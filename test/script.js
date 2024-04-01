@@ -11,86 +11,85 @@ function loadPPImage(file) {
 }
 
 function displayPPMImage(data) {
-    const lines = data.trim().split("\n");
-    const dimensions = lines[1].split(" ");
-    const width = parseInt(dimensions[0]);
-    const height = parseInt(dimensions[1]);
-    const pixels = lines.slice(3); // Starting from line 3 are the pixel values
+  const lines = data.trim().split("\n");
+  const dimensions = lines[1].split(" ");
+  const width = parseInt(dimensions[0]);
+  const height = parseInt(dimensions[1]);
+  const pixels = lines.slice(3); // Starting from line 3 are the pixel values
 
-    const canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext("2d");
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+  const imageData = ctx.createImageData(width, height);
+  const buffer = new Uint32Array(imageData.data.buffer);
 
-    for (let y = 0; y < height; y++) {
-      for (let x = 0; x < width; x++) {
-        const index = y * width + x;
-        const rgb = pixels[index].split(" ").map(val => parseInt(val));
-        const color = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
-        ctx.fillStyle = color;
-        ctx.fillRect(x, y, 1, 1);
-      }
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const index = y * width + x;
+      const rgb = pixels[index].split(" ").map(val => parseInt(val));
+      const color = (255 << 24) | (rgb[2] << 16) | (rgb[1] << 8) | rgb[0];
+      buffer[index] = color;
     }
-
-    const container = document.getElementById("image-container");
-    container.innerHTML = "";
-    container.appendChild(canvas);
   }
 
+  ctx.putImageData(imageData, 0, 0);
 
-image = 'C:\\Users\\ernes\\Desktop\\Travail\\S8\\isim\\Raytracer\\test\\around\\around1.ppm';
-function loadSpecificImage(file_name) {
-    fetch(file_name)
-        .then(response => response.text())
-        .then(data => {
-        displayPPMImage(data);
-        })
-        .catch(error => {
-        console.error("Error loading specific image:", error);
-        });
+  const container = document.getElementById("image-container");
+  container.innerHTML = "";
+  container.appendChild(canvas);
 }
-loadSpecificImage(image)
 
+
+files = null;
 document.addEventListener("DOMContentLoaded", function() {
   const fileInput = document.getElementById("file-input");
 
   fileInput.addEventListener("change", function(event) {
-    const file = event.target.files[i];
-    console.log(typeof(file))
-    loadPPImage(file);
+    files = event.target.files;
+    loadPPImage(files[i]);
   });
 });
 
+let actionExecuted = false;
 i = 0;
-
 window.addEventListener("keydown", function (event) {
-    if (event.defaultPrevented) {
-      return; // Do nothing if the event was already processed
+    if (event.defaultPrevented || actionExecuted) {
+      return;
     }
   
     switch (event.key) {
       case "ArrowDown":
         console.log("ArrowDown");
+        actionExecuted = true;
         break;
       case "ArrowUp":
         console.log("ArrowUp");
+        actionExecuted = true;
         break;
       case "ArrowLeft":
         console.log("ArrowLeft");
-        i = (i + 1) % event.target.files.length;
-        loadPPImage(event.target.files[i]);
+        i = (i + 1) % files.length;
+        loadPPImage(files[i]);
+        actionExecuted = true;
         break;
       case "ArrowRight":
-        i = (i - 1) % event.target.files.length;
-        loadPPImage(event.target.files[i]);    
         console.log("ArrowRight");
+        i = i - 1;
+        if (i < 0)
+          i = files.length - 1;
+        loadPPImage(files[i]);
+        actionExecuted = true;
         break;
       default:
-        return; // Quit when this doesn't handle the key event.
+        return;
     }
-  
-    // Cancel the default action to avoid it being handled twice
+
     event.preventDefault();
   }, true);
-  // the last option dispatches the event to the listener first,
-  // then dispatches event to window
+
+  document.addEventListener("keyup", function(event) {
+    if (event.key === "ArrowDown" || event.key === "ArrowUp" || event.key === "ArrowLeft" || event.key === "ArrowRight") {
+      actionExecuted = false;
+    }
+  });
