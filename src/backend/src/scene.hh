@@ -19,11 +19,9 @@ class Scene
         vector<Point_Light> lights;
         Camera camera;
 
-        Scene(vector<Sphere> sphere_, vector<Point_Light> lights_, Camera camera_) {
-            spheres = std::move(sphere_);
-            lights = std::move(lights_);
-            camera = camera_;
-        }
+        Scene()=default;
+        Scene(int width, int height);
+        Scene(vector<Sphere> sphere_, vector<Point_Light> lights_, Camera camera_);
 };
 
 #endif //RAYTRACER_SCENE_HH

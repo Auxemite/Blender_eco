@@ -29,14 +29,14 @@ void Image::render(const Scene& scene) {
 
 void Image::save_as_ppm(const std::string& pathname)
 {
-    std::ofstream ofs(pathname);
-    ofs << "P3\n" << width << " " << height << "\n255\n";
+    std::ofstream ofs(pathname, ifstream::binary);
+    ofs << "P6\n" << width << " " << height << "\n255\n";
     for (int j = 0; j < height; ++j) {
         for (int i = 0; i < width; ++i) {
             auto c = data[i][j];
-            ofs << static_cast<int>(255.999 * c.r) << ' '
-                << static_cast<int>(255.999 * c.g) << ' '
-                << static_cast<int>(255.999 * c.b) << '\n';
+            ofs << static_cast<char>(static_cast<int>(255.999 * c.r))
+                << static_cast<char>(static_cast<int>(255.999 * c.g))
+                << static_cast<char>(static_cast<int>(255.999 * c.b));
         }
     }
     ofs.close();

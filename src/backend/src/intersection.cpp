@@ -5,7 +5,7 @@
 #include "intersection.hh"
 
 Color black = Color(0,0,0);
-const Image& fond = load_image("../test/sky.ppm");
+const Image& fond = load_image("../test/sunset.ppm");
 
 void Intersection::throw_ray(const Scene& scene) {
     for (auto new_sphere : scene.spheres) {

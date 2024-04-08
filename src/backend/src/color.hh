@@ -46,10 +46,6 @@ inline Color operator/(const Color &c, const double &l) {
     return {c.r / l, c.g / l, c.b / l};
 }
 
-inline void print(Color c) {
-    cout << "(" << c.r << ", " << c.g << ", " << c.b << ")\n";
-}
-
 inline Color cap(const Color &c) {
     Color color(c.r, c.g, c.b);
 

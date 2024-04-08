@@ -37,6 +37,15 @@ add_executable(blender_eco main.cpp
         src/backend/src/intersection.cpp
         src/backend/render.hh
         src/backend/src/image.cpp
+        src/backend/backend_main.cpp
+        src/backend/backend_main.hh
+        src/backend/backend_main.hh
+        src/backend/src/scece.cpp
+        src/backend/src/scece.cpp
+        src/backend/render.cpp
+        src/frontend/action.hh
+        src/frontend/action.hh
+        src/frontend/action.cpp
 )
 
 find_package(OpenGL REQUIRED)
