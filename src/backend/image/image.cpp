@@ -1,7 +1,3 @@
-//
-// Created by ernes on 25/03/2024.
-//
-
 #include "image.hh"
 
 Image::Image(int width_, int height_) {

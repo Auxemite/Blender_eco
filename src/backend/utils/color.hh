@@ -1,9 +1,4 @@
-//
-// Created by ernes on 15/03/2024.
-//
-
-#ifndef RAYTRACER_COLOR_HH
-#define RAYTRACER_COLOR_HH
+#pragma once
 
 class Color {
     public :
@@ -65,5 +60,3 @@ inline Color cap(const Color &c) {
 
     return color;
 }
-
-#endif //RAYTRACER_COLOR_HH

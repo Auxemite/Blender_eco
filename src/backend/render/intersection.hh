@@ -1,16 +1,9 @@
-//
-// Created by ernes on 22/03/2024.
-//
-
-#ifndef RAYTRACER_INTERSECTION_HH
-#define RAYTRACER_INTERSECTION_HH
+#pragma once
 
 #define PI 3.14159265
 
-#include "vector3.hh"
-#include "object/object.hh"
-#include "scene.hh"
-#include "image.hh"
+#include "../scene/scene.hh"
+#include "../image/image.hh"
 
 class Intersection {
     public :
@@ -30,5 +23,3 @@ class Intersection {
         Point3 inter_loc;
         Sphere sphere;
 };
-
-#endif //RAYTRACER_INTERSECTION_HH

@@ -1,11 +1,6 @@
-//
-// Created by ernes on 15/03/2024.
-//
+#pragma once
 
-#ifndef RAYTRACER_LIGHT_HH
-#define RAYTRACER_LIGHT_HH
-
-#include "color.hh"
+#include "../utils/color.hh"
 
 class Light
 {};
@@ -30,5 +25,3 @@ public:
         color = color_;
     };
 };
-
-#endif //RAYTRACER_LIGHT_HH

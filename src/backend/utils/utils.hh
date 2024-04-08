@@ -1,14 +1,6 @@
-//
-// Created by ernes on 22/03/2024.
-//
+#pragma once
 
-#ifndef RAYTRACER_UTILS_HH
-#define RAYTRACER_UTILS_HH
-
-#include <iostream>
-#include <list>
 #include "color.hh"
-#include "texture_material.hh"
 #include "vector3.hh"
 
 namespace u {
@@ -43,5 +35,3 @@ namespace u {
 
     Point3 p0 = Point3(0,0,0);
 }
-
-#endif //RAYTRACER_UTILS_HH

@@ -1,11 +1,5 @@
-//
-// Created by ernes on 17/03/2024.
-//
+#pragma once
 
-#ifndef RAYTRACER_TEXTURE_MATERIAL_HH
-#define RAYTRACER_TEXTURE_MATERIAL_HH
-
-#include <list>
 #include "color.hh"
 
 class Texture_Material {
@@ -30,5 +24,3 @@ class Uniform_Texture : Texture_Material {
             ks = ks_;
         };
 };
-
-#endif //RAYTRACER_TEXTURE_MATERIAL_HH

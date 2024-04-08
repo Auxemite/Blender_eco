@@ -1,7 +1,3 @@
-//
-// Created by ernes on 23/03/2024.
-//
-
 #include "intersection.hh"
 
 Color black = Color(0,0,0);

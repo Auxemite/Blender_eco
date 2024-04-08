@@ -1,14 +1,8 @@
-//
-// Created by ernes on 15/03/2024.
-//
+#pragma once
 
-#ifndef RAYTRACER_IMAGE_HH
-#define RAYTRACER_IMAGE_HH
-
-#include <iostream>
 #include <vector>
 #include <fstream>
-#include "intersection.hh"
+#include "../render/intersection.hh"
 
 class Image {
     public:
@@ -54,5 +48,3 @@ inline Image load_image(const string& path_name) {
     ifs.close();
     return image;
 }
-
-#endif //RAYTRACER_IMAGE_HH

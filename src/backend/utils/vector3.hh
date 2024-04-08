@@ -1,12 +1,6 @@
-//
-// Created by ernes on 15/03/2024.
-//
-
-#ifndef RAYTRACER_VECTOR3_HH
-#define RAYTRACER_VECTOR3_HH
+#pragma once
 
 #include <iostream>
-#include <valarray>
 
 #define PI 3.14159265
 
@@ -28,12 +22,6 @@ class Vector3 {
         [[nodiscard]] double norme() const {
             return sqrt(norme_squared());
         };
-
-//        Vector3& operator=(const Vector3 &v) {
-//            x = v.x;
-//            y = v.y;
-//            z = v.z;
-//        }
 };
 
 inline Vector3 operator*(double l, const Vector3 &v) {
@@ -90,5 +78,3 @@ inline void print(Vector3 v1) {
 }
 
 typedef Vector3 Point3;
-
-#endif //RAYTRACER_VECTOR3_HH

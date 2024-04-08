@@ -111,7 +111,7 @@
 //   need to provide your own APIs in the same file which will access the
 //   static functions.
 //
-//   The basic concept is that you provide a "string" object which
+//   The basic concept is that you provide a "string" scene which
 //   behaves like an array of characters. stb_textedit uses indices to
 //   refer to positions in the string, implicitly representing positions
 //   in the displayed textedit. This is true for both plain text and
@@ -127,8 +127,8 @@
 //
 // Symbols you must define for implementation mode:
 //
-//    STB_TEXTEDIT_STRING               the type of object representing a string being edited,
-//                                      typically this is a wrapper object with other data you need
+//    STB_TEXTEDIT_STRING               the type of scene representing a string being edited,
+//                                      typically this is a wrapper scene with other data you need
 //
 //    STB_TEXTEDIT_STRINGLEN(obj)       the length of the string (ideally O(1))
 //    STB_TEXTEDIT_LAYOUTROW(&r,obj,n)  returns the results of laying out a line of characters

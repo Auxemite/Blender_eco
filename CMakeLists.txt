@@ -22,27 +22,31 @@ add_executable(blender_eco main.cpp
         src/frontend/imgui/imgui_impl_opengl3_loader.h
 
         src/frontend/app.cpp
-        src/frontend/app.h
+        src/frontend/app.hh
 
-        src/backend/src/vector3.hh
-        src/backend/src/color.hh
-        src/backend/src/image.hh
-        src/backend/src/object/object.hh
-        src/backend/src/light.hh
-        src/backend/src/camera.hh
-        src/backend/src/scene.hh
-        src/backend/src/texture_material.hh
-        src/backend/src/utils.hh
-        src/backend/src/intersection.hh
-        src/backend/src/intersection.cpp
-        src/backend/render.hh
-        src/backend/src/image.cpp
-        src/backend/backend_main.cpp
-        src/backend/backend_main.hh
-        src/backend/backend_main.hh
-        src/backend/src/scece.cpp
-        src/backend/src/scece.cpp
-        src/backend/render.cpp
+        src/backend/utils/vector3.hh
+        src/backend/utils/color.hh
+        src/backend/image/image.hh
+        src/backend/scene/object.hh
+        src/backend/scene/light.hh
+        src/backend/scene/camera.hh
+        src/backend/scene/scene.hh
+        src/backend/utils/texture_material.hh
+        src/backend/utils/utils.hh
+        src/backend/render/intersection.hh
+        src/backend/render/intersection.cpp
+        src/backend/render/render.hh
+        src/backend/image/image.cpp
+        src/backend/scene/scece.cpp
+        src/backend/scene/scece.cpp
+        src/backend/render/render.cpp
+        src/frontend/env.hh
+        src/frontend/env.hh
+        src/frontend/env.cpp
+        src/backend/scene/camera.cpp
+        src/backend/scene/camera.cpp
+        src/backend/scene/object.cpp
+        src/backend/scene/object.cpp
         src/frontend/action.hh
         src/frontend/action.hh
         src/frontend/action.cpp
