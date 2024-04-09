@@ -53,7 +53,12 @@ void Env::update_texture() {
 }
 
 void Env::render() {
-    image.render(scene);
+    image.render(scene, true);
+    update_texture();
+}
+
+void Env::fast_render() {
+    image.render(scene, false);
     update_texture();
 }
 
@@ -61,27 +66,27 @@ void Env::move_camera() {
     Point3 p = scene.camera.center;
     double angle = PI / 8;
     scene.camera.update_cam(Point3(cos(angle) * p.x - sin(angle) * p.z, 0, sin(angle) * p.x + cos(angle) * p.z) + Point3(0, 5, 0));
-    render();
+    fast_render();
 }
 
 void Env::move_right() {
     scene.spheres[focus_index].center.x += 0.5;
-    render();
+    fast_render();
 }
 
 void Env::move_left() {
     scene.spheres[focus_index].center.x -= 0.5;
-    render();
+    fast_render();
 }
 
 void Env::grow() {
     scene.spheres[focus_index].radius += 0.2;
-    render();
+    fast_render();
 }
 
 void Env::shrink() {
     scene.spheres[focus_index].radius -= 0.2;
-    render();
+    fast_render();
 }
 
 void Env::change_focus() {

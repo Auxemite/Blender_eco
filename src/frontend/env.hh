@@ -7,7 +7,8 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "GLFW/glfw3.h"
 
-#include "../backend/render/render.hh"
+#include "../backend/render/intersection.hh"
+#include "../backend/image/image.hh"
 #include "action.hh"
 
 class Env {
@@ -25,6 +26,7 @@ class Env {
     [[nodiscard]] static unsigned char* convertDataToGLRGB(const vector<vector<Color>>& data, int width, int height);
 
     void render();
+    void fast_render();
     void move_camera();
     void move_right();
     void move_left();

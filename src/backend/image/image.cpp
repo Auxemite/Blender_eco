@@ -11,7 +11,7 @@ Image::Image(int width_, int height_) {
     data = data_;
 };
 
-void Image::render(const Scene& scene) {
+void Image::render(const Scene& scene, bool photorealist) {
     Camera camera = scene.camera;
     for (int j = 0; j < height; ++j)
         for (int i = 0; i < width; ++i) {
@@ -19,7 +19,10 @@ void Image::render(const Scene& scene) {
             auto dir = unit_vector(pixel_center - camera.center);
             auto intersection = Intersection(camera.center, dir);
             intersection.throw_ray(scene);
-            data[i][j] = intersection.ray_color(scene, 0);
+            if (photorealist)
+                data[i][j] = intersection.ray_color(scene, 0);
+            else
+                data[i][j] = intersection.fast_ray_color(scene);
         }
 }
 

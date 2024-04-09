@@ -12,10 +12,13 @@ class Intersection {
 
         void update(Point3 origin_, Vector3 dir_);
         void throw_ray(const Scene& scene);
+
         Color bg_color();
+        Color fast_ray_color(const Scene& scene);
         Color ray_color(const Scene& scene, int recursive);
         Color diffuse(Vector3 light_ray, Vector3 normale);
         Color specular(Point_Light light, Vector3 light_ray, Vector3 refaction);
+
         static bool inside_object(const Scene& scene, Point_Light light);
 
         Point3 origin;

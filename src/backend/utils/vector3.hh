@@ -50,9 +50,9 @@ inline Vector3 operator-(const Vector3 &v) {
 
 inline bool operator==(const Vector3 &v1, const Vector3 &v2) {
     Vector3 diff = v1 - v2;
-    return static_cast<int>(diff.x * 10000) == 0
-    && static_cast<int>(diff.y * 10000) == 0
-    && static_cast<int>(diff.z * 10000) == 0;
+    return static_cast<int>(diff.x * 1000) == 0
+    && static_cast<int>(diff.y * 1000) == 0
+    && static_cast<int>(diff.z * 1000) == 0;
 }
 
 inline bool operator!=(const Vector3 &v1, const Vector3 &v2) {

@@ -18,7 +18,7 @@ void Intersection::throw_ray(const Scene& scene) {
 }
 
 Color Intersection::bg_color() {
-    dir = unit_vector(dir); // (1,0,0) or (-1,0,0)
+    dir = unit_vector(dir);
     auto w = fond.width;
     auto h = fond.height;
     auto theta =  static_cast<int>(acos(dir.y) * h / PI); // because dir is a unit vector
@@ -30,6 +30,7 @@ Color Intersection::bg_color() {
 
     return fond.data[phi][theta];
 
+    // TEST FOR FULL SKYBOX
 //    auto w = 400;
 //    for (auto i=w; i > 0; i--) {
 //        std::cout << -((atan(i / 1) + PI/2) * w / (PI*2)) + w;
@@ -53,6 +54,18 @@ bool Intersection::inside_object(const Scene& scene, Point_Light light) {
             return true;
     }
     return false;
+}
+
+Color Intersection::fast_ray_color(const Scene& scene) {
+    if (inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX))
+        return bg_color();
+
+    auto normale = sphere.normale(inter_loc);
+    Color ray_color = 0.5
+                      * Color(normale.x + 1, normale.y, normale.z + 1)
+                      * sphere.get_material().color;
+    auto light_ray = unit_vector(scene.lights[0].center - inter_loc); // Main light
+    return ray_color;
 }
 
 Color Intersection::ray_color(const Scene& scene, int recursive) {

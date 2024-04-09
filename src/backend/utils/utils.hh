@@ -3,7 +3,7 @@
 #include "color.hh"
 #include "vector3.hh"
 
-namespace u {
+namespace utils {
     Color red = Color(1.0, 0.0, 0.0);
     Color green = Color(0.0, 1.0, 0.0);
     Color blue = Color(0.0, 0.0, 1.0);

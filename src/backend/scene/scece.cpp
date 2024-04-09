@@ -4,10 +4,10 @@
 Scene::Scene(int width, int height) {
     vector<Sphere> s;
     vector<Point_Light> l;
-    s.push_back(Sphere({0, 0, 0}, u::simple(u::white)));
-    s.push_back(Sphere({2, 0, 0}, u::plastic(u::magenta)));
-    s.push_back(Sphere({-2, 0, 0}, u::metal(u::purple)));
-    l.push_back(Point_Light({0, 5, 1}, 10, u::orange));
+    s.push_back(Sphere({0, 0, 0}, utils::simple(utils::white)));
+    s.push_back(Sphere({2, 0, 0}, utils::plastic(utils::magenta)));
+    s.push_back(Sphere({-2, 0, 0}, utils::metal(utils::purple)));
+    l.push_back(Point_Light({0, 5, 1}, 10, utils::orange));
 
     Point3 p(0, 5, -5);
     Camera camera_ = Camera(p, {0, 0, 0}, width, height);

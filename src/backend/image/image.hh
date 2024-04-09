@@ -13,7 +13,7 @@ class Image {
         Image()= default;
         Image(int width_, int height_);
 
-        void render(const Scene& scene);
+        void render(const Scene& scene, bool photorealist);
 
         void save_as_ppm(const std::string& pathname);
 };

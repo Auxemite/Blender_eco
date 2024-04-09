@@ -35,11 +35,9 @@ add_executable(blender_eco main.cpp
         src/backend/utils/utils.hh
         src/backend/render/intersection.hh
         src/backend/render/intersection.cpp
-        src/backend/render/render.hh
         src/backend/image/image.cpp
         src/backend/scene/scece.cpp
         src/backend/scene/scece.cpp
-        src/backend/render/render.cpp
         src/frontend/env.hh
         src/frontend/env.hh
         src/frontend/env.cpp
