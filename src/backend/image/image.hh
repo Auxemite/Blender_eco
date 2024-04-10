@@ -4,6 +4,7 @@
 #include <fstream>
 #include <thread>
 #include "../render/intersection.hh"
+#include "../utils/utils.hh"
 
 class Image {
     public:

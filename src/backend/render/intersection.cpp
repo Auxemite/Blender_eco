@@ -18,15 +18,19 @@ void Intersection::throw_ray(const Scene& scene) {
 }
 
 Color Intersection::bg_color() {
+    auto dirz = dir.z;
+    if (dir.z < 0)
+        dirz = -dirz;
+
     dir = unit_vector(dir);
     auto w = fond.width;
     auto h = fond.height;
     auto theta =  static_cast<int>(acos(dir.y) * h / PI); // because dir is a unit vector
     int phi;
-    if (dir.z == 0)
+    if (dirz == 0)
         phi = w-1;
     else
-        phi = static_cast<int>((atan(dir.x / dir.z) + PI/2) * w / PI);
+        phi = static_cast<int>((atan(dir.x / dirz) + PI/2) * w / PI);
 
     return fond.data[phi][theta];
 
@@ -58,7 +62,7 @@ bool Intersection::inside_object(const Scene& scene, Point_Light light) {
 
 Color Intersection::fast_ray_color(const Scene& scene) {
     if (inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX))
-        return bg_color();
+        return {0.2, 0.2, 0.3};
 
     auto normale = sphere.normale(inter_loc);
     Color ray_color = 0.5

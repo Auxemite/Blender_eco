@@ -36,16 +36,13 @@ unsigned char* Env::convertDataToGLRGB(const vector<vector<Color>>& data, int wi
 
 void Env::update_texture() {
     unsigned char* image_data = convertDataToGLRGB(image.data, image.width, image.height);
-    // Create a OpenGL texture identifier
     GLuint image_texture;
     glGenTextures(1, &image_texture);
     glBindTexture(GL_TEXTURE_2D, image_texture);
 
-    // Setup filtering parameters for display
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    // Upload pixels into texture
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.width, image.height, 0, GL_RGB, GL_UNSIGNED_BYTE, image_data);
 
     glDeleteTextures(1, &render_image);
