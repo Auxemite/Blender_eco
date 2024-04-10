@@ -27,7 +27,7 @@ add_executable(blender_eco main.cpp
         src/backend/utils/vector3.hh
         src/backend/utils/color.hh
         src/backend/image/image.hh
-        src/backend/scene/object.hh
+        src/backend/object/object.hh
         src/backend/scene/light.hh
         src/backend/scene/camera.hh
         src/backend/scene/scene.hh
@@ -43,8 +43,8 @@ add_executable(blender_eco main.cpp
         src/frontend/env.cpp
         src/backend/scene/camera.cpp
         src/backend/scene/camera.cpp
-        src/backend/scene/object.cpp
-        src/backend/scene/object.cpp
+        src/backend/object/object.cpp
+        src/backend/object/object.cpp
         src/frontend/action.hh
         src/frontend/action.hh
         src/frontend/action.cpp

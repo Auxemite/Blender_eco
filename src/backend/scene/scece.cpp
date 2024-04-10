@@ -4,6 +4,7 @@
 Scene::Scene(int width, int height) {
     vector<Sphere> s;
     vector<Point_Light> l;
+//    s.push_back(Sphere({0, 0, 0}, 1, utils::simple(utils::blue), "LA SPHEREEEU"));
     s.push_back(Sphere({0, 0, 0}, utils::simple(utils::blue)));
     s.push_back(Sphere({2, 0, 0}, utils::plastic(utils::magenta)));
     s.push_back(Sphere({-2, 0, 0}, utils::metal(utils::purple)));

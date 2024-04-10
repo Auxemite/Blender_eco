@@ -2,6 +2,7 @@
 
 Color black = Color(0,0,0);
 const Image& fond = load_image("../test/sunset.ppm");
+//const Image& fond = load_image("./test/retro.ppm");
 
 void Intersection::throw_ray(const Scene& scene) {
     for (auto new_sphere : scene.spheres) {
@@ -33,23 +34,6 @@ Color Intersection::bg_color() {
         phi = static_cast<int>((atan(dir.x / dirz) + PI/2) * w / PI);
 
     return fond.data[phi][theta];
-
-    // TEST FOR FULL SKYBOX
-//    auto w = 400;
-//    for (auto i=w; i > 0; i--) {
-//        std::cout << -((atan(i / 1) + PI/2) * w / (PI*2)) + w;
-//        std::cout << "\n";
-//    }
-//    for (auto i=0; i < w; i++)
-//    {
-//        std::cout << ((atan(i / 1) + PI/2) * w / (PI*2)) + w/2;
-//        std::cout << "\n";
-//    }
-//    return 0;
-
-//    auto a = 0.5*(dir.y + 1.0);
-//    auto color = (1.0-a) * Color(1.0, 1.0, 0.5) + a * Color(1.0, 0.2, 0.0);
-//    return color * fond.data[i][j];
 }
 
 bool Intersection::inside_object(const Scene& scene, Point_Light light) {
