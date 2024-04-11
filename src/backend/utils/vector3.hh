@@ -1,80 +1,114 @@
 #pragma once
 
 #include <iostream>
+#include "utils.hh"
 
-#define PI 3.14159265
+struct Vector3
+{
+    double x;
+    double y;
+    double z;
 
-using namespace std;
+    // Constructor & Destructor
+    Vector3();
+    Vector3(double f);
+    Vector3(double x, double y, double z);
+    Vector3(const Vector3& v);
 
-class Vector3 {
+    ~Vector3() = default;
 
-    public :
-        Vector3() : x(0), y(0), z(0) {};
-        Vector3(double x_, double y_, double z_) : x(x_), y(y_), z(z_) {};
+    // Methods
+    double length_sqr();
+    double length();
 
-        double x;
-        double y;
-        double z;
+    double normalize();
+    Vector3 norm();
 
-        [[nodiscard]] double norme_squared() const {
-            return x*x + y*y + z*z;
-        };
-        [[nodiscard]] double norme() const {
-            return sqrt(norme_squared());
-        };
+    double dot(const Vector3& v) const;
+    Vector3 cross(const Vector3& v) const;
+
+    // Operators
+    Vector3& operator=(const Vector3& v);
+    Vector3& operator+=(const Vector3& v);
+    Vector3& operator-=(const Vector3& v);
+    Vector3 operator-() const;
+    Vector3& operator*=(const double& f);
+    Vector3& operator/=(const double& f);
 };
 
-inline Vector3 operator*(double l, const Vector3 &v) {
-    return {v.x * l, v.y * l, v.z * l};
-}
-
-inline Vector3 operator*(const Vector3 &v, double l) {
-    return l * v;
-}
-
-inline Vector3 operator+(const Vector3 &v1, const Vector3 &v2) {
-    return {v1.x + v2.x, v1.y + v2.y, v1.z + v2.z};
-}
-
-inline Vector3 operator-(const Vector3 &v1, const Vector3 &v2) {
-    return {v1.x - v2.x, v1.y - v2.y, v1.z - v2.z};
-}
-
-inline Vector3 operator/(const Vector3 &v, const double &l) {
-    return {v.x / l, v.y / l, v.z / l};
-}
-
-inline Vector3 operator-(const Vector3 &v) {
-    return {-1 * v.x, -1 * v.y, -1 * v.z};
-}
-
-inline bool operator==(const Vector3 &v1, const Vector3 &v2) {
-    Vector3 diff = v1 - v2;
-    return static_cast<int>(diff.x * 1000) == 0
-    && static_cast<int>(diff.y * 1000) == 0
-    && static_cast<int>(diff.z * 1000) == 0;
-}
-
-inline bool operator!=(const Vector3 &v1, const Vector3 &v2) {
-    return !(v1 == v2);
-}
-
-inline double dot(const Vector3 &u, const Vector3 &v) {
-    return u.x * v.x + u.y * v.y + u.z * v.z;
-}
-
-inline Vector3 unit_vector(Vector3 v) {
-    return v / v.norme();
-}
-
-inline Vector3 operator*(Vector3 v1, Vector3 v2) {
-    return {v1.y*v2.z - v1.z*v2.y,
-            v1.z*v2.x - v1.x*v2.z,
-            v1.x*v2.y - v1.y*v2.x};
-}
-
-inline void print(Vector3 v1) {
-    cout << "(" << v1.x << ", " << v1.y << ", " << v1.z << ")\n";
-}
-
 typedef Vector3 Point3;
+
+// Usefull operators on Vectors
+double dot(const Vector3& v1, const Vector3& v2);
+Vector3 cross(const Vector3& v1, const Vector3& v2);
+std::ostream& operator<<(std::ostream& out, const Vector3& vect);
+
+// Overloaded operators
+inline Vector3 operator+(const Vector3& v1, const Vector3& v2)
+{
+    return Vector3(v1.x + v2.x,
+                   v1.y + v2.y,
+                   v1.z + v2.z);
+}
+
+inline Vector3 operator-(const Vector3& v1, const Vector3& v2)
+{
+    return Vector3(v1.x - v2.x,
+                   v1.y - v2.y,
+                   v1.z - v2.z);
+}
+
+inline Vector3 operator*(const Vector3& v1, const Vector3& v2)
+{
+    return Vector3(v1.x * v2.x,
+                   v1.y * v2.y,
+                   v1.z * v2.z);
+}
+
+inline Vector3 operator*(const Vector3& v, double f)
+{
+    return Vector3(v.x * f,
+                   v.y * f,
+                   v.z * f);
+}
+
+inline Vector3 operator*(double f, const Vector3& v)
+{
+    return Vector3(f * v.x,
+                   f * v.y,
+                   f * v.z);
+}
+
+inline Vector3 operator/(const Vector3& v1, const Vector3& v2)
+{
+    return Vector3(v1.x / v2.x,
+                   v1.y / v2.y,
+                   v1.z / v2.z);
+}
+
+inline Vector3 operator/(const Vector3& v, double f)
+{
+    return Vector3(v.x / f,
+                   v.y / f,
+                   v.z / f);
+}
+
+inline Vector3 operator/(double f, const Vector3& v)
+{
+    return Vector3(f / v.x,
+                   f / v.y,
+                   f / v.z);
+}
+
+inline bool operator==(const Vector3 &v1, const Vector3 &v2) 
+{
+    static const double delta = 0.001;
+    return abs_(v1.x - v2.x) < delta &&
+           abs_(v1.y - v2.y) < delta &&
+           abs_(v1.z - v2.z) < delta;
+}
+
+inline bool operator!=(const Vector3 &v1, const Vector3 &v2) 
+{
+    return ! (v1 == v2);
+}

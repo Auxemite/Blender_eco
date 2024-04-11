@@ -9,10 +9,10 @@ Camera::Camera(Point3 center_, Point3 lookat_, int width_, int height_)
     auto screen_width = screen_height * (static_cast<double>(width)/height);
     center = center_;
     lookat = lookat_;
-    auto lookat_vect = unit_vector(lookat_ - center) * z_min;
+    auto lookat_vect = (lookat_ - center).norm() * z_min;
     auto up = Vector3(0,1,0);
-    auto u = (unit_vector(lookat_vect * up) * -1) * screen_width;
-    auto v = (unit_vector(lookat_vect * u)) * -screen_height;
+    auto u = ((lookat_vect * up).norm() * -1) * screen_width;
+    auto v = ((lookat_vect * u)).norm() * -screen_height;
 
     pixel_u = u / width;
     pixel_v = v / height;
@@ -27,10 +27,10 @@ void Camera::update_cam(Point3 center_)
     auto screen_height = 1.0;
     auto screen_width = screen_height * (static_cast<double>(width)/height);
     center = center_;
-    auto lookat_vect = unit_vector(lookat - center) * z_min;
+    auto lookat_vect = (lookat - center).norm() * z_min;
     auto up = Vector3(0,1,0);
-    auto u = (unit_vector(lookat_vect * up) * -1) * screen_width;
-    auto v = (unit_vector(lookat_vect * u)) * -screen_height;
+    auto u = ((lookat_vect * up).norm() * -1) * screen_width;
+    auto v = ((lookat_vect * u)).norm() * -screen_height;
 
     pixel_u = u / width;
     pixel_v = v / height;
@@ -45,10 +45,10 @@ void Camera::update_lookat(Point3 lookat_)
     auto screen_height = 1.0;
     auto screen_width = screen_height * (static_cast<double>(width)/height);
     lookat = lookat_;
-    auto lookat_vect = unit_vector(lookat - center) * z_min;
+    auto lookat_vect = (lookat - center).norm() * z_min;
     auto up = Vector3(0,1,0);
-    auto u = (unit_vector(lookat_vect * up) * -1) * screen_width;
-    auto v = (unit_vector(lookat_vect * u)) * -screen_height;
+    auto u = ((lookat_vect * up).norm() * -1) * screen_width;
+    auto v = ((lookat_vect * u)).norm() * -screen_height;
 
     pixel_u = u / width;
     pixel_v = v / height;

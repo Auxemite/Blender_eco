@@ -16,7 +16,7 @@ Env::Env(const char* filename) {
     update_texture();
 }
 
-unsigned char* Env::convertDataToGLRGB(const vector<vector<Color>>& data, int width, int height)
+unsigned char* Env::convertDataToGLRGB(const std::vector<std::vector<Color>>& data, int width, int height)
 {
     unsigned char* char_data;
     size_t size = width * height * 3;

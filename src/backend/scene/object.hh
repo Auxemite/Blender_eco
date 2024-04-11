@@ -16,6 +16,15 @@ class Object
     virtual Uniform_Texture get_material() { return uniformMaterial; };
 };
 
+/* class Shape
+{
+    public:
+    Uniform_Texture texture;
+
+    virtual bool intersect(Intersection& intersection) = 0;
+    virtual Vector3 normal(const Point3& point) const = 0;    
+}; */
+
 class Sphere : public Object {
     public:
     Point3 center = Point3();

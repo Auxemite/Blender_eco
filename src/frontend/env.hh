@@ -23,7 +23,7 @@ class Env {
     explicit Env(const char* filename);
 
     void update_texture();
-    [[nodiscard]] static unsigned char* convertDataToGLRGB(const vector<vector<Color>>& data, int width, int height);
+    [[nodiscard]] static unsigned char* convertDataToGLRGB(const std::vector<std::vector<Color>>& data, int width, int height);
 
     void render();
     void fast_render();

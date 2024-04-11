@@ -1,4 +1,5 @@
 #include "object.hh"
+#include "../utils/utils.hh"
 
 Sphere::Sphere(Point3 center_, double radius_, Uniform_Texture uniformMaterial_) {
     center = center_;
@@ -18,7 +19,7 @@ double Sphere::ray_intersection(Point3 cam_center, Vector3 dir) {
     auto a = dot(dir, dir);
     auto b = 2.0 * dot(oc, dir);
     auto c = dot(oc, oc) - radius*radius;
-    auto discriminant = b*b - 4*a*c;
+    auto discriminant = discr(a, b, c);
 
     if (discriminant < 0)
         return -1.0;
@@ -28,8 +29,7 @@ double Sphere::ray_intersection(Point3 cam_center, Vector3 dir) {
 
 Vector3 Sphere::normale(Point3 point)
 {
-    Vector3 v = point - center;
-    return unit_vector(v);
+    return (point - center).norm();
 }
 
 Uniform_Texture Sphere::get_material()
