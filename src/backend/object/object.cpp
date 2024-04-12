@@ -3,19 +3,19 @@
 
 int object_index = 0;
 
-Sphere::Sphere(Point3 center_, double radius_, Uniform_Texture uniformMaterial_, const string& name_) {
-    center = center_;
-    radius = radius_;
-    uniformMaterial = uniformMaterial_;
-    name = name_;
-    object_index++;
-}
+//Sphere::Sphere(Point3 center_, double radius_, Uniform_Texture uniformMaterial_, const string& name_) {
+//    center = center_;
+//    radius = radius_;
+//    uniformMaterial = uniformMaterial_;
+//    name = name_;
+//    object_index++;
+//}
 
 Sphere::Sphere(Point3 center_, double radius_, Uniform_Texture uniformMaterial_) {
     center = center_;
     radius = radius_;
     uniformMaterial = uniformMaterial_;
-    name = "Sphere " + to_string(object_index);
+//    name = "Sphere " + to_string(object_index);
     object_index++;
 }
 
@@ -23,7 +23,7 @@ Sphere::Sphere(Point3 center_, Uniform_Texture uniformMaterial_) {
     center = center_;
     radius = 1;
     uniformMaterial = uniformMaterial_;
-    name = "Sphere " + to_string(object_index);
+//    name = "Sphere " + to_string(object_index);
     object_index++;
 }
 
