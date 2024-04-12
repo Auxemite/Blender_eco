@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <string>
 
 #include "utils.hh"
 #include "vector3.hh"

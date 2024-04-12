@@ -1,7 +1,5 @@
 #include "intersection.hh"
 
-#define INT_MAX 65000
-
 const Image& fond = load_image("../test/sunset.ppm");
 
 void Intersection::throw_ray(const Scene& scene) {

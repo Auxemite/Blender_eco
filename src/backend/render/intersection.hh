@@ -4,6 +4,7 @@
 
 #include "../scene/scene.hh"
 #include "../image/image.hh"
+#include <climits>
 
 class Intersection {
     public :

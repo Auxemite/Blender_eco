@@ -1,6 +1,6 @@
 #include "texture_material.hh"
 
-inline Uniform_Texture::Uniform_Texture(Color color, double kd, double ks, double ns)
+Uniform_Texture::Uniform_Texture(Color color, double kd, double ks, double ns)
 {
     mat.color = color;
     mat.kd = kd;

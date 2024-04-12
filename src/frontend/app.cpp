@@ -11,7 +11,7 @@ void App::Windows()
                  ImVec2(static_cast<float>(env.image.width), static_cast<float>(env.image.height)));
     ImGui::End();
 
-    ImGui::ShowDemoWindow();
+//    ImGui::ShowDemoWindow();
 
     ImGui::Begin("Actions");
 
