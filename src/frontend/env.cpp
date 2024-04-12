@@ -67,22 +67,22 @@ void Env::move_camera() {
 }
 
 void Env::move_right() {
-    scene.spheres[focus_index].center.x += 0.5;
+    ((Sphere*) scene.spheres[focus_index])->center.x += 0.5;
     fast_render();
 }
 
 void Env::move_left() {
-    scene.spheres[focus_index].center.x -= 0.5;
+    ((Sphere*) scene.spheres[focus_index])->center.x -= 0.5;
     fast_render();
 }
 
 void Env::grow() {
-    scene.spheres[focus_index].radius += 0.2;
+    ((Sphere*) scene.spheres[focus_index])->radius += 0.2;
     fast_render();
 }
 
 void Env::shrink() {
-    scene.spheres[focus_index].radius -= 0.2;
+    ((Sphere*) scene.spheres[focus_index])->radius -= 0.2;
     fast_render();
 }
 

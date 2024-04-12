@@ -1,19 +1,19 @@
 #include "object.hh"
 #include "../utils/utils.hh"
 
-Sphere::Sphere(Point3 center_, double radius_, Uniform_Texture uniformMaterial_) {
+Sphere::Sphere(const Point3& center_, double radius_, Uniform_Texture uniformMaterial_) {
     center = center_;
     radius = radius_;
-    uniformMaterial = uniformMaterial_;
+    texture = uniformMaterial_;
 }
 
-Sphere::Sphere(Point3 center_, Uniform_Texture uniformMaterial_) {
+Sphere::Sphere(const Point3& center_, Uniform_Texture uniformMaterial_) {
     center = center_;
     radius = 1;
-    uniformMaterial = uniformMaterial_;
+    texture = uniformMaterial_;
 }
 
-double Sphere::ray_intersection(Point3 cam_center, Vector3 dir) {
+double Sphere::ray_intersection(const Point3& cam_center, const Vector3& dir) {
     Vector3 oc = cam_center - center;
 
     auto a = dot(dir, dir);
@@ -27,12 +27,12 @@ double Sphere::ray_intersection(Point3 cam_center, Vector3 dir) {
         return (-b - sqrt(discriminant)) / (2.0 * a);
 }
 
-Vector3 Sphere::normale(Point3 point)
+Vector3 Sphere::normal(const Point3& point) const
 {
     return (point - center).norm();
 }
 
-Uniform_Texture Sphere::get_material()
+Material Sphere::get_material(const Point3& point) const
 {
-    return uniformMaterial;
+    return texture.get_texture(point);
 }

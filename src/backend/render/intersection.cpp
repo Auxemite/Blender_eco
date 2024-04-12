@@ -4,7 +4,7 @@ const Image& fond = load_image("../test/sunset.ppm");
 
 void Intersection::throw_ray(const Scene& scene) {
     for (auto new_sphere : scene.spheres) {
-        auto inter_scal = new_sphere.ray_intersection(origin, dir);
+        auto inter_scal = new_sphere->ray_intersection(origin, dir);
         if (inter_scal > 0) {
             Point3 new_inter_loc = origin + dir * inter_scal;
             if (inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX)
@@ -52,10 +52,10 @@ Color Intersection::bg_color() {
 }
 
 bool Intersection::inside_object(const Scene& scene, Point_Light light) {
-    for (const auto& s : scene.spheres) {
-        if ((light.center - s.center).length() < s.radius)
-            return true;
-    }
+    // for (const auto& s : scene.spheres) {
+    //     if ((light.center - s->).length() < s.radius)
+    //         return true;
+    // }
     return false;
 }
 
@@ -63,9 +63,9 @@ Color Intersection::fast_ray_color(const Scene& scene) {
     if (inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX))
         return {0.2, 0.2, 0.3};
 
-    Vector3 normal = sphere.normale(inter_loc);
-    Color ray_color = sphere.uniformMaterial.get_texture()->color;
-    auto light_ray = (scene.lights[0].center - inter_loc).norm(); // Main light
+    Vector3 normal = sphere->normal(inter_loc);
+    Color ray_color = sphere->texture.mat.color;
+    // auto light_ray = (scene.lights[0].center - inter_loc).norm(); // Main light
     return ray_color;
 }
 
@@ -89,7 +89,7 @@ Color Intersection::ray_color(const Scene& scene, int recursive) {
         if (inter_light.inter_loc != inter_loc) // Check shadows
             continue;
 
-        auto normal = sphere.normale(inter_loc);
+        auto normal = sphere->normal(inter_loc);
         refraction = (2 * dot(normal, light_ray) * normal - light_ray).norm();
         diff_color = diff_color + diffuse(light_ray, normal);
         spec_color = spec_color + specular(light, light_ray, refraction);
@@ -110,7 +110,7 @@ Color Intersection::diffuse(Vector3 light_ray, Vector3 normal) {
 
     Color ray_color = 0.5
                       * Color(normal.x + 1, normal.y, normal.z + 1)
-                      * sphere.uniformMaterial.get_texture()->color;
+                      * sphere->texture.mat.color;
     return ray_color * (diffuse / (normal.length() * light_ray.length()));
 }
 
@@ -121,8 +121,8 @@ Color Intersection::specular(Point_Light light, Vector3 light_ray, Vector3 refac
 
     auto dist = (light.center - inter_loc).length(); // Not a unit vector is lengthal
     auto spec_color = cap(light.color
-                          * sphere.uniformMaterial.get_texture()->ks
-                          * pow(spec, sphere.uniformMaterial.get_texture()->ns)
+                          * sphere->texture.mat.texture.ks
+                          * pow(spec, sphere->texture.mat.texture.ns)
                           * light.power / dist);
     return spec_color;
 }
@@ -138,5 +138,5 @@ Intersection::Intersection(Point3 origin_, Vector3 dir_) {
     origin = origin_;
     dir = dir_;
     inter_loc = Point3(INT_MAX, INT_MAX, INT_MAX);
-    sphere = Sphere();
+    sphere = NULL;
 }

@@ -25,5 +25,5 @@ class Intersection {
         Point3 origin;
         Vector3 dir;
         Point3 inter_loc;
-        Sphere sphere;
+        Shape* sphere;
 };
