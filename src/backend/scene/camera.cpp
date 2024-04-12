@@ -56,3 +56,9 @@ void Camera::update_lookat(Point3 lookat_)
     auto upper_left = center + lookat_vect - u / 2 - v /2;
     pixel_loc = upper_left + (pixel_u + pixel_v) * 0.5;
 }
+
+Vector3 Camera::get_dir(int i, int j) {
+    auto pixel_center = pixel_loc + (i * pixel_u) + (j * pixel_v);
+    auto dir = unit_vector(pixel_center - center);
+    return dir;
+}

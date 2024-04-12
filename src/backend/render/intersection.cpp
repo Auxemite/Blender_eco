@@ -7,6 +7,7 @@ const Image& fond = load_image("../test/sunset.ppm");
 void Intersection::throw_ray(const Scene& scene) {
     for (auto new_sphere : scene.spheres) {
         auto inter_scal = new_sphere.ray_intersection(origin, dir);
+
         if (inter_scal > 0) {
             Point3 new_inter_loc = origin + dir * inter_scal;
             if (inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX)
