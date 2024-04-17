@@ -3,12 +3,15 @@
 const Image& fond = load_image("../test/sunset.ppm");
 
 void Intersection::throw_ray(const Scene& scene) {
-    for (auto new_sphere : scene.spheres) {
+    for (auto new_sphere : scene.spheres)
+    {
         auto inter_scal = new_sphere->ray_intersection(origin, dir);
-        if (inter_scal > 0) {
+        if (inter_scal > 0)
+        {
             Point3 new_inter_loc = origin + dir * inter_scal;
             if (inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX)
-                || (new_inter_loc - origin).length() < (inter_loc - origin).length()) {
+                || (new_inter_loc - origin).length() < (inter_loc - origin).length())
+                {
                 sphere = new_sphere;
                 inter_loc = new_inter_loc;
             }
@@ -51,7 +54,7 @@ Color Intersection::bg_color() {
 //    return color * fond.data[i][j];
 }
 
-bool Intersection::inside_object(const Scene& scene, Point_Light light) {
+bool Intersection::inside_object(const Scene& scene, Light *light) {
     // for (const auto& s : scene.spheres) {
     //     if ((light.center - s->).length() < s.radius)
     //         return true;
@@ -83,8 +86,8 @@ Color Intersection::ray_color(const Scene& scene, int recursive) {
         if (inside_object(scene, light))
             continue;
 
-        auto light_ray = (light.center - inter_loc).norm();
-        auto inter_light = Intersection(light.center, -light_ray);
+        auto light_ray = (light->center - inter_loc).norm();
+        auto inter_light = Intersection(light->center, -light_ray);
         inter_light.throw_ray(scene);
         if (inter_light.inter_loc != inter_loc) // Check shadows
             continue;
@@ -114,16 +117,16 @@ Color Intersection::diffuse(Vector3 light_ray, Vector3 normal) {
     return ray_color * (diffuse / (normal.length() * light_ray.length()));
 }
 
-Color Intersection::specular(Point_Light light, Vector3 light_ray, Vector3 refaction) {
+Color Intersection::specular(Light *light, Vector3 light_ray, Vector3 refaction) {
     auto spec = dot(light_ray, refaction);
     if (spec <= 0)
         return basic::color::black;
 
-    auto dist = (light.center - inter_loc).length(); // Not a unit vector is lengthal
-    auto spec_color = cap(light.color
+    auto dist = (light->center - inter_loc).length(); // Not a unit vector is lengthal
+    auto spec_color = cap(light->color
                           * sphere->texture.mat.texture.ks
                           * pow(spec, sphere->texture.mat.texture.ns)
-                          * light.power / dist);
+                          * light->power / dist);
     return spec_color;
 }
 

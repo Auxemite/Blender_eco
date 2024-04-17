@@ -4,18 +4,6 @@
 #include "../utils/texture_material.hh"
 #include "../utils/vector3.hh"
 
-/* class Object
-{
-    public:
-    Object() = default;
-
-    Uniform_Texture uniformMaterial = Uniform_Texture();
-
-    virtual double ray_intersection(Point3 p, Vector3 v) { return 0; };
-    virtual Vector3 normale(Point3 point) { return {}; };
-    virtual Uniform_Texture get_material() { return uniformMaterial; };
-}; */
-
 class Shape
 {
     public:
@@ -36,6 +24,31 @@ class Sphere : public Shape {
     Sphere(const Point3& center_, Uniform_Texture uniformMaterial_);
 
     double ray_intersection(const Point3& cam_center, const Vector3& dir) override;
+    Vector3 normal(const Point3& point) const override;
+    Material get_material(const Point3& point) const override;
+};
+
+class Plane : public Shape {
+    public:
+    Point3 origin;
+    Vector3 normal_;
+
+    Plane(const Point3& center_, Vector3 normal_, Uniform_Texture uniformMaterial_);
+
+    double ray_intersection(const Point3& cam_position, const Vector3& direction) override;
+    Vector3 normal(const Point3& point) const override;
+    Material get_material(const Point3& point) const override;
+};
+
+class Triangle : public Shape
+{
+    public:
+    Point3 a, b, c;
+    Vector3 normal_;
+
+    Triangle(const Point3& a_, const Point3& b_, const Point3& c_, Uniform_Texture uniformMaterial_);
+
+    double ray_intersection(const Point3& cam_position, const Vector3& direction) override;
     Vector3 normal(const Point3& point) const override;
     Material get_material(const Point3& point) const override;
 };

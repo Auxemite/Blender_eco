@@ -18,7 +18,7 @@ void render_thread(std::vector<std::vector<Color>>& data, int width, const Scene
     for (int j = start; j < end; ++j) {
         for (int i = 0; i < width; ++i) {
             auto pixel_center = camera.pixel_loc + (i * camera.pixel_u) + (j * camera.pixel_v);
-            auto dir = (pixel_center - camera.center).norm();
+            auto dir = (pixel_center - camera.center);//.norm();
             auto intersection = Intersection(camera.center, dir);
             intersection.throw_ray(scene);
             if (photorealist)

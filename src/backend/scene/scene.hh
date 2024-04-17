@@ -9,10 +9,10 @@ class Scene
 {
     public:
         std::vector<Shape*> spheres;
-        std::vector<Point_Light> lights;
+        std::vector<Light*> lights;
         Camera camera;
 
         Scene()=default;
         Scene(int width, int height);
-        Scene(std::vector<Shape*> sphere_, std::vector<Point_Light> lights_, Camera camera_);
+        Scene(std::vector<Shape*> sphere_, std::vector<Light*> lights_, Camera camera_);
 };

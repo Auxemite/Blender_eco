@@ -6,7 +6,8 @@
 #include "../image/image.hh"
 #include <climits>
 
-class Intersection {
+class Intersection
+{
     public :
         Intersection()= default;
         Intersection(Point3 origin_, Vector3 dir_);
@@ -18,9 +19,9 @@ class Intersection {
         Color fast_ray_color(const Scene& scene);
         Color ray_color(const Scene& scene, int recursive);
         Color diffuse(Vector3 light_ray, Vector3 normale);
-        Color specular(Point_Light light, Vector3 light_ray, Vector3 refaction);
+        Color specular(Light *light, Vector3 light_ray, Vector3 refaction);
 
-        static bool inside_object(const Scene& scene, Point_Light light);
+        static bool inside_object(const Scene& scene, Light *light);
 
         Point3 origin;
         Vector3 dir;
