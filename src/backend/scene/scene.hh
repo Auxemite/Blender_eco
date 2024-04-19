@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../object/object.hh"
+#include "object.hh"
 #include "camera.hh"
 #include "light.hh"
 #include <vector>

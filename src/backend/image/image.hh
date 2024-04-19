@@ -15,7 +15,8 @@ class Image {
         Image()= default;
         Image(int width_, int height_);
 
-        void render(const Scene& scene, const bool& photorealist);
+        void render(const Scene& scene, const bool& photorealist=false);
+        void render_debug(const Scene& scene, const bool& photorealist=false);
 
         void save_as_ppm(const std::string& pathname);
 };

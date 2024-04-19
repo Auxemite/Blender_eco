@@ -53,6 +53,19 @@ void Image::render(const Scene& scene, const bool& photorealist) {
     }
 }
 
+void Image::render_debug(const Scene& scene, const bool& photorealist) {
+
+    render_thread(std::ref(data), width, scene, photorealist, 0, height);
+
+    if (!photorealist) {
+        int mid_w = width / 2;
+        int mid_h = height / 2;
+        for (int i = 0; i < 11; ++i)
+            data[mid_w - 5 + i][mid_h] = utils::red;
+        for (int i = 0; i < 11; ++i)
+            data[mid_w][mid_h - 5 + i] = utils::red;
+    }
+}
 
 void Image::save_as_ppm(const std::string& pathname)
 {
