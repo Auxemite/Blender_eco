@@ -41,7 +41,7 @@ double Vector3::normalize()
     return len;
 }
 
-Vector3 Vector3::norm()
+Vector3 Vector3::norm() const
 {
     Vector3 v(*this);
     v.normalize();

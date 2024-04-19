@@ -1,6 +1,7 @@
 #include "image.hh"
 
-Image::Image(int width_, int height_) {
+Image::Image(int width_, int height_)
+{
     width = width_;
     height = height_;
     std::vector<std::vector<Color>> data_(
@@ -15,12 +16,15 @@ void render_thread(std::vector<std::vector<Color>>& data, int width, const Scene
                    const bool& photorealist, int start, int end)
 {
     Camera camera = scene.camera;
-    for (int j = start; j < end; ++j) {
-        for (int i = 0; i < width; ++i) {
+    for (int j = start; j < end; ++j)
+    {
+        for (int i = 0; i < width; ++i)
+        {
             auto pixel_center = camera.pixel_loc + (i * camera.pixel_u) + (j * camera.pixel_v);
-            auto dir = (pixel_center - camera.center);//.norm();
+            auto dir = (pixel_center - camera.center).norm();
             auto intersection = Intersection(camera.center, dir);
             intersection.throw_ray(scene);
+            
             if (photorealist)
                 data[i][j] = intersection.ray_color(scene, 0);
             else
@@ -29,8 +33,9 @@ void render_thread(std::vector<std::vector<Color>>& data, int width, const Scene
     }
 }
 
-void Image::render(const Scene& scene, const bool& photorealist) {
-    const int numThreads = std::thread::hardware_concurrency();
+void Image::render(const Scene& scene, const bool& photorealist)
+{
+    const int numThreads = 1; //std::thread::hardware_concurrency();
     std::vector<std::thread> threads;
 
     int batchSize = height / numThreads; // Height is data size

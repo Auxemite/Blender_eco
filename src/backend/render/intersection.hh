@@ -10,7 +10,7 @@ class Intersection
 {
     public :
         Intersection()= default;
-        Intersection(Point3 origin_, Vector3 dir_);
+        Intersection(const Point3& origin_, const Vector3& dir_);
 
         void update(Point3 origin_, Vector3 dir_);
         void throw_ray(const Scene& scene);

@@ -2,7 +2,8 @@
 
 const Image& fond = load_image("../test/sunset.ppm");
 
-void Intersection::throw_ray(const Scene& scene) {
+void Intersection::throw_ray(const Scene& scene)
+{
     for (auto new_sphere : scene.spheres)
     {
         auto inter_scal = new_sphere->ray_intersection(origin, dir);
@@ -11,7 +12,7 @@ void Intersection::throw_ray(const Scene& scene) {
             Point3 new_inter_loc = origin + dir * inter_scal;
             if (inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX)
                 || (new_inter_loc - origin).length() < (inter_loc - origin).length())
-                {
+            {
                 sphere = new_sphere;
                 inter_loc = new_inter_loc;
             }
@@ -19,7 +20,8 @@ void Intersection::throw_ray(const Scene& scene) {
     }
 }
 
-Color Intersection::bg_color() {
+Color Intersection::bg_color()
+{
     auto dirz = dir.z;
     if (dir.z < 0)
         dirz = -dirz;
@@ -35,26 +37,10 @@ Color Intersection::bg_color() {
         phi = static_cast<int>((atan(dir.x / dirz) + PI/2) * w / PI);
 
     return fond.data[phi][theta];
-
-    // TEST FOR FULL SKYBOX
-//    auto w = 400;
-//    for (auto i=w; i > 0; i--) {
-//        std::cout << -((atan(i / 1) + PI/2) * w / (PI*2)) + w;
-//        std::cout << "\n";
-//    }
-//    for (auto i=0; i < w; i++)
-//    {
-//        std::cout << ((atan(i / 1) + PI/2) * w / (PI*2)) + w/2;
-//        std::cout << "\n";
-//    }
-//    return 0;
-
-//    auto a = 0.5*(dir.y + 1.0);
-//    auto color = (1.0-a) * Color(1.0, 1.0, 0.5) + a * Color(1.0, 0.2, 0.0);
-//    return color * fond.data[i][j];
 }
 
-bool Intersection::inside_object(const Scene& scene, Light *light) {
+bool Intersection::inside_object(const Scene& scene, Light *light)
+{
     // for (const auto& s : scene.spheres) {
     //     if ((light.center - s->).length() < s.radius)
     //         return true;
@@ -62,17 +48,19 @@ bool Intersection::inside_object(const Scene& scene, Light *light) {
     return false;
 }
 
-Color Intersection::fast_ray_color(const Scene& scene) {
+Color Intersection::fast_ray_color(const Scene& scene)
+{
     if (inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX))
         return {0.2, 0.2, 0.3};
 
     Vector3 normal = sphere->normal(inter_loc);
-    Color ray_color = sphere->texture.mat.color;
-    // auto light_ray = (scene.lights[0].center - inter_loc).norm(); // Main light
+    Color ray_color = sphere->texture.mat.color * (0.8 - dot(dir, normal));
+    //return ray_color;
     return ray_color;
 }
 
-Color Intersection::ray_color(const Scene& scene, int recursive) {
+Color Intersection::ray_color(const Scene& scene, int recursive)
+{
     if (recursive > 6)
         return basic::color::black;
 
@@ -82,7 +70,8 @@ Color Intersection::ray_color(const Scene& scene, int recursive) {
     Color diff_color = basic::color::black;
     Color spec_color = basic::color::black;
     Vector3 refraction;
-    for (auto light : scene.lights) {
+    for (auto light : scene.lights)
+    {
         if (inside_object(scene, light))
             continue;
 
@@ -106,13 +95,14 @@ Color Intersection::ray_color(const Scene& scene, int recursive) {
     return cap(spec_color + diff_color * second);
 }
 
-Color Intersection::diffuse(Vector3 light_ray, Vector3 normal) {
+Color Intersection::diffuse(Vector3 light_ray, Vector3 normal)
+{
     auto diffuse = dot(normal, light_ray);
     if (diffuse < 0)
         return basic::color::black;
 
     Color ray_color = 0.5
-                      * Color(normal.x + 1, normal.y, normal.z + 1)
+                      //* Color(normal.x + 1, normal.y, normal.z + 1)
                       * sphere->texture.mat.color;
     return ray_color * (diffuse / (normal.length() * light_ray.length()));
 }
@@ -122,11 +112,16 @@ Color Intersection::specular(Light *light, Vector3 light_ray, Vector3 refaction)
     if (spec <= 0)
         return basic::color::black;
 
-    auto dist = (light->center - inter_loc).length(); // Not a unit vector is lengthal
+    auto dist = (light->center - inter_loc).length(); // Not a unit vector is normal
     auto spec_color = cap(light->color
                           * sphere->texture.mat.texture.ks
                           * pow(spec, sphere->texture.mat.texture.ns)
                           * light->power / dist);
+
+    /* auto spec_color = light->color
+                          * sphere->texture.mat.texture.ks
+                          * pow(spec, sphere->texture.mat.texture.ns)
+                          * light->power / dist; */
     return spec_color;
 }
 
@@ -137,7 +132,7 @@ void Intersection::update(Point3 origin_, Vector3 dir_) {
     inter_loc = Point3(INT_MAX, INT_MAX, INT_MAX);
 };
 
-Intersection::Intersection(Point3 origin_, Vector3 dir_) {
+Intersection::Intersection(const Point3& origin_, const Vector3& dir_) {
     origin = origin_;
     dir = dir_;
     inter_loc = Point3(INT_MAX, INT_MAX, INT_MAX);

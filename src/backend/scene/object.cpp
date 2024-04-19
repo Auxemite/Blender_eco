@@ -91,13 +91,13 @@ double Triangle::ray_intersection(const Point3& cam_position, const Vector3& dir
     double u = inv_det * dot(s, normal_);
 
     if (u < 0 || u > 1)
-        return false;
+        return -1.;
 
     Vector3 s_cross_e1 = cross(s, (b - a));
     float v = inv_det * dot(direction, s_cross_e1);
 
     if (v < 0 || u + v > 1)
-        return false;
+        return -1.;
 
     double t = inv_det * dot((c - a), s_cross_e1);
 

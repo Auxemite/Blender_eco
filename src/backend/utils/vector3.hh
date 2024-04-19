@@ -22,7 +22,7 @@ struct Vector3
     double length();
 
     double normalize();
-    Vector3 norm();
+    Vector3 norm() const;
 
     double dot(const Vector3& v) const;
     Vector3 cross(const Vector3& v) const;
@@ -60,9 +60,9 @@ inline Vector3 operator-(const Vector3& v1, const Vector3& v2)
 
 inline Vector3 operator*(const Vector3& v1, const Vector3& v2)
 {
-    return Vector3(v1.x * v2.x,
-                   v1.y * v2.y,
-                   v1.z * v2.z);
+     return Vector3(v1.y * v2.z - v1.z * v2.y,
+                    v1.z * v2.x - v1.x * v2.z,
+                    v1.x * v2.y - v1.y * v2.x);
 }
 
 inline Vector3 operator*(const Vector3& v, double f)
