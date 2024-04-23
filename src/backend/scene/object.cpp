@@ -54,7 +54,7 @@ double Plane::ray_intersection(const Point3& cam_position, const Vector3& direct
     double ray_dot_normal = dot(normal_, direction);
 
     // Parallel
-    if (ray_dot_normal < 0.001)
+    if (abs_(ray_dot_normal) < 0.01)
         return -1;
 
     // Check distance
@@ -80,29 +80,32 @@ Triangle::Triangle(const Point3& a_, const Point3& b_, const Point3& c_, Uniform
 
 double Triangle::ray_intersection(const Point3& cam_position, const Vector3& direction)
 {
-    double det = dot((b - a), normal_);
+    Vector3 edge_1 = b - a;
+    Vector3 edge_2 = c - a;
+    Vector3 normal_vect = direction * edge_2;
+    double det = dot(edge_1, normal_vect);
 
     // Parallel
-    if (abs(det) <= 0.001)
-        return false;
+    if (abs_(det) <= 0.001)
+        return -1.;
 
     double inv_det = 1.0 / det;
     Vector3 s = cam_position - a;
-    double u = inv_det * dot(s, normal_);
+    double u = inv_det * dot(s, normal_vect);
 
     if (u < 0 || u > 1)
         return -1.;
 
-    Vector3 s_cross_e1 = cross(s, (b - a));
-    float v = inv_det * dot(direction, s_cross_e1);
+    Vector3 s_cross_e1 = s * edge_1;
+    double v = inv_det * dot(direction, s_cross_e1);
 
     if (v < 0 || u + v > 1)
         return -1.;
 
-    double t = inv_det * dot((c - a), s_cross_e1);
+    double t = inv_det * dot(edge_2, s_cross_e1);
 
-    if (t < 0.001)
-        return -1.;
+    /* if (t < 0.01)
+        return -1.; */
 
     return t;
 }

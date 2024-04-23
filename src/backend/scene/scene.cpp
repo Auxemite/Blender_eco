@@ -3,10 +3,14 @@
 
 Scene::Scene(int width, int height)
 {
-    spheres.push_back(new Plane({0, -2, 0}, {0, -1, 0}, Uniform_Texture(basic::texture::metal, basic::color::white)));
+    spheres.push_back(new Plane({0, -4, 0}, {0, 1, 0}, Uniform_Texture(basic::texture::metal, basic::color::white)));
     spheres.push_back(new Sphere({0, 0, 0}, Uniform_Texture(basic::texture::simple, basic::color::blue)));
+    spheres.push_back(new Sphere({2, 0, 0}, Uniform_Texture(basic::texture::plastic, basic::color::cyan)));
     spheres.push_back(new Sphere({2, 0, 0}, Uniform_Texture(basic::texture::plastic, basic::color::magenta)));
-    spheres.push_back(new Sphere({-2, 0, 0}, Uniform_Texture(basic::texture::metal, basic::color::purple)));
+    spheres.push_back(new Sphere({-2, 0, 0}, Uniform_Texture(basic::texture::metal, basic::color::gray)));
+    spheres.push_back(new Sphere({-4, 0, 0}, Uniform_Texture(basic::texture::metal, basic::color::yellow)));
+    spheres.push_back(new Triangle({0, 0, -1}, {0, 2, 0}, {0, 0, 1}, Uniform_Texture(basic::texture::basic, basic::color::red)));
+    spheres.push_back(new Triangle({-1, 0, 0}, {0, 2, 0}, {1, 0, 0}, Uniform_Texture(basic::texture::basic, basic::color::blue)));
     lights.push_back(new Point_Light({0, 5, 1}, 10, basic::color::orange));
 
     camera = Camera({0, 1, -5}, {0, 0, 0}, width, height);
