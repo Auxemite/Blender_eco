@@ -86,7 +86,7 @@ void Env::shrink() {
     fast_render();
 }
 
-void Env::change_focus(int index, const string& type) {
+void Env::change_focus(int index, const std::string& type) {
     if (index >= 0 && index < scene.spheres.size()) {
         focus_index = index;
         focus_type = type;

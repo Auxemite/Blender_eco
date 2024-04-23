@@ -35,7 +35,7 @@ void render_thread(std::vector<std::vector<Color>>& data, int width, const Scene
 
 void Image::render(const Scene& scene, const bool& photorealist)
 {
-    const int numThreads = 1; //std::thread::hardware_concurrency();
+    const int numThreads = std::thread::hardware_concurrency();
     std::vector<std::thread> threads;
 
     int batchSize = height / numThreads; // Height is data size
@@ -68,9 +68,9 @@ void Image::render_debug(const Scene& scene, const bool& photorealist) {
         int mid_w = width / 2;
         int mid_h = height / 2;
         for (int i = 0; i < 11; ++i)
-            data[mid_w - 5 + i][mid_h] = utils::red;
+            data[mid_w - 5 + i][mid_h] = basic::color::red;
         for (int i = 0; i < 11; ++i)
-            data[mid_w][mid_h - 5 + i] = utils::red;
+            data[mid_w][mid_h - 5 + i] = basic::color::red;
     }
 }
 

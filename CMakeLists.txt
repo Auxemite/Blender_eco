@@ -56,10 +56,6 @@ target_link_libraries(blender_eco PUBLIC glfw)
 
 
 ## FOR DEBUG
-#cmake_minimum_required(VERSION 3.22)
-#project(blender_eco)
-#
-#set(CMAKE_CXX_STANDARD 17)
 #
 #add_executable(blender_eco main_debug.cpp
 #        src/backend/utils/vector3.hh
