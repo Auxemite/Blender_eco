@@ -4,15 +4,25 @@ Camera::Camera(Point3 center_, Point3 lookat_, int width_, int height_)
 {
     width = width_;
     height = height_;
-    auto z_min = 1.0;
-    auto screen_height = 1.0;
-    auto screen_width = screen_height * (static_cast<double>(width)/height);
-    center = center_;
-    lookat = lookat_;
-    auto lookat_vect = unit_vector(lookat_ - center) * z_min;
-    auto up = Vector3(0,1,0);
-    auto u = (unit_vector(lookat_vect * up) * -1) * screen_width;
-    auto v = (unit_vector(lookat_vect * u)) * -screen_height;
+
+    update(center_, lookat_);
+}
+
+void Camera::update(const Point3& center_, const Point3& lookat_)
+{
+    if (center_ != 0)
+        center = center_;
+
+    if (lookat_ != 0)
+        lookat = lookat_;
+
+    double z_min = 1.0;
+    double screen_height = 1.0;
+    double screen_width = screen_height * (static_cast<double>(width)/height);
+    Vector3 lookat_vect = (lookat - center).norm() * z_min;
+    Vector3 up = Vector3(0,1,0);
+    Vector3 u = (lookat_vect * up).norm() * -screen_width;
+    Vector3 v = (lookat_vect * u).norm() * -screen_height;
 
     pixel_u = u / width;
     pixel_v = v / height;
@@ -23,42 +33,10 @@ Camera::Camera(Point3 center_, Point3 lookat_, int width_, int height_)
 
 void Camera::update_cam(Point3 center_)
 {
-    auto z_min = 1.0;
-    auto screen_height = 1.0;
-    auto screen_width = screen_height * (static_cast<double>(width)/height);
-    center = center_;
-    auto lookat_vect = unit_vector(lookat - center) * z_min;
-    auto up = Vector3(0,1,0);
-    auto u = (unit_vector(lookat_vect * up) * -1) * screen_width;
-    auto v = (unit_vector(lookat_vect * u)) * -screen_height;
-
-    pixel_u = u / width;
-    pixel_v = v / height;
-
-    auto upper_left = center + lookat_vect - u / 2 - v /2;
-    pixel_loc = upper_left + (pixel_u + pixel_v) * 0.5;
-}
+    update(center_, 0);
+}        
 
 void Camera::update_lookat(Point3 lookat_)
 {
-    auto z_min = 1.0;
-    auto screen_height = 1.0;
-    auto screen_width = screen_height * (static_cast<double>(width)/height);
-    lookat = lookat_;
-    auto lookat_vect = unit_vector(lookat - center) * z_min;
-    auto up = Vector3(0,1,0);
-    auto u = (unit_vector(lookat_vect * up) * -1) * screen_width;
-    auto v = (unit_vector(lookat_vect * u)) * -screen_height;
-
-    pixel_u = u / width;
-    pixel_v = v / height;
-
-    auto upper_left = center + lookat_vect - u / 2 - v /2;
-    pixel_loc = upper_left + (pixel_u + pixel_v) * 0.5;
-}
-
-Vector3 Camera::get_dir(int i, int j) {
-    auto pixel_center = pixel_loc + (i * pixel_u) + (j * pixel_v);
-    auto dir = unit_vector(pixel_center - center);
-    return dir;
+    update(0, lookat_);
 }

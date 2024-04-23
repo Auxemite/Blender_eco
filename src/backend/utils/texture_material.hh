@@ -1,26 +1,44 @@
 #pragma once
 
 #include "color.hh"
+#include "../utils/vector3.hh"
+
+struct Texture
+{
+    double kd, ks, ns;
+};
+
+struct Material
+{
+    Color color;
+    Texture texture;
+};
 
 class Texture_Material {
     public:
-        Color color= Color(0, 0, 0);
-        double ns = 0;
-        double ks = 0;
 
-        Texture_Material()= default;
+    virtual struct Material get_texture(const Point3& position) const = 0;
 };
 
 class Uniform_Texture : Texture_Material {
     public:
-        Color color= Color(0, 0, 0);
-        double ns = 0;
-        double ks = 0;
+        struct Material mat;
 
         Uniform_Texture()= default;
-        explicit Uniform_Texture(Color color_, double ns_, double ks_) {
-            color = color_;
-            ns = ns_;
-            ks = ks_;
-        };
+        Uniform_Texture(Color color, Texture texture);
+        Uniform_Texture(Texture texture, Color color);
+        Uniform_Texture(Color color, double kd, double ks, double ns);
+
+    struct Material get_texture(const Point3& position) const override;
 };
+
+namespace basic
+{
+    namespace texture
+    {
+        static struct Texture basic = {0.5, 0.5, 1};
+        static struct Texture simple = {0.9, 0.1, 1};
+        static struct Texture plastic = {0.8, 0.5, 10};
+        static struct Texture metal = {0.3, 1, 50};
+    }
+}

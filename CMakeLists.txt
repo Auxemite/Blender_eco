@@ -29,7 +29,9 @@ add_executable(blender_eco main.cpp
         src/frontend/action.cpp
 
         src/backend/utils/vector3.hh
+        src/backend/utils/vector3.cpp
         src/backend/utils/color.hh
+        src/backend/utils/color.cpp
         src/backend/image/image.hh
         src/backend/image/image.cpp
         src/backend/scene/object.hh
@@ -37,9 +39,10 @@ add_executable(blender_eco main.cpp
         src/backend/scene/light.hh
         src/backend/scene/camera.hh
         src/backend/scene/camera.cpp
-        src/backend/scene/scene.cpp
         src/backend/scene/scene.hh
+        src/backend/scene/scene.cpp
         src/backend/utils/texture_material.hh
+        src/backend/utils/texture_material.cpp
         src/backend/utils/utils.hh
         src/backend/render/intersection.hh
         src/backend/render/intersection.cpp

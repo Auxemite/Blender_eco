@@ -1,11 +1,12 @@
 #include "image.hh"
 
-Image::Image(int width_, int height_) {
+Image::Image(int width_, int height_)
+{
     width = width_;
     height = height_;
-    vector<vector<Color>> data_(
+    std::vector<std::vector<Color>> data_(
             width,
-            vector<Color>(height, {0.0, 0.0, 0.0})
+            std::vector<Color>(height, {0.0, 0.0, 0.0})
     );
 
     data = data_;
@@ -15,10 +16,15 @@ void render_thread(std::vector<std::vector<Color>>& data, int width, const Scene
                    const bool& photorealist, int start, int end)
 {
     Camera camera = scene.camera;
-    for (int j = start; j < end; ++j) {
-        for (int i = 0; i < width; ++i) {
-            auto intersection = Intersection(camera.center, camera.get_dir(i, j));
+    for (int j = start; j < end; ++j)
+    {
+        for (int i = 0; i < width; ++i)
+        {
+            auto pixel_center = camera.pixel_loc + (i * camera.pixel_u) + (j * camera.pixel_v);
+            auto dir = (pixel_center - camera.center).norm();
+            auto intersection = Intersection(camera.center, dir);
             intersection.throw_ray(scene);
+            
             if (photorealist)
                 data[i][j] = intersection.ray_color(scene, 0);
             else
@@ -27,8 +33,9 @@ void render_thread(std::vector<std::vector<Color>>& data, int width, const Scene
     }
 }
 
-void Image::render(const Scene& scene, const bool& photorealist) {
-    const int numThreads = thread::hardware_concurrency();
+void Image::render(const Scene& scene, const bool& photorealist)
+{
+    const int numThreads = 1; //std::thread::hardware_concurrency();
     std::vector<std::thread> threads;
 
     int batchSize = height / numThreads; // Height is data size
@@ -47,9 +54,9 @@ void Image::render(const Scene& scene, const bool& photorealist) {
         int mid_w = width / 2;
         int mid_h = height / 2;
         for (int i = 0; i < 11; ++i)
-            data[mid_w - 5 + i][mid_h] = utils::red;
+            data[mid_w - 5 + i][mid_h] = basic::color::red;
         for (int i = 0; i < 11; ++i)
-            data[mid_w][mid_h - 5 + i] = utils::red;
+            data[mid_w][mid_h - 5 + i] = basic::color::red;
     }
 }
 
@@ -69,33 +76,34 @@ void Image::render_debug(const Scene& scene, const bool& photorealist) {
 
 void Image::save_as_ppm(const std::string& pathname)
 {
-    std::ofstream ofs(pathname, ifstream::binary);
+    std::ofstream ofs;
+    ofs.open(pathname, std::ifstream::binary);
     ofs << "P6\n" << width << " " << height << "\n255\n";
     for (int j = 0; j < height; ++j) {
         for (int i = 0; i < width; ++i) {
             auto c = data[i][j];
-            ofs << static_cast<char>(static_cast<int>(255.999 * c.r))
-                << static_cast<char>(static_cast<int>(255.999 * c.g))
-                << static_cast<char>(static_cast<int>(255.999 * c.b));
+            ofs << static_cast<char>(255 * c.r)
+                << static_cast<char>(255 * c.g)
+                << static_cast<char>(255 * c.b);
         }
     }
     ofs.close();
 };
 
-Image load_image(const string& path_name) {
-    string line;
-    ifstream ifs(path_name, ifstream::binary);
+Image load_image(const std::string& path_name) {
+    std::string line;
+    std::ifstream ifs(path_name, std::ifstream::binary);
     if (!ifs.is_open()) {
-        cerr << "Error Image: Unable to open file." << endl;
+        std::cerr << "Error Image: Unable to open file." << std::endl;
         return {};
     }
 
-    string magicNumber;
+    std::string magicNumber;
     int maxColor, width, height;
     ifs >> magicNumber >> width >> height >> maxColor;
 
     if (magicNumber != "P6" || maxColor != 255) {
-        cerr << "Error Image: Invalid headers." << endl;
+        std::cerr << "Error Image: Invalid headers." << std::endl;
         return {};
     }
     ifs.get();

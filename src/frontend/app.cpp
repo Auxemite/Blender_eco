@@ -22,7 +22,6 @@ void App::Windows()
     ImGui::End();
 
 //    ImGui::ShowDemoWindow();
-
     App::TreeNode();
 
     ImGui::Begin("Actions");

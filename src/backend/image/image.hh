@@ -23,4 +23,4 @@ class Image {
 
 void render_thread(std::vector<std::vector<Color>>& data, int width, const Scene& scene,
                    const bool& photorealist, int start, int end);
-Image load_image(const string& path_name);
+Image load_image(const std::string& path_name);
