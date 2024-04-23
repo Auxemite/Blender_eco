@@ -14,16 +14,6 @@ Scene::Scene(int width, int height)
             {0,1,0},
             Uniform_Texture(basic::texture::basic, basic::color::dark_gray),
             true));
-    spheres.push_back(new Plane(
-            {0,0,0},
-            {1,0,0},
-            Uniform_Texture(basic::texture::basic, basic::color::dark_gray),
-            true));
-    spheres.push_back(new Plane(
-            {0,0,0},
-            {0,0,1},
-            Uniform_Texture(basic::texture::basic, basic::color::dark_gray),
-            true));
 
     spheres.push_back(new Sphere(
             {0,0,0},
