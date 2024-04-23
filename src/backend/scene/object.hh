@@ -32,8 +32,9 @@ class Plane : public Shape {
     public:
     Point3 origin;
     Vector3 normal_;
+    bool grille;
 
-    Plane(const Point3& center_, Vector3 normal_, Uniform_Texture uniformMaterial_);
+    Plane(const Point3& center_, Vector3 normal_, Uniform_Texture uniformMaterial_, bool grille_ = false);
 
     double ray_intersection(const Point3& cam_position, const Vector3& direction) override;
     Vector3 normal(const Point3& point) const override;

@@ -169,6 +169,7 @@ namespace basic
         static const Color light_gray(0.75, 0.75, 0.75);
         static const Color gray(0.5, 0.5, 0.5);
         static const Color dark_gray(0.25, 0.25, 0.25);
+        static const Color dark_dark_gray(0.1, 0.1, 0.1);
         static const Color light_blue(0.75, 0.75, 1);
         static const Color dark_yellow(0.5, 0.5, 0);
         static const Color dark_blue(0, 0, 0.25);

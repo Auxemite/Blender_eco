@@ -48,11 +48,34 @@ Material Sphere::get_material(const Point3& point) const
 
 
 /////////////////// Plane /////////////////////////////////
-Plane::Plane(const Point3& center_, Vector3 normal_, Uniform_Texture uniformMaterial_)
+Plane::Plane(const Point3& center_, Vector3 normal_, Uniform_Texture uniformMaterial_, bool grille_)
 {
     origin = center_;
     this->normal_ = normal_.norm();
     texture = uniformMaterial_;
+    grille = grille_;
+}
+
+double grille_intersection(const Point3& point_loc, double distance, const Vector3& normal)
+{
+    double diff_1 = abs_(round(point_loc.x) - point_loc.x);
+    double diff_2 = abs_(round(point_loc.z) - point_loc.z);
+    if (normal.x == 1) {
+        diff_1 = abs_(round(point_loc.y) - point_loc.y);
+        diff_2 = abs_(round(point_loc.z) - point_loc.z);
+    }
+    else if (normal.z == 1) {
+        diff_1 = abs_(round(point_loc.x) - point_loc.x);
+        diff_2 = abs_(round(point_loc.y) - point_loc.y);
+    }
+
+//    if (diff_1 > abs_(diff_1 - diff_2) && diff_2 > abs_(diff_1 - diff_2))
+//        return -1; // For beautiful pattern
+    auto diff = 0.6;
+    if (diff_1 * 20 + diff_2 > diff && diff_1 + diff_2 * 20 > diff)
+        return -1;
+
+    return distance;
 }
 
 double Plane::ray_intersection(const Point3& cam_position, const Vector3& direction)
@@ -63,8 +86,12 @@ double Plane::ray_intersection(const Point3& cam_position, const Vector3& direct
     if (abs_(ray_dot_normal) < 0.01)
         return -1;
 
+    auto distance = dot(origin - cam_position, this->normal_) / ray_dot_normal;
+    if (grille) // Si le plan est de type grille
+        return grille_intersection(cam_position + direction * distance, distance, this->normal_);
+
     // Check distance
-    return dot(origin - cam_position, this->normal_) / ray_dot_normal;
+    return distance;
 }
 
 Vector3 Plane::normal(const Point3& point) const { return this->normal_; }
