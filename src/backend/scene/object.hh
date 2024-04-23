@@ -47,7 +47,6 @@ class Triangle : public Shape
     Vector3 normal_;
 
     Triangle(const Point3& a_, const Point3& b_, const Point3& c_, Uniform_Texture uniformMaterial_);
-
     double ray_intersection(const Point3& cam_position, const Vector3& direction) override;
     Vector3 normal(const Point3& point) const override;
     Material get_material(const Point3& point) const override;

@@ -1,6 +1,7 @@
 #include "intersection.hh"
 
 const Image& fond = load_image("../test/sunset.ppm");
+//const Image& fond = load_image("./test/retro.ppm");
 
 void Intersection::throw_ray(const Scene& scene)
 {

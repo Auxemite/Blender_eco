@@ -18,6 +18,7 @@ class Camera
         Camera(Point3 center_, Point3 lookat_, int width_, int height_);
 
         void update(const Point3& center_, const Point3& lookat_);
+        Vector3 get_dir(int i, int j);
         void update_cam(Point3 center_);
         void update_lookat(Point3 lookat_);
 };

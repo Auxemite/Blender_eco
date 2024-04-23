@@ -1,19 +1,25 @@
+#include <string>
 #include "object.hh"
 #include "../utils/utils.hh"
 
+int object_index = 0;
 /////////////////// Sphere //////////////////////////////
 Sphere::Sphere(const Point3& center_, double radius_, Uniform_Texture uniformMaterial_) 
 {
     center = center_;
     radius = radius_;
     texture = uniformMaterial_;
+    object_index++;
 }
 
 Sphere::Sphere(const Point3& center_, Uniform_Texture uniformMaterial_) 
 {
     center = center_;
     radius = 1;
+
     texture = uniformMaterial_;
+    // name = "Sphere " + to_string(object_index);
+    object_index++;
 }
 
 double Sphere::ray_intersection(const Point3& cam_center, const Vector3& dir) {

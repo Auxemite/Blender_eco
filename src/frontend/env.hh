@@ -32,5 +32,5 @@ class Env {
     void move_left();
     void grow();
     void shrink();
-    void change_focus();
+    void change_focus(int index, const string& type);
 };
