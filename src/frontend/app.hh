@@ -11,4 +11,5 @@ class App {
 
     void Windows();
     void TreeNode();
+    void PrintObjInfo();
 };

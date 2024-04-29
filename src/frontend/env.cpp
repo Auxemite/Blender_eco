@@ -7,12 +7,14 @@ inline int default_height = static_cast<int>(default_width / aspect_ratio);
 Env::Env() {
     image = Image(default_width, default_height);
     scene = Scene(image.width, image.height);
+    focus_obj = scene.objects[1]->get_obj_data();
     update_texture();
 }
 
 Env::Env(const char* filename) {
     image = load_image(filename);
     scene = Scene(image.width, image.height);
+    focus_obj = scene.objects[1]->get_obj_data();
     update_texture();
 }
 
@@ -67,28 +69,29 @@ void Env::move_camera() {
 }
 
 void Env::move_right() {
-    ((Sphere*) scene.spheres[focus_index])->center.x += 0.5;
+    ((Sphere*) scene.objects[focus_index])->center.x += 0.5;
     fast_render();
 }
 
 void Env::move_left() {
-    ((Sphere*) scene.spheres[focus_index])->center.x -= 0.5;
+    ((Sphere*) scene.objects[focus_index])->center.x -= 0.5;
     fast_render();
 }
 
 void Env::grow() {
-    ((Sphere*) scene.spheres[focus_index])->radius += 0.2;
+    ((Sphere*) scene.objects[focus_index])->radius += 0.2;
     fast_render();
 }
 
 void Env::shrink() {
-    ((Sphere*) scene.spheres[focus_index])->radius -= 0.2;
+    ((Sphere*) scene.objects[focus_index])->radius -= 0.2;
     fast_render();
 }
 
-void Env::change_focus(int index, const std::string& type) {
-    if (index >= 0 && index < scene.spheres.size()) {
+void Env::change_focus(int index, Shape *shape) {
+    // TOFIX UPDATE AT EVERY CHANGE
+    if (index >= 0 && index < scene.objects.size()) {
         focus_index = index;
-        focus_type = type;
+        focus_obj = shape->get_obj_data();
     }
 }

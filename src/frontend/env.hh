@@ -16,7 +16,7 @@ class Env {
     GLuint render_image{};
     Scene scene;
     Image image;
-    std::string focus_type = "sphere";
+    Shape_data focus_obj;
     int focus_index = 1;
 
     Env();
@@ -32,5 +32,5 @@ class Env {
     void move_left();
     void grow();
     void shrink();
-    void change_focus(int index, const std::string& type);
+    void change_focus(int index, Shape *shape);
 };

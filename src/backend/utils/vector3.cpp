@@ -56,6 +56,12 @@ Vector3 Vector3::cross(const Vector3& v) const
                    x * v.y - y * v.x);
 }
 
+std::string Vector3::to_string() const
+{
+    return '(' + std::to_string(x)
+    + ", " + std::to_string(y)
+    + ", " + std::to_string(z) + ')';
+};
 
 
     // Usefull Operators on Vectors

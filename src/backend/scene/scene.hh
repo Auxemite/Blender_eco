@@ -8,7 +8,7 @@
 class Scene
 {
     public:
-        std::vector<Shape*> spheres;
+        std::vector<Shape*> objects;
         std::vector<Light*> lights;
         Camera camera;
 

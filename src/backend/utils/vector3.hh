@@ -27,6 +27,8 @@ struct Vector3
     double dot(const Vector3& v) const;
     Vector3 cross(const Vector3& v) const;
 
+    std::string to_string() const;
+
     // Operators
     Vector3& operator=(const Vector3& v);
     Vector3& operator+=(const Vector3& v);

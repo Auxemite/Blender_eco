@@ -3,6 +3,26 @@
 #include "../utils/utils.hh"
 
 int object_index = 0;
+
+Shape_data::Shape_data(const Point3& center_, double radius_) { // Sphere
+    origin = center_;
+    radius = radius_;
+    obj_type = "Sphere";
+};
+Shape_data::Shape_data(const Point3& origin_, const Vector3& normal, bool grille_) { // Plane
+    origin = origin_;
+    normal_ = normal;
+    grille = grille_;
+    obj_type = "Plane";
+};
+Shape_data::Shape_data(const Point3& a_, const Point3& b_, const Point3& c_, const Vector3& normal) { // Triangle
+    a = a_;
+    b = b_;
+    c = c_;
+    normal_ = normal;
+    obj_type = "Triangle";
+};
+
 /////////////////// Sphere //////////////////////////////
 Sphere::Sphere(const Point3& center_, double radius_, Uniform_Texture uniformMaterial_) 
 {
@@ -46,6 +66,10 @@ Material Sphere::get_material(const Point3& point) const
     return texture.get_texture(point);
 }
 
+Shape_data Sphere::get_obj_data() const
+{
+    return Shape_data(center, radius);
+};
 
 /////////////////// Plane /////////////////////////////////
 Plane::Plane(const Point3& center_, Vector3 normal_, Uniform_Texture uniformMaterial_, bool grille_)
@@ -96,7 +120,10 @@ double Plane::ray_intersection(const Point3& cam_position, const Vector3& direct
 
 Vector3 Plane::normal(const Point3& point) const { return this->normal_; }
 Material Plane::get_material(const Point3& point) const { return texture.get_texture(point); }
-
+Shape_data Plane::get_obj_data() const
+{
+    return Shape_data(origin, normal_, grille);
+};
 
 /////////////////// Triangle ///////////////////////////////
 Triangle::Triangle(const Point3& a_, const Point3& b_, const Point3& c_, Uniform_Texture uniformMaterial_)
@@ -145,3 +172,7 @@ double Triangle::ray_intersection(const Point3& cam_position, const Vector3& dir
 
 Vector3 Triangle::normal(const Point3& point) const { return this->normal_; }
 Material Triangle::get_material(const Point3& point) const { return texture.get_texture(point); }
+Shape_data Triangle::get_obj_data() const
+{
+    return Shape_data(a, b, c, normal_);
+};

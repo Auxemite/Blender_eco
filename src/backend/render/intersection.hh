@@ -26,5 +26,5 @@ class Intersection
         Point3 origin;
         Vector3 dir;
         Point3 inter_loc;
-        Shape* sphere;
+        Shape* object;
 };
