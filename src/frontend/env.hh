@@ -28,9 +28,10 @@ class Env {
     void render();
     void fast_render();
     void move_camera();
-    void move_right();
-    void move_left();
-    void grow();
-    void shrink();
+    void move_x(double value);
+    void move_y(double value);
+    void move_z(double value);
+    void grow(double value);
+    void shrink(double value);
     void change_focus(int index, Shape *shape);
 };

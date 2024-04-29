@@ -8,14 +8,14 @@ Env::Env() {
     image = Image(default_width, default_height);
     scene = Scene(image.width, image.height);
     focus_obj = scene.objects[1]->get_obj_data();
-    update_texture();
+    fast_render();
 }
 
 Env::Env(const char* filename) {
     image = load_image(filename);
     scene = Scene(image.width, image.height);
     focus_obj = scene.objects[1]->get_obj_data();
-    update_texture();
+    fast_render();
 }
 
 unsigned char* Env::convertDataToGLRGB(const std::vector<std::vector<Color>>& data, int width, int height)
@@ -68,23 +68,63 @@ void Env::move_camera() {
     fast_render();
 }
 
-void Env::move_right() {
-    ((Sphere*) scene.objects[focus_index])->center.x += 0.5;
+void Env::move_x(double value) {
+    std::string obj_type = typeid(*scene.objects[focus_index]).name();
+    if (obj_type == "class Sphere")
+        ((Sphere*) scene.objects[focus_index])->center.x += value;
+    else if (obj_type == "class Plane")
+        ((Plane*) scene.objects[focus_index])->origin.x += value;
+    else if (obj_type == "class Triangle") {
+        ((Triangle *) scene.objects[focus_index])->a.x += value;
+        ((Triangle *) scene.objects[focus_index])->b.x += value;
+        ((Triangle *) scene.objects[focus_index])->c.x += value;
+    }
     fast_render();
 }
 
-void Env::move_left() {
-    ((Sphere*) scene.objects[focus_index])->center.x -= 0.5;
+void Env::move_y(double value) {
+    std::string obj_type = typeid(*scene.objects[focus_index]).name();
+    if (obj_type == "class Sphere")
+        ((Sphere*) scene.objects[focus_index])->center.y += value;
+    else if (obj_type == "class Plane")
+        ((Plane*) scene.objects[focus_index])->origin.y += value;
+    else if (obj_type == "class Triangle") {
+        ((Triangle *) scene.objects[focus_index])->a.y += value;
+        ((Triangle *) scene.objects[focus_index])->b.y += value;
+        ((Triangle *) scene.objects[focus_index])->c.y += value;
+    }
     fast_render();
 }
 
-void Env::grow() {
-    ((Sphere*) scene.objects[focus_index])->radius += 0.2;
+void Env::move_z(double value) {
+    std::string obj_type = typeid(*scene.objects[focus_index]).name();
+    if (obj_type == "class Sphere")
+        ((Sphere*) scene.objects[focus_index])->center.z += value;
+    else if (obj_type == "class Plane")
+        ((Plane*) scene.objects[focus_index])->origin.z += value;
+    else if (obj_type == "class Triangle") {
+        ((Triangle *) scene.objects[focus_index])->a.z += value;
+        ((Triangle *) scene.objects[focus_index])->b.z += value;
+        ((Triangle *) scene.objects[focus_index])->c.z += value;
+    }
     fast_render();
 }
 
-void Env::shrink() {
-    ((Sphere*) scene.objects[focus_index])->radius -= 0.2;
+void Env::grow(double value) {
+    std::string obj_type = typeid(*scene.objects[focus_index]).name();
+    if (obj_type == "class Sphere")
+        ((Sphere*) scene.objects[focus_index])->radius += value;
+    else if (obj_type == "class Triangle")
+        // TODO
+    fast_render();
+}
+
+void Env::shrink(double value) {
+    std::string obj_type = typeid(*scene.objects[focus_index]).name();
+    if (obj_type == "class Sphere")
+        ((Sphere*) scene.objects[focus_index])->radius -= value;
+    else if (obj_type == "class Triangle")
+        // TODO
     fast_render();
 }
 

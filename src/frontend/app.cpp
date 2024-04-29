@@ -27,13 +27,15 @@ void App::Windows()
     if (ImGui::Button("Render")) { env.render(); }
     if (ImGui::Button("Move Camera")) { env.move_camera(); }
 
-    if (ImGui::Button("Move Right")) { env.move_right(); }
+    if (ImGui::Button("Move X")) { env.move_x(0.5); }
     ImGui::SameLine();
-    if (ImGui::Button("Move Left")) { env.move_left(); }
+    if (ImGui::Button("Move Y")) { env.move_y(0.5); }
+    ImGui::SameLine();
+    if (ImGui::Button("Move Z")) { env.move_z(0.5); }
 
-    if (ImGui::Button("Grow")) { env.grow(); }
+    if (ImGui::Button("Grow")) { env.grow(0.2); }
     ImGui::SameLine();
-    if (ImGui::Button("Shrink")) { env.shrink(); }
+    if (ImGui::Button("Shrink")) { env.shrink(0.2); }
 
     if (ImGui::Button("Save Render")) { env.image.save_as_ppm("../test/result.ppm"); }
 
@@ -55,7 +57,8 @@ void App::TreeNode() {
             if (is_selected)
                 node_flags |= ImGuiTreeNodeFlags_Selected;
             node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-            ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, "Object %d", i);
+            string obj_type = typeid(*env.scene.objects[i]).name();
+            ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, "%d Object %s", i, obj_type.c_str());
             if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()) {
                 node_clicked = i;
                 // BEHAVIOR IS HERE

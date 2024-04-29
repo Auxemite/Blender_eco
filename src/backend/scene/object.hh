@@ -12,7 +12,7 @@ class Shape_data {
     bool grille{};
     Point3 a, b, c;
     std::string obj_type;
-    Shape_data() =default;
+    Shape_data()=default;
     Shape_data(const Point3& center_, double radius_);
     Shape_data(const Point3& origin_, const Vector3& normal, bool grille_);
     Shape_data(const Point3& a_, const Point3& b_, const Point3& c_, const Vector3& normal);
