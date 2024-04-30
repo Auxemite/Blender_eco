@@ -114,8 +114,8 @@ void Env::grow(double value) {
     std::string obj_type = typeid(*scene.objects[focus_index]).name();
     if (obj_type == "class Sphere")
         ((Sphere*) scene.objects[focus_index])->radius += value;
-    else if (obj_type == "class Triangle")
-        // TODO
+//    else if (obj_type == "class Triangle")
+//        // TODO
     fast_render();
 }
 
@@ -123,8 +123,8 @@ void Env::shrink(double value) {
     std::string obj_type = typeid(*scene.objects[focus_index]).name();
     if (obj_type == "class Sphere")
         ((Sphere*) scene.objects[focus_index])->radius -= value;
-    else if (obj_type == "class Triangle")
-        // TODO
+//    else if (obj_type == "class Triangle")
+//        // TODO
     fast_render();
 }
 

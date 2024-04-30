@@ -14,32 +14,60 @@ void App::Windows()
 {
     ImGui::Begin("Viewport");
     ImGui::Text("pointer = %x", env.render_image);
+    ImGui::SameLine();
     ImGui::Text("size = %d x %d", env.image.width, env.image.height);
     ImGui::Image((void*)(intptr_t)env.render_image,
                  ImVec2(static_cast<float>(env.image.width), static_cast<float>(env.image.height)));
     ImGui::End();
 
-//    ImGui::ShowDemoWindow();
     App::TreeNode();
 
     ImGui::Begin("Actions");
 
     if (ImGui::Button("Render")) { env.render(); }
-    if (ImGui::Button("Move Camera")) { env.move_camera(); }
 
-    if (ImGui::Button("Move X")) { env.move_x(0.5); }
+    static float c1 = 1.00f;
+    if (ImGui::Button("Move Camera X")) { env.move_camera(); }
     ImGui::SameLine();
-    if (ImGui::Button("Move Y")) { env.move_y(0.5); }
-    ImGui::SameLine();
-    if (ImGui::Button("Move Z")) { env.move_z(0.5); }
+    ImGui::DragFloat("Cam X", &c1, 0.005f);
 
-    if (ImGui::Button("Grow")) { env.grow(0.2); }
+    static float c2 = 1.00f;
+    if (ImGui::Button("Move Camera Y")) { env.move_camera(); }
     ImGui::SameLine();
-    if (ImGui::Button("Shrink")) { env.shrink(0.2); }
+    ImGui::DragFloat("Cam Y", &c2, 0.005f);
+
+    static float c3 = 1.00f;
+    if (ImGui::Button("Move Camera Z")) { env.move_camera(); }
+    ImGui::SameLine();
+    ImGui::DragFloat("Cam Z", &c3, 0.005f);
+
+    static float v1 = 1.00f;
+    if (ImGui::Button("Move X")) { env.move_x(v1); }
+    ImGui::SameLine();
+    ImGui::DragFloat("X", &v1, 0.005f);
+
+    static float v2 = 1.00f;
+    if (ImGui::Button("Move Y")) { env.move_y(v2); }
+    ImGui::SameLine();
+    ImGui::DragFloat("Y", &v2, 0.005f);
+
+    static float v3 = 1.00f;
+    if (ImGui::Button("Move Z")) { env.move_z(v3); }
+    ImGui::SameLine();
+    ImGui::DragFloat("Z", &v3, 0.005f);
+
+    static float radius = 1.00f;
+    ImGui::DragFloat("Radius", &radius, 0.005f);
+    if (ImGui::Button("Grow")) { env.grow(radius); }
+    ImGui::SameLine();
+    if (ImGui::Button("Shrink")) { env.shrink(radius); }
+
 
     if (ImGui::Button("Save Render")) { env.image.save_as_ppm("../test/result.ppm"); }
 
     ImGui::End();
+
+//    ImGui::ShowDemoWindow();
 }
 
 void App::TreeNode() {
