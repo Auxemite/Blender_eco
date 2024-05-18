@@ -60,9 +60,9 @@ Mesh::Mesh(std::string filename, Uniform_Texture uniformMaterial_)
         {
             int f[3];
             s >> f[0] >> f[1] >> f[2];
-            faces.push_back(new Triangle(*points[f[0] - 1],
-                                         *points[f[1] - 1],
-                                         *points[f[2] - 1],
+            faces.push_back(new Triangle(points[f[0] - 1],
+                                         points[f[1] - 1],
+                                         points[f[2] - 1],
                                          uniformMaterial_));
         }
     }
@@ -101,7 +101,45 @@ Shape_data Mesh::get_obj_data() const
     return test;
 };
 
+int Mesh::get_point_index(const Point3* point) const
+{
+    int i = 1;
+    for (auto pt : points)
+    {
+        if (pt == point)
+            return i;
+        i++;
+    }
+
+    return -1;
+}
+
+std::vector<int> Mesh::get_face_index(const Triangle& face) const
+{
+    return std::vector<int>({
+        get_point_index(face.a),
+        get_point_index(face.b),
+        get_point_index(face.c),
+    });
+}
+
 void Mesh::to_dot_obj(std::string filename)
 {
-    return;
+    std::ofstream f(filename);
+    if (!f)
+        return;
+    
+    f << "#Generated with Blender Eco++\n";
+
+    for (auto point : points)
+        f << "v " << point->x << ' ' << point->y << ' ' << point->z << '\n';
+
+    f << '\n';
+
+    for (auto face : faces)
+    {
+        std::vector<int> index = get_face_index(*face);
+
+        f << "f " << index[0] << ' ' << index[1] << ' ' << index[2] << '\n';
+    }
 }

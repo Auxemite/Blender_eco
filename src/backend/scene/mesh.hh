@@ -20,5 +20,10 @@ public:
     Vector3 normal(const Point3& point) const override;
     Material get_material(const Point3& point) const override;
     Shape_data get_obj_data() const override;
-    void to_dot_obj(std::string filename);
+
+    int get_point_index(const Point3* point) const;
+    std::vector<int> get_face_index(const Triangle& face) const;
+    void to_dot_obj(std::string filename); //To .obj
+
+    bool move_point(int index, const Point3& new_pos);
 };

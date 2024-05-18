@@ -128,11 +128,23 @@ Shape_data Plane::get_obj_data() const
 /////////////////// Triangle ///////////////////////////////
 Triangle::Triangle(const Point3& a_, const Point3& b_, const Point3& c_, Uniform_Texture uniformMaterial_)
 {
+    a = new Point3(a_);
+    b = new Point3(b_);
+    c = new Point3(c_);
+
+    normal_ = cross((*b - *a), (*c - *a));
+    normal_.normalize();
+
+    texture = uniformMaterial_;
+}
+
+Triangle::Triangle(Point3 *a_, Point3 *b_, Point3 *c_, Uniform_Texture uniformMaterial_)
+{
     a = a_;
     b = b_;
     c = c_;
 
-    normal_ = cross((b - a), (c - a));
+    normal_ = cross((*b - *a), (*c - *a));
     normal_.normalize();
 
     texture = uniformMaterial_;
@@ -140,8 +152,8 @@ Triangle::Triangle(const Point3& a_, const Point3& b_, const Point3& c_, Uniform
 
 double Triangle::ray_intersection(const Point3& cam_position, const Vector3& direction)
 {
-    Vector3 edge_1 = b - a;
-    Vector3 edge_2 = c - a;
+    Vector3 edge_1 = *b - *a;
+    Vector3 edge_2 = *c - *a;
     Vector3 normal_vect = direction * edge_2;
     double det = dot(edge_1, normal_vect);
 
@@ -150,7 +162,7 @@ double Triangle::ray_intersection(const Point3& cam_position, const Vector3& dir
         return -1.;
 
     double inv_det = 1.0 / det;
-    Vector3 s = cam_position - a;
+    Vector3 s = cam_position - *a;
     double u = inv_det * dot(s, normal_vect);
 
     if (u < 0 || u > 1)
@@ -174,5 +186,5 @@ Vector3 Triangle::normal(const Point3& point) const { return this->normal_; }
 Material Triangle::get_material(const Point3& point) const { return texture.get_texture(point); }
 Shape_data Triangle::get_obj_data() const
 {
-    return Shape_data(a, b, c, normal_);
+    return Shape_data(*a, *b, *c, normal_);
 };
