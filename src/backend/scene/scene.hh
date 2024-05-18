@@ -1,6 +1,7 @@
 #pragma once
 
 #include "object.hh"
+#include "mesh.hh"
 #include "camera.hh"
 #include "light.hh"
 #include <vector>
@@ -15,4 +16,5 @@ class Scene
         Scene()=default;
         Scene(int width, int height);
         Scene(std::vector<Shape*> sphere_, std::vector<Light*> lights_, Camera camera_);
+        void add_mesh(const Mesh& mesh);
 };

@@ -24,6 +24,9 @@ void App::Windows()
 
     ImGui::Begin("Actions");
 
+    // env.image.render(env.scene, true);
+    // env.image.save_as_ppm("test.ppm");
+
     if (ImGui::Button("Render")) { env.render(); }
 
     static float c1 = 1.00f;

@@ -95,7 +95,7 @@ double grille_intersection(const Point3& point_loc, double distance, const Vecto
 
 //    if (diff_1 > abs_(diff_1 - diff_2) && diff_2 > abs_(diff_1 - diff_2))
 //        return -1; // For beautiful pattern
-    auto diff = 0.6;
+    auto diff = 0.3;
     if (diff_1 * 20 + diff_2 > diff && diff_1 + diff_2 * 20 > diff)
         return -1;
 

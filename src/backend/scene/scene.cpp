@@ -9,12 +9,12 @@ Scene::Scene(int width, int height)
 //     s.push_back(Sphere({2, 0, 0}, utils::plastic(utils::magenta)));
 //     s.push_back(Sphere({-2, 0, 0}, utils::metal(utils::purple)));
 //     l.push_back(Point_Light({0, 5, 1}, 10, utils::orange));
-    objects.push_back(new Plane(
-            {0,0,0},
-            {0,1,0},
-            Uniform_Texture(basic::texture::basic, basic::color::dark_gray),
-            true));
 
+
+/*     objects.push_back(new Plane({0,0,0},
+                                {0,1,0},
+                                Uniform_Texture(basic::texture::basic, basic::color::dark_gray),
+                                true));
     objects.push_back(new Sphere(
             {0,0,0},
             Uniform_Texture(basic::texture::simple, basic::color::blue)));
@@ -29,17 +29,31 @@ Scene::Scene(int width, int height)
             Uniform_Texture(basic::texture::metal, basic::color::gray)));
     objects.push_back(new Sphere(
             {-4,0,0},
-            Uniform_Texture(basic::texture::metal, basic::color::yellow)));
+            Uniform_Texture(basic::texture::metal, basic::color::yellow))); */
     objects.push_back(new Triangle(
-            {0,0,-1},
-            {0,2,0},
-            {0,0,1},
+            {0,0,0},
+            {0,0,0},
+            {0,0,0},
             Uniform_Texture(basic::texture::basic, basic::color::red)));
-    objects.push_back(new Triangle(
+/*     objects.push_back(new Triangle(
             {-1,0,0},
             {0,2,0},
             {1,0,0},
-            Uniform_Texture(basic::texture::basic, basic::color::blue)));
+            Uniform_Texture(basic::texture::basic, basic::color::blue))); */
+
+    Point3 a({0, 0, 0}), b(0, 1, 0), c(1, 1, 0), d(1, 0, 0),
+           e(0, 0, 1), f(0, 1, 1);
+    std::vector<Point3 *> point_vec({&a, &b, &c, &d, &e, &f});
+    std::vector<std::vector<int>> face_vec({{0, 1, 2}, {0, 2, 3}, {0, 4, 5}, {0, 5, 1}});
+
+    Mesh mesh = Mesh(point_vec,
+                    face_vec,
+            Uniform_Texture(basic::texture::basic, basic::color::blue));
+    add_mesh(mesh);
+
+    Mesh test_triangle = Mesh("triangle_test.obj", Uniform_Texture(basic::texture::simple, basic::color::cyan));
+    add_mesh(test_triangle);
+ 
     lights.push_back(new Point_Light({0,5,1}, 10,
                                      basic::color::orange));
 
@@ -55,4 +69,10 @@ Scene::Scene(std::vector<Shape*> sphere_, std::vector<Light*> lights_, Camera ca
     objects = std::move(sphere_);
     lights = std::move(lights_);
     camera = camera_;
+}
+
+void Scene::add_mesh(const Mesh& mesh)
+{
+    for (auto triangle = mesh.faces.begin(); triangle < mesh.faces.end(); triangle++)
+        objects.push_back(*triangle);
 }
