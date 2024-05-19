@@ -27,4 +27,7 @@ public:
 
     bool move_point(int index, const Point3& new_pos);
     bool translate_point(int index, const Point3& new_pos);
+
+    bool move_mesh(int index, const Point3& new_pos);
+    bool translate_mesh(int index, const Point3& new_pos);
 };

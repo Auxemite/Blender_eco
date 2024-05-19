@@ -191,3 +191,33 @@ bool Mesh::translate_point(int index, const Point3& new_pos)
         return false;
     }
 }
+
+bool Mesh::move_mesh(int index, const Point3& new_pos)
+{
+    try
+    {
+        Point3 *origin = points.at(0);
+        Vector3 diff = new_pos - *origin; 
+        for (auto point : points)
+            *point += diff;
+
+            std::cout << "Mesh moved to " << new_pos << std::endl;
+
+        return true;
+    }
+    catch (std::out_of_range const& exc)
+    {
+        std::cout << "No origin cannot move mesh\n";
+        return false;
+    }
+}
+
+bool Mesh::translate_mesh(int index, const Point3& new_pos)
+{
+    for (auto point : points)
+        *point += new_pos;
+        
+        std::cout << "Mesh translated by " << new_pos << std::endl;
+    
+    return true;
+}

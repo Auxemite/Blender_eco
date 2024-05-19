@@ -56,7 +56,7 @@ Scene::Scene(int width, int height)
     Mesh test_triangle = Mesh(file, Uniform_Texture(basic::texture::simple, basic::color::cyan));
     add_mesh(test_triangle);
 
-    test_triangle.translate_point(34, {1, 1, 1});
+    test_triangle.move_mesh(34, {1, 1, 1});
     // *(test_triangle.points[0]) += Point3(0.5, 0.5, 0.5); 
 
     // test_triangle.to_dot_obj("be+.obj");
