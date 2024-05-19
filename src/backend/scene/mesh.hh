@@ -26,4 +26,5 @@ public:
     void to_dot_obj(std::string filename); //To .obj
 
     bool move_point(int index, const Point3& new_pos);
+    bool translate_point(int index, const Point3& new_pos);
 };

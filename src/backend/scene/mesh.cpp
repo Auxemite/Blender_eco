@@ -32,6 +32,7 @@ Mesh::Mesh(std::vector<Point3 *> points_vec, std::vector<std::vector<int>> faces
 #define LINE_LEN 512
 Mesh::Mesh(std::string filename, Uniform_Texture uniformMaterial_)
 {
+    // Open file as stream
     std::ifstream f(filename);
     if (!f.is_open())
         return;
@@ -41,25 +42,34 @@ Mesh::Mesh(std::string filename, Uniform_Texture uniformMaterial_)
     
     while (!f.eof())
     {
-
+        // Foreach line
         char line[LINE_LEN];
         f.getline(line, LINE_LEN);
 
         std::strstream s;
         s << line;
-
         s >> skip;
 
-        if (skip == 'v')
+        // if first char is 'v' create associated point
+        if (skip == 'v' && s.peek() == ' ')
         {
             s >> p.x >> p.y >> p.z;
             points.push_back(new Point3(p));
         }
 
+        // if first char is 'f' create associated face
         if (skip == 'f')
         {
+            // Handle different format such as "f 3 6 9" and "f 3/4/5 6/7/8 9/10/11"
             int f[3];
-            s >> f[0] >> f[1] >> f[2];
+            for (int i = 0; i < 3; i++)
+            {
+                s >> f[i];
+                while (s.peek() != ' ' && !s.eof())
+                    s >> skip;
+            }
+
+            // point index -1 because starting index is 1 in the .obj file
             faces.push_back(new Triangle(points[f[0] - 1],
                                          points[f[1] - 1],
                                          points[f[2] - 1],
@@ -141,5 +151,43 @@ void Mesh::to_dot_obj(std::string filename)
         std::vector<int> index = get_face_index(*face);
 
         f << "f " << index[0] << ' ' << index[1] << ' ' << index[2] << '\n';
+    }
+}
+
+bool Mesh::move_point(int index, const Point3& new_pos)
+{
+    try
+    {
+        Point3 *point = points.at(index);
+        point->x = new_pos.x;
+        point->y = new_pos.y;
+        point->z = new_pos.z;
+        
+        std::cout << "Point moved to " << new_pos << std::endl;
+
+        return true;
+    }
+    catch (std::out_of_range const& exc)
+    {
+        std::cout << "Point out of range\n";
+        return false;
+    }
+}
+
+bool Mesh::translate_point(int index, const Point3& new_pos)
+{
+    try
+    {
+        Point3 *point = points.at(index);
+        *point += new_pos;
+        
+        std::cout << "Point translated by " << new_pos << std::endl;
+
+        return true;
+    }
+    catch (std::out_of_range const& exc)
+    {
+        std::cout << "Point out of range\n";
+        return false;
     }
 }

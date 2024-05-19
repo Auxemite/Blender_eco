@@ -38,5 +38,12 @@ void Camera::update_cam(Point3 center_)
 
 void Camera::update_lookat(Point3 lookat_)
 {
+    // TODO to correct up update problem
+    /// Vector3 old_dir = (this->lookat - center).norm();
+    /// Vector3 new_dir = (lookat_ - center).norm();
+    /// Vector3 diff = new_dir - old_dir;
+    /// up += diff;
+    /// v += diff;
+
     update(0, lookat_);
 }

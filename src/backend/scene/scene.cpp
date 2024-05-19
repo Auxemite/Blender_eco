@@ -52,12 +52,14 @@ Scene::Scene(int width, int height)
             Uniform_Texture(basic::texture::basic, basic::color::blue));
     add_mesh(mesh);
 
-    Mesh test_triangle = Mesh("test_cube.obj", Uniform_Texture(basic::texture::simple, basic::color::cyan));
+    char *file = "truc_chelou.obj";
+    Mesh test_triangle = Mesh(file, Uniform_Texture(basic::texture::simple, basic::color::cyan));
     add_mesh(test_triangle);
 
-    *(test_triangle.points[0]) += Point3(0.5, 0.5, 0.5); 
+    test_triangle.translate_point(34, {1, 1, 1});
+    // *(test_triangle.points[0]) += Point3(0.5, 0.5, 0.5); 
 
-    test_triangle.to_dot_obj("be+.obj");
+    // test_triangle.to_dot_obj("be+.obj");
  
     lights.push_back(new Point_Light({0,5,1}, 10,
                                      basic::color::orange));

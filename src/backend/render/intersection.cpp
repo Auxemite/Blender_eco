@@ -55,16 +55,14 @@ Color Intersection::fast_ray_color(const Scene& scene)
         return basic::color::background_blue;
 
     Vector3 normal = object->normal(inter_loc);
-    double dot_angle = dot(dir, normal);
-    // if (abs_(dot_angle) <= 0.15 && selected)
-    //     return basic::color::orange;
-        
-    return object->texture.mat.color * (-dot_angle);
+    double dot_angle = dot((scene.camera.lookat - scene.camera.center).norm(), normal);
+    
+    return object->texture.mat.color * (1 - dot_angle);
 }
 
 Color Intersection::ray_color(const Scene& scene, int recursive)
 {
-    if (recursive > 2)
+    if (recursive > 3)
         return basic::color::black;
 
     if (inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX))
