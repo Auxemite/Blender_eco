@@ -30,4 +30,11 @@ public:
 
     bool move_mesh(int index, const Point3& new_pos);
     bool translate_mesh(int index, const Point3& new_pos);
+
+    bool add_point(Point3 *point);
+    bool create_point(const Point3& point);
+    bool create_point(double a, double b, double c);
+    bool add_face(Triangle *new_triangle);
+    bool create_face(const Triangle& new_triangle);
+    bool create_face(Point3 *a, Point3 *b, Point3 *c);
 };

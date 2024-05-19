@@ -3,22 +3,29 @@
 const Image& fond = load_image("../test/sunset.ppm");
 //const Image& fond = load_image("./test/retro.ppm");
 
-void Intersection::throw_ray(const Scene& scene)
+inline void Intersection::throw_ray(Shape *shape)
 {
-    for (auto new_object : scene.objects)
-    {
-        auto inter_scal = new_object->ray_intersection(origin, dir);
+    auto inter_scal = shape->ray_intersection(origin, dir);
         if (inter_scal > 0)
         {
             Point3 new_inter_loc = origin + dir * inter_scal;
             if (inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX)
                 || (new_inter_loc - origin).length() < (inter_loc - origin).length())
             {
-                object = new_object;
+                object = shape;
                 inter_loc = new_inter_loc;
             }
         }
-    }
+}
+
+void Intersection::throw_ray(const Scene& scene)
+{
+    for (auto new_object : scene.objects)
+        throw_ray(new_object);
+
+    for (auto mesh : scene.meshes)
+        for (auto face : mesh->faces)
+            throw_ray(face);
 }
 
 Color Intersection::bg_color()

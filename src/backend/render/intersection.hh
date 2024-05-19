@@ -13,6 +13,7 @@ class Intersection
         Intersection(const Point3& origin_, const Vector3& dir_);
 
         void update(Point3 origin_, Vector3 dir_);
+        void throw_ray(Shape *object);
         void throw_ray(const Scene& scene);
 
         Color bg_color();

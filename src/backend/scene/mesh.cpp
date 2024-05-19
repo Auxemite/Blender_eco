@@ -121,6 +121,7 @@ int Mesh::get_point_index(const Point3* point) const
         i++;
     }
 
+    std::cerr << "Cannot find point index" << std::endl;
     return -1;
 }
 
@@ -219,5 +220,66 @@ bool Mesh::translate_mesh(int index, const Point3& new_pos)
         
         std::cout << "Mesh translated by " << new_pos << std::endl;
     
+    return true;
+}
+
+bool Mesh::add_point(Point3 *new_point)
+{
+    for (auto point : points)
+        if (point == new_point)
+            return false;
+
+    points.push_back(new_point);
+    return true;
+}
+
+bool Mesh::create_point(const Point3& point)
+{
+    points.push_back(new Point3(point));
+    return true;
+}
+
+bool Mesh::create_point(double a, double b, double c)
+{
+    points.push_back(new Point3(a, b, c));
+    return true;
+}
+    
+bool Mesh::add_face(Triangle *new_face)
+{
+    for (auto face : faces)
+        if (face == new_face)
+            return false;
+
+    faces.push_back(new_face);
+
+    add_point(new_face->a);
+    add_point(new_face->b);
+    add_point(new_face->c);
+
+    return true;
+}
+
+bool Mesh::create_face(const Triangle& new_face)
+{
+    Triangle *face = new Triangle(new_face);
+    faces.push_back(face);
+
+    add_point(face->a);
+    add_point(face->b);
+    add_point(face->c);
+
+    return true;
+}
+
+bool Mesh::create_face(Point3 *a, Point3 *b, Point3 *c)
+{
+    Triangle *face = new Triangle(a, b, c, texture);
+    faces.push_back(face);
+
+    add_point(face->a);
+    add_point(face->b);
+    add_point(face->c);
+
     return true;
 }
