@@ -31,8 +31,8 @@ public:
     bool move_point(int index, const Point3& new_pos);
     bool translate_point(int index, const Point3& new_pos);
     //// Mesh
-    bool move_mesh(int index, const Point3& new_pos);
-    bool translate_mesh(int index, const Point3& new_pos);
+    bool move_mesh(const Point3& new_pos);
+    bool translate_mesh(const Point3& new_pos);
 
     // Creation
     //// Point
@@ -45,6 +45,9 @@ public:
     bool create_face(Point3 *a, Point3 *b, Point3 *c);
 
     // Dimension
-    void scale(double size);
-    void scale(double size, const Point3& from);
+    void scale_mesh(double size);
+    void scale_mesh(double size, const Point3& from);
+    std::vector<Point3 *> get_points_from_indexes(const std::vector<int>) const;
+    void scale_selected(double size, const std::vector<int> indexes);
+    void scale_selected(double size, const Point3& from, const std::vector<int> indexes);
 };

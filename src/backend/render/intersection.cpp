@@ -6,16 +6,16 @@ const Image& fond = load_image("../test/sunset.ppm");
 inline void Intersection::throw_ray(Shape *shape)
 {
     auto inter_scal = shape->ray_intersection(origin, dir);
-        if (inter_scal > 0)
+    if (inter_scal > 0)
+    {
+        Point3 new_inter_loc = origin + dir * inter_scal;
+        if (inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX)
+            || (new_inter_loc - origin).length() < (inter_loc - origin).length())
         {
-            Point3 new_inter_loc = origin + dir * inter_scal;
-            if (inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX)
-                || (new_inter_loc - origin).length() < (inter_loc - origin).length())
-            {
-                object = shape;
-                inter_loc = new_inter_loc;
-            }
+            object = shape;
+            inter_loc = new_inter_loc;
         }
+    }
 }
 
 void Intersection::throw_ray(const Scene& scene)
@@ -25,7 +25,11 @@ void Intersection::throw_ray(const Scene& scene)
 
     for (auto mesh : scene.meshes)
         for (auto face : mesh->faces)
-            throw_ray(face);
+        {
+            // Check backface culling
+            if (dot(dir, face->normal_) < 0) 
+                throw_ray(face);
+        }
 }
 
 Color Intersection::bg_color()

@@ -193,7 +193,7 @@ bool Mesh::translate_point(int index, const Point3& new_pos)
     }
 }
 
-bool Mesh::move_mesh(int index, const Point3& new_pos)
+bool Mesh::move_mesh(const Point3& new_pos)
 {
     try
     {
@@ -208,12 +208,12 @@ bool Mesh::move_mesh(int index, const Point3& new_pos)
     }
     catch (std::out_of_range const& exc)
     {
-        std::cout << "No origin cannot move mesh\n";
+        std::cerr << "No origin cannot move mesh\n";
         return false;
     }
 }
 
-bool Mesh::translate_mesh(int index, const Point3& new_pos)
+bool Mesh::translate_mesh(const Point3& new_pos)
 {
     for (auto point : points)
         *point += new_pos;
@@ -285,7 +285,7 @@ bool Mesh::create_face(Point3 *a, Point3 *b, Point3 *c)
 }
 
 // Dimension
-void Mesh::scale(double size)
+void Mesh::scale_mesh(double size)
 {
     if (size == 1.)
         return;
@@ -299,11 +299,55 @@ void Mesh::scale(double size)
         *point = mid + (*point - mid) * size;
 }
 
-void Mesh::scale(double size, const Point3& from)
+void Mesh::scale_mesh(double size, const Point3& from)
 {
     if (size == 1.)
         return;
 
     for (auto point : points)
         *point = from + (*point - from) * size;  
+}
+
+inline std::vector<Point3 *> Mesh::get_points_from_indexes(const std::vector<int> indexes) const
+{
+    std::vector<Point3 *> point_list;
+
+    try
+    {
+        for (int i : indexes)
+            point_list.push_back(points.at(i));
+    }
+    catch (std::out_of_range const& exc)
+    {
+        std::cerr << "Invalid index given for rescaling\n";
+    }
+
+    return point_list;
+}
+
+void Mesh::scale_selected(double size, const std::vector<int> indexes)
+{
+    if (size == 1.)
+        return;
+
+    std::vector<Point3 *> point_list = get_points_from_indexes(indexes);
+
+    Point3 mid = (0, 0, 0);
+    int nb_point = point_list.size();
+    for (auto point : point_list)
+        mid += *point / nb_point;
+
+    for (auto point : point_list)
+        *point = mid + (*point - mid) * size;
+}
+
+void Mesh::scale_selected(double size, const Point3& from, const std::vector<int> indexes)
+{
+    if (size == 1.)
+        return;
+
+    std::vector<Point3 *> point_list = get_points_from_indexes(indexes);
+
+    for (auto point : point_list)
+        *point = from + (*point - from) * size;
 }
