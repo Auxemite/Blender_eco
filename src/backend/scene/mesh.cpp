@@ -29,37 +29,6 @@ Mesh::Mesh(std::vector<Point3 *> points_vec, std::vector<std::vector<int>> faces
     texture = uniformMaterial_;
 }
 
-/* double Mesh::ray_intersection(const Point3& cam_position, const Vector3& direction)
-{
-    if (faces.size() == 0)
-        return -1.;
-    
-    double min_dist = -1.;
-    for (auto iter = faces.begin(); iter < faces.end(); iter++)
-    {
-        Triangle *face = *iter;
-        double face_dist = face->ray_intersection(cam_position, direction);
-
-        if (face_dist == -1.)
-            continue;
-        
-        if (min_dist == -1.)
-            min_dist = face_dist;
-        else
-            min_dist = std::min(min_dist, face_dist);
-    }
-
-    return min_dist;
-}
-
-Vector3 Mesh::normal(const Point3& point) const { return faces.at(0)->normal_; }
-Material Mesh::get_material(const Point3& point) const { return faces.at(0)->get_material(point); }
-Shape_data Mesh::get_obj_data() const
-{
-    Shape_data test = faces.at(0)->get_obj_data();
-    return test;
-}; */
-
 #define LINE_LEN 512
 Mesh::Mesh(std::string filename, Uniform_Texture uniformMaterial_)
 {
@@ -350,4 +319,24 @@ void Mesh::scale_selected(double size, const Point3& from, const std::vector<int
 
     for (auto point : point_list)
         *point = from + (*point - from) * size;
+}
+
+void rotate_point_axis(double angle, Point3 *point, const Point3& from)
+{
+    double x = point->x - from.x;
+    double y = point->y - from.y;
+
+    point->x = x * std::cos(angle) - y * sin(angle);
+    point->y = x * std::sin(angle) + y * cos(angle);
+}
+
+void Mesh::rotate_axis(double angle)
+{
+    Point3 mid = (0, 0, 0);
+    int nb_point = points.size();
+    for (auto point : points)
+        mid += *point / nb_point;
+
+    for (auto point : points)
+        rotate_point_axis(angle, point, mid);
 }

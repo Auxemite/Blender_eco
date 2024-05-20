@@ -16,17 +16,18 @@ Scene::Scene(int width, int height)
     Point3 a(1, 0, 0), b(0, 1, 0), c(0, 0, 1), d(2, 0, 0),
            e(0, 2, 0), f(0, 0, 2);
 
-    char *file = "truc_chelou.obj";
-    // char *file = "test_cube.obj";
+    // char *file = "truc_chelou.obj";
+    char *file = "test_cube.obj";
 
     Mesh *cube1 = new Mesh(file, Uniform_Texture(basic::texture::simple, basic::color::cyan));
     Mesh *cube2 = new Mesh(file, Uniform_Texture(basic::texture::simple, basic::color::yellow));
 
-    add_mesh(cube1);
+    // add_mesh(cube1);
     add_mesh(cube2);
 
-    cube1->scale_selected(0.5, {0, 1, 2, 3, 4, 5});
-	cube2->move_mesh({1, 0, 0});
+    cube1->scale_mesh(1);
+	// cube2->move_mesh({1, 0, 0});
+    cube2->rotate_axis(3.14159 / 4);
 
     lights.push_back(new Point_Light({0,5,1}, 10,
                                      basic::color::orange));
@@ -47,8 +48,5 @@ Scene::Scene(std::vector<Shape*> sphere_, std::vector<Light*> lights_, Camera ca
 
 void Scene::add_mesh(Mesh *mesh)
 {
-    // for (auto triangle : mesh.faces)
-    //     objects.push_back(triangle);
-
     meshes.push_back(mesh);
 }

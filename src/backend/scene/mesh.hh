@@ -50,4 +50,8 @@ public:
     std::vector<Point3 *> get_points_from_indexes(const std::vector<int>) const;
     void scale_selected(double size, const std::vector<int> indexes);
     void scale_selected(double size, const Point3& from, const std::vector<int> indexes);
+
+    // Rotation
+    void rotate_axis(double angle);
+    // void rotate_axis(double angle, std::vector<Point3 *> point_list);
 };
