@@ -70,4 +70,8 @@ class Triangle : public Shape
     Vector3 normal(const Point3& point) const override;
     Material get_material(const Point3& point) const override;
     Shape_data get_obj_data() const override;
+
+    // Usefull for mesh transformation
+    void scale(double size);
+    void scale(double size, const Point3& from);
 };

@@ -188,3 +188,33 @@ Shape_data Triangle::get_obj_data() const
 {
     return Shape_data(*a, *b, *c, normal_);
 };
+
+void Triangle::scale(double size)
+{
+    if (size == 1.)
+        return;
+
+    Point3 mid = *a/3 + *b/3 + *c/3;
+
+    Vector3 diff_a = *a - mid;   
+    Vector3 diff_b = *b - mid;   
+    Vector3 diff_c = *c - mid;
+
+    *a = mid + diff_a * size;   
+    *b = mid + diff_b * size;   
+    *c = mid + diff_c * size;   
+}
+
+void Triangle::scale(double size, const Point3& from)
+{
+    if (size == 1.)
+        return;
+
+    Vector3 diff_a = *a - from;
+    Vector3 diff_b = *b - from;   
+    Vector3 diff_c = *c - from;
+
+    *a = from + diff_a * size;   
+    *b = from + diff_b * size;   
+    *c = from + diff_c * size;   
+}

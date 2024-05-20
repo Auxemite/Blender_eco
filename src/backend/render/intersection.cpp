@@ -62,7 +62,8 @@ Color Intersection::fast_ray_color(const Scene& scene)
         return basic::color::background_blue;
 
     Vector3 normal = object->normal(inter_loc);
-    double dot_angle = dot((scene.camera.lookat - scene.camera.center).norm(), normal);
+    // double dot_angle = dot((scene.camera.lookat - scene.camera.center).norm(), normal);
+    double dot_angle = dot(dir, normal);
     
     return object->texture.mat.color * (1 - dot_angle);
 }
