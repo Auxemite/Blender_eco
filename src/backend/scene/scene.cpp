@@ -25,9 +25,12 @@ Scene::Scene(int width, int height)
     // add_mesh(cube1);
     add_mesh(cube2);
 
-    cube1->scale_mesh(1);
+    // cube2->scale_mesh(0.5);
+    // cube2->move_mesh({1, 1, 1});
 	// cube2->move_mesh({1, 0, 0});
-    cube2->rotate_axis(3.14159 / 4);
+    cube2->rotate_axis(3.14159 / 4, {0, 1, 2, 3});
+    // cube2->extrude(0.5, cube2->faces.at(0));
+    cube2->extrude(1, cube2->faces.at(0));
 
     lights.push_back(new Point_Light({0,5,1}, 10,
                                      basic::color::orange));

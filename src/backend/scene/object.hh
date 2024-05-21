@@ -74,4 +74,6 @@ class Triangle : public Shape
     // Usefull for mesh transformation
     void scale(double size);
     void scale(double size, const Point3& from);
+
+    void update_normal();
 };

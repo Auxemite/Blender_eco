@@ -27,7 +27,7 @@ void Intersection::throw_ray(const Scene& scene)
         for (auto face : mesh->faces)
         {
             // Check backface culling
-            // if (dot(dir, face->normal_) < 0) 
+            if (dot(dir, face->normal_) < 0) 
                 throw_ray(face);
         }
 }

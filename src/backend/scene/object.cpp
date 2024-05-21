@@ -218,3 +218,9 @@ void Triangle::scale(double size, const Point3& from)
     *b = from + diff_b * size;   
     *c = from + diff_c * size;   
 }
+
+void Triangle::update_normal()
+{
+    normal_ = cross((*b - *a), (*c - *a));
+    normal_.normalize();
+}

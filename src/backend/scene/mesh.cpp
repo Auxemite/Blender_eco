@@ -222,6 +222,7 @@ bool Mesh::add_face(Triangle *new_face)
 
     faces.push_back(new_face);
 
+    // TODO check if the Point are already contained in the mesh
     add_point(new_face->a);
     add_point(new_face->b);
     add_point(new_face->c);
@@ -234,6 +235,7 @@ bool Mesh::create_face(const Triangle& new_face)
     Triangle *face = new Triangle(new_face);
     faces.push_back(face);
 
+    // TODO check if the Point are already contained in the mesh
     add_point(face->a);
     add_point(face->b);
     add_point(face->c);
@@ -246,6 +248,7 @@ bool Mesh::create_face(Point3 *a, Point3 *b, Point3 *c)
     Triangle *face = new Triangle(a, b, c, texture);
     faces.push_back(face);
 
+    // TODO check if the Point are already contained in the mesh
     add_point(face->a);
     add_point(face->b);
     add_point(face->c);
@@ -321,13 +324,16 @@ void Mesh::scale_selected(double size, const Point3& from, const std::vector<int
         *point = from + (*point - from) * size;
 }
 
-void rotate_point_axis(double angle, Point3 *point, const Point3& from)
+inline void rotate_point_axis(double angle, Point3 *point, const Point3& from)
 {
-    double x = point->x - from.x;
+    // double x = point->x - from.x;
     double y = point->y - from.y;
+    double z = point->z - from.z;
 
-    point->x = x * std::cos(angle) - y * sin(angle);
-    point->y = x * std::sin(angle) + y * cos(angle);
+    // point->x = x * std::cos(angle) - z * sin(angle);
+    point->y = y * std::cos(angle) - z * sin(angle) + from.y;
+    point->z = y * std::sin(angle) + z * cos(angle) + from.z;
+
 }
 
 void Mesh::rotate_axis(double angle)
@@ -339,4 +345,54 @@ void Mesh::rotate_axis(double angle)
 
     for (auto point : points)
         rotate_point_axis(angle, point, mid);
+
+    // Update the normals of the faces
+    for (auto face : faces)
+        face->update_normal();
+}
+
+void Mesh::rotate_axis(double angle, std::vector<int> indexes)
+{
+    std::vector<Point3 *> point_list = get_points_from_indexes(indexes);
+
+    Point3 mid = (0, 0, 0);
+    int nb_point = point_list.size();
+    for (auto point : point_list)
+        mid += *point / nb_point;
+
+    for (auto point : point_list)
+        rotate_point_axis(angle, point, mid);
+
+    // Update the normals of the faces; TODO only update changed faces
+    for (auto face : faces)
+        face->update_normal();
+}
+
+void Mesh::extrude_along_normal(double thickness, Triangle *face)
+{
+    Point3 *a = new Point3(*face->a + face->normal_ * thickness);
+    Point3 *b = new Point3(*face->b + face->normal_ * thickness);
+    Point3 *c = new Point3(*face->c + face->normal_ * thickness);
+
+    Triangle *face_1 = new Triangle(face->a, face->b, a, texture);
+    Triangle *face_2 = new Triangle(face->b, b, a, texture);
+    faces.push_back(face_1);
+    faces.push_back(face_2);
+
+    Triangle *face_3 = new Triangle(face->b, face->c, b, texture);
+    Triangle *face_4 = new Triangle(face->c, c, b, texture);
+    faces.push_back(face_3);
+    faces.push_back(face_4);
+
+    Triangle *face_5 = new Triangle(face->c, face->a, c, texture);
+    Triangle *face_6 = new Triangle(face->a, a, c, texture);
+    faces.push_back(face_5);
+    faces.push_back(face_6);
+
+    face->a = a;
+    face->b = b;
+    face->c = c;
+    points.push_back(a);
+    points.push_back(b);
+    points.push_back(c);
 }

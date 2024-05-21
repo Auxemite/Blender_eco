@@ -45,13 +45,18 @@ public:
     bool create_face(Point3 *a, Point3 *b, Point3 *c);
 
     // Dimension
+    //// All Mesh
     void scale_mesh(double size);
     void scale_mesh(double size, const Point3& from);
+    //// Selected Points of the Mesh
     std::vector<Point3 *> get_points_from_indexes(const std::vector<int>) const;
     void scale_selected(double size, const std::vector<int> indexes);
     void scale_selected(double size, const Point3& from, const std::vector<int> indexes);
 
     // Rotation
+    //// All Mesh
     void rotate_axis(double angle);
-    // void rotate_axis(double angle, std::vector<Point3 *> point_list);
+    void rotate_axis(double angle, std::vector<int> indexes);
+
+    void extrude_along_normal(double thickness, Triangle *face);
 };
