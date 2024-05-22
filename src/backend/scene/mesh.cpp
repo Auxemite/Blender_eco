@@ -222,7 +222,6 @@ bool Mesh::add_face(Triangle *new_face)
 
     faces.push_back(new_face);
 
-    // TODO check if the Point are already contained in the mesh
     add_point(new_face->a);
     add_point(new_face->b);
     add_point(new_face->c);
@@ -235,7 +234,6 @@ bool Mesh::create_face(const Triangle& new_face)
     Triangle *face = new Triangle(new_face);
     faces.push_back(face);
 
-    // TODO check if the Point are already contained in the mesh
     add_point(face->a);
     add_point(face->b);
     add_point(face->c);
@@ -248,7 +246,6 @@ bool Mesh::create_face(Point3 *a, Point3 *b, Point3 *c)
     Triangle *face = new Triangle(a, b, c, texture);
     faces.push_back(face);
 
-    // TODO check if the Point are already contained in the mesh
     add_point(face->a);
     add_point(face->b);
     add_point(face->c);
@@ -368,12 +365,8 @@ void Mesh::rotate_axis(double angle, std::vector<int> indexes)
         face->update_normal();
 }
 
-void Mesh::extrude_along_normal(double thickness, Triangle *face)
+void Mesh::extrude_face(Triangle *face, Point3* a, Point3 *b, Point3 *c)
 {
-    Point3 *a = new Point3(*face->a + face->normal_ * thickness);
-    Point3 *b = new Point3(*face->b + face->normal_ * thickness);
-    Point3 *c = new Point3(*face->c + face->normal_ * thickness);
-
     Triangle *face_1 = new Triangle(face->a, face->b, a, texture);
     Triangle *face_2 = new Triangle(face->b, b, a, texture);
     faces.push_back(face_1);
@@ -392,7 +385,77 @@ void Mesh::extrude_along_normal(double thickness, Triangle *face)
     face->a = a;
     face->b = b;
     face->c = c;
+
+    // Those are new points no need to check if they are already contained in the Mesh
     points.push_back(a);
     points.push_back(b);
     points.push_back(c);
+
+    Vector3 n = cross((*b - *a), (*c - *a));
+    n.normalize();
+    std::cout << "Same normal ? " << (face->normal_ == n) << std::endl;
+}
+
+void Mesh::extrude_along_normal(double thickness, Triangle *face)
+{
+    Point3 *a = new Point3(*face->a + face->normal_ * thickness);
+    Point3 *b = new Point3(*face->b + face->normal_ * thickness);
+    Point3 *c = new Point3(*face->c + face->normal_ * thickness);
+
+    extrude_face(face, a, b, c);
+}
+
+inline std::vector<Triangle *> Mesh::get_faces(const Point3 *point)
+{
+    std::vector<Triangle *> connected_faces;
+
+    for (auto face : faces)
+        if (face->a == point || face->b == point || face->c == point)
+            connected_faces.push_back(face);
+    
+    return connected_faces;
+}
+
+Vector3* Mesh::get_point_normal(const Point3 *point)
+{
+    std::vector<Triangle *> connected = get_faces(point);
+    Vector3 *normal = new Vector3(0, 0, 0);
+
+    for (const auto face : connected)
+        *normal += face->normal_;
+    
+    normal->normalize();
+    return normal;
+}
+
+void Mesh::extrude_along_points_normalized(double thickness, Triangle *face)
+{
+    Point3 *a = new Point3(*face->a + *get_point_normal(face->a) * thickness);
+    Point3 *b = new Point3(*face->b + *get_point_normal(face->b) * thickness);
+    Point3 *c = new Point3(*face->c + *get_point_normal(face->c) * thickness);
+
+    extrude_face(face, a, b, c);
+}
+
+
+
+void Mesh::extrude_along_points(double thickness, Triangle *face)
+{
+    Vector3 *normal_a = get_point_normal(face->a);
+    Vector3 *normal_b = get_point_normal(face->b);
+    Vector3 *normal_c = get_point_normal(face->c);
+
+    double dot_a = dot(face->normal_, *normal_a);
+    double dot_b = dot(face->normal_, *normal_b);
+    double dot_c = dot(face->normal_, *normal_c);
+
+    *normal_a /= dot_a; 
+    *normal_b /= dot_b; 
+    *normal_c /= dot_c; 
+
+    Point3 *a = new Point3(*face->a + *normal_a * thickness);
+    Point3 *b = new Point3(*face->b + *normal_b * thickness);
+    Point3 *c = new Point3(*face->c + *normal_c * thickness);
+
+    extrude_face(face, a, b, c);
 }

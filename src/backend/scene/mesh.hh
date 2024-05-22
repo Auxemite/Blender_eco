@@ -58,5 +58,12 @@ public:
     void rotate_axis(double angle);
     void rotate_axis(double angle, std::vector<int> indexes);
 
+    // Extrude
+    void extrude_face(Triangle *face, Point3* a, Point3 *b, Point3 *c);
     void extrude_along_normal(double thickness, Triangle *face);
+
+    std::vector<Triangle *> get_faces(const Point3 *point);
+    Vector3* get_point_normal(const Point3 *point);
+    void extrude_along_points(double thickness, Triangle *face);
+    void extrude_along_points_normalized(double thickness, Triangle *face);
 };
