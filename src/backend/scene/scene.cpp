@@ -17,7 +17,7 @@ Scene::Scene(int width, int height)
            e(0, 2, 0), f(0, 0, 2);
 
     // char *file = "truc_chelou.obj";
-    char *file = "test_cube.obj";
+    char *file = "truc_chelou.obj";
 
     Mesh *cube1 = new Mesh(file, Uniform_Texture(basic::texture::simple, basic::color::cyan));
     Mesh *cube2 = new Mesh(file, Uniform_Texture(basic::texture::simple, basic::color::yellow));
@@ -30,8 +30,9 @@ Scene::Scene(int width, int height)
 	// cube2->move_mesh({1, 0, 0});
     // cube2->rotate_axis(3.14159 / 4, {0, 1, 2, 3});
     // cube2->extrude(0.5, cube2->faces.at(0));
-    cube2->extrude_along_points_normalized(0.5, cube2->faces.at(0));
-    cube2->extrude_along_points(0.5, cube2->faces.at(0));
+    std::vector<Triangle *> faces = {cube2->faces};
+    cube2->extrude_along_points_normalized(1., faces);
+    //cube2->extrude_along_points_normalized(0.5, cube2->faces.at(1));
 
     lights.push_back(new Point_Light({0,5,1}, 10,
                                      basic::color::orange));

@@ -4,6 +4,11 @@
 
 #include "object.hh"
 
+struct Edge
+{
+    Point3 *a;
+    Point3 *b;
+};
 
 class Mesh
 {
@@ -42,7 +47,7 @@ public:
     //// Face
     bool add_face(Triangle *new_triangle);
     bool create_face(const Triangle& new_triangle);
-    bool create_face(Point3 *a, Point3 *b, Point3 *c);
+    bool create_face(Point3 *a, Point3 *b, Point3 *c, bool add_points);
 
     // Dimension
     //// All Mesh
@@ -61,9 +66,17 @@ public:
     // Extrude
     void extrude_face(Triangle *face, Point3* a, Point3 *b, Point3 *c);
     void extrude_along_normal(double thickness, Triangle *face);
+    void extrude_along_normal(double thickness, std::vector<Triangle *> faces);
 
     std::vector<Triangle *> get_faces(const Point3 *point);
     Vector3* get_point_normal(const Point3 *point);
     void extrude_along_points(double thickness, Triangle *face);
+    void extrude_along_points(double thickness, std::vector<Triangle *> faces);
     void extrude_along_points_normalized(double thickness, Triangle *face);
+    void extrude_along_points_normalized(double thickness, std::vector<Triangle *> faces);
+
+    std::vector<Edge> get_edges(const std::vector<Triangle *> faces_, std::vector<int> *count);
+    std::vector<Edge> get_border_edges(const std::vector<Triangle *> faces_);
+    std::vector<Point3 *> get_points_from_faces(const std::vector<Triangle *> faces_);
+    std::vector<Vector3 *> get_points_normal(const std::vector<Point3 *> point_list);
 };
