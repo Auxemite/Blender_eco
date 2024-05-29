@@ -17,22 +17,21 @@ Scene::Scene(int width, int height)
            e(0, 2, 0), f(0, 0, 2);
 
     // char *file = "truc_chelou.obj";
-    char *file = "truc_chelou.obj";
+    char *file = "test_extrude_nom.obj";
 
-    Mesh *cube1 = new Mesh(file, Uniform_Texture(basic::texture::simple, basic::color::cyan));
+    // Mesh *cube1 = new Mesh(file, Uniform_Texture(basic::texture::simple, basic::color::cyan));
     Mesh *cube2 = new Mesh(file, Uniform_Texture(basic::texture::simple, basic::color::yellow));
 
     // add_mesh(cube1);
     add_mesh(cube2);
 
-    // cube2->scale_mesh(0.5);
-    // cube2->move_mesh({1, 1, 1});
-	// cube2->move_mesh({1, 0, 0});
-    // cube2->rotate_axis(3.14159 / 4, {0, 1, 2, 3});
-    // cube2->extrude(0.5, cube2->faces.at(0));
-    std::vector<Triangle *> faces = {cube2->faces};
-    cube2->extrude_along_points_normalized(1., faces);
-    //cube2->extrude_along_points_normalized(0.5, cube2->faces.at(1));
+    // std::vector<Triangle *> faces = {cube2->faces.at(2), cube2->faces.at(3), cube2->faces.at(4), cube2->faces.at(5)};
+    // cube2->extrude_along_points_normalized(1., faces);
+    // cube2->scale_mesh(-1.);
+    std::vector<Triangle *> faces(cube2->faces.begin(), cube2->faces.end() - 4);
+    cube2->extrude_along_points_normalized(1, faces);
+
+    // cube2->to_dot_obj("test.obj");
 
     lights.push_back(new Point_Light({0,5,1}, 10,
                                      basic::color::orange));

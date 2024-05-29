@@ -257,28 +257,15 @@ bool Mesh::create_face(Point3 *a, Point3 *b, Point3 *c, bool add_points=true)
     return true;
 }
 
-// Dimension
-void Mesh::scale_mesh(double size)
+// Usefull
+Point3 get_mid(std::vector<Point3 *> points)
 {
-    if (size == 1.)
-        return;
-
     Point3 mid = (0, 0, 0);
     int nb_point = points.size();
     for (auto point : points)
         mid += *point / nb_point;
 
-    for (auto point : points)
-        *point = mid + (*point - mid) * size;
-}
-
-void Mesh::scale_mesh(double size, const Point3& from)
-{
-    if (size == 1.)
-        return;
-
-    for (auto point : points)
-        *point = from + (*point - from) * size;  
+    return mid;
 }
 
 inline std::vector<Point3 *> Mesh::get_points_from_indexes(const std::vector<int> indexes) const
@@ -298,6 +285,21 @@ inline std::vector<Point3 *> Mesh::get_points_from_indexes(const std::vector<int
     return point_list;
 }
 
+// Dimension
+void Mesh::scale_mesh(double size, const Point3& from)
+{
+    if (size == 1.)
+        return;
+
+    for (auto point : points)
+        *point = from + (*point - from) * size;  
+}
+
+void Mesh::scale_mesh(double size)
+{
+    scale_mesh(size, get_mid(points));
+}
+
 void Mesh::scale_selected(double size, const std::vector<int> indexes)
 {
     if (size == 1.)
@@ -305,10 +307,7 @@ void Mesh::scale_selected(double size, const std::vector<int> indexes)
 
     std::vector<Point3 *> point_list = get_points_from_indexes(indexes);
 
-    Point3 mid = (0, 0, 0);
-    int nb_point = point_list.size();
-    for (auto point : point_list)
-        mid += *point / nb_point;
+    Point3 mid = get_mid(point_list);
 
     for (auto point : point_list)
         *point = mid + (*point - mid) * size;
@@ -325,7 +324,7 @@ void Mesh::scale_selected(double size, const Point3& from, const std::vector<int
         *point = from + (*point - from) * size;
 }
 
-inline void rotate_point_axis(double angle, Point3 *point, const Point3& from)
+inline void rotate_point_axis_x(double angle, Point3 *point, const Point3& from)
 {
     // double x = point->x - from.x;
     double y = point->y - from.y;
@@ -337,24 +336,8 @@ inline void rotate_point_axis(double angle, Point3 *point, const Point3& from)
 
 }
 
-void Mesh::rotate_axis(double angle)
+void Mesh::rotate_axis_x(double angle, std::vector<Point3 *> point_list)
 {
-    Point3 mid = (0, 0, 0);
-    int nb_point = points.size();
-    for (auto point : points)
-        mid += *point / nb_point;
-
-    for (auto point : points)
-        rotate_point_axis(angle, point, mid);
-
-    // Update the normals of the faces
-    for (auto face : faces)
-        face->update_normal();
-}
-
-void Mesh::rotate_axis(double angle, std::vector<int> indexes)
-{
-    std::vector<Point3 *> point_list = get_points_from_indexes(indexes);
 
     Point3 mid = (0, 0, 0);
     int nb_point = point_list.size();
@@ -362,13 +345,24 @@ void Mesh::rotate_axis(double angle, std::vector<int> indexes)
         mid += *point / nb_point;
 
     for (auto point : point_list)
-        rotate_point_axis(angle, point, mid);
+        rotate_point_axis_x(angle, point, mid);
 
     // Update the normals of the faces; TODO only update changed faces
     for (auto face : faces)
         face->update_normal();
 }
 
+void Mesh::rotate_axis_x(double angle, std::vector<int> indexes)
+{
+    rotate_axis_x(angle, get_points_from_indexes(indexes));
+}
+
+void Mesh::rotate_axis_x(double angle)
+{
+    rotate_axis_x(angle, points);
+}
+
+/***********Extrude***********/
 void Mesh::extrude_face(Triangle *face, Point3* a, Point3 *b, Point3 *c)
 {
     // Create extruded faces
@@ -627,6 +621,78 @@ void Mesh::extrude_along_points_normalized(double thickness, std::vector<Triangl
     // Update remaining surrounded points (No need to create a new point neither to create extrude face)
     for (auto point : surrounded_points)
         *point += *get_point_normal(point) * thickness;
+
+    // Update faces' normal
+    for (auto face : faces_)
+        face->update_normal();
+}
+
+Triangle* get_face_from_point(std::vector<Triangle *> faces, Point3* point)
+{
+    for (auto face : faces)
+        if (face->a == point || face->b == point || face->c == point)
+            return face;
+        
+    std::cerr << "Error: get_face_from_point : Cannot find point in given faces\n";
+    return nullptr;
+}
+
+void Mesh::extrude_along_points(double thickness, std::vector<Triangle *> faces_)
+{
+    std::vector<Point3 *> surrounded_points = get_points_from_faces(faces_);
+    std::vector<Edge> border_edges = get_border_edges(faces_);
+    std::vector<Point3 *> border_points = get_points_from_edges(border_edges);
+    std::vector<Vector3 *> point_direction = get_points_normal(border_points);
+    std::vector<Point3 *> new_border_points;
+
+    // For all border points create the new extruded points and remove them from the surrounded points
+    for (int i = 0; i < border_points.size(); i++)
+    {
+        // Get a face connected to the point
+        Triangle* face = get_face_from_point(faces_, border_points.at(i));
+
+        // Calculating the difference between the face normal and the point normal
+        double dot_new_point = dot(face->normal_, *point_direction.at(i));
+        *point_direction.at(i) /= dot_new_point; 
+
+        // Shift the new point along its normal depending on the dot and the thickness
+        Point3 *new_point = new Point3(*border_points.at(i) + *point_direction.at(i) * thickness);
+
+        new_border_points.push_back(new_point);
+
+        int to_remove = get_index(surrounded_points, border_points.at(i));
+        surrounded_points.erase(surrounded_points.begin() + to_remove);
+    }
+
+    // Update points in faces that contains border edge
+    for (auto face : faces_)
+        for (int i = 0; i < new_border_points.size(); i++)
+            update_point(face, border_points.at(i), new_border_points.at(i));
+
+    // For all border edges create the new extruded faces
+    for (auto edge : border_edges)
+    {
+        Point3 *a_ext = new_border_points.at(get_index(border_points, edge.a));
+        Point3 *b_ext = new_border_points.at(get_index(border_points, edge.b));
+
+        create_face(edge.a, edge.b, a_ext);
+        create_face(edge.b, b_ext, a_ext);
+    }
+
+    // Update remaining surrounded points (No need to create a new point neither to create extrude face)
+    for (auto point : surrounded_points)
+    {
+        // Get a face connected to the point
+        Triangle* face = get_face_from_point(faces_, point);
+        Vector3 *point_normal = get_point_normal(point);
+
+        // Calculating the difference between the face normal and the point normal
+        double dot_new_point = dot(face->normal_, *point_normal);
+        *point_normal /= dot_new_point; 
+
+        // Update the point position by shifting it along its normal depending on the dot and the thickness
+        *point += *point_normal * thickness;
+    }
 
     // Update faces' normal
     for (auto face : faces_)

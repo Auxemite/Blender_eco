@@ -22,11 +22,6 @@ public:
     Mesh(std::vector<Point3 *> points_vec, std::vector<std::vector<int>> faces_vec, Uniform_Texture uniformMaterial_);
     Mesh(std::string filename, Uniform_Texture uniformMaterial_); //From .obj
 
-    // double ray_intersection(const Point3& cam_position, const Vector3& direction) override;
-    // Vector3 normal(const Point3& point) const override;
-    // Material get_material(const Point3& point) const override;
-    // Shape_data get_obj_data() const override;
-
     int get_point_index(const Point3* point) const;
     std::vector<int> get_face_index(const Triangle& face) const;
     void to_dot_obj(std::string filename); //To .obj
@@ -49,19 +44,27 @@ public:
     bool create_face(const Triangle& new_triangle);
     bool create_face(Point3 *a, Point3 *b, Point3 *c, bool add_points);
 
+    // Usefull
+    std::vector<Point3 *> get_points_from_indexes(const std::vector<int>) const;
+
     // Dimension
     //// All Mesh
     void scale_mesh(double size);
     void scale_mesh(double size, const Point3& from);
     //// Selected Points of the Mesh
-    std::vector<Point3 *> get_points_from_indexes(const std::vector<int>) const;
     void scale_selected(double size, const std::vector<int> indexes);
     void scale_selected(double size, const Point3& from, const std::vector<int> indexes);
 
     // Rotation
     //// All Mesh
-    void rotate_axis(double angle);
-    void rotate_axis(double angle, std::vector<int> indexes);
+    void rotate_axis_x(double angle);
+    void rotate_axis_y(double angle);
+    void rotate_axis_z(double angle);
+    //// Selection
+    void rotate_axis_x(double angle, std::vector<int> indexes);
+    void rotate_axis_x(double angle, std::vector<Point3 *> points);
+    void rotate_axis_y(double angle, std::vector<int> indexes);
+    void rotate_axis_z(double angle, std::vector<int> indexes);
 
     // Extrude
     void extrude_face(Triangle *face, Point3* a, Point3 *b, Point3 *c);
