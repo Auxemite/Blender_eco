@@ -22,6 +22,7 @@ class Shape
 {
     public:
     Uniform_Texture texture;
+    bool selected = false;
 
     virtual double ray_intersection(const Point3& p, const Vector3& v) = 0;
     virtual Vector3 normal(const Point3& point) const = 0;

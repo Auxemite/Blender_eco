@@ -24,12 +24,18 @@ void Intersection::throw_ray(const Scene& scene)
         throw_ray(new_object);
 
     for (auto mesh : scene.meshes)
+    {
+        // Check hit_box
+        if (mesh->hit_box.ray_intersection(origin, dir) <= 0)
+            continue;
+
         for (auto face : mesh->faces)
         {
             // Check backface culling
             if (dot(dir, face->normal_) < 0) 
                 throw_ray(face);
         }
+    }
 }
 
 Color Intersection::bg_color()

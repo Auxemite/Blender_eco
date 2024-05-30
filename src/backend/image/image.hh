@@ -11,6 +11,7 @@ class Image {
         int width = 0;
         int height = 0;
         std::vector<std::vector<Color>> data;
+        std::vector<std::vector<bool>> selected;
 
         Image()= default;
         Image(int width_, int height_);
@@ -21,6 +22,6 @@ class Image {
         void save_as_ppm(const std::string& pathname);
 };
 
-void render_thread(std::vector<std::vector<Color>>& data, int width, const Scene& scene,
+void render_thread(std::vector<std::vector<Color>>& data, std::vector<std::vector<bool>>& selected, int width, const Scene& scene,
                    const bool& photorealist, int start, int end);
 Image load_image(const std::string& path_name);

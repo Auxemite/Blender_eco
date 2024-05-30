@@ -16,6 +16,7 @@ public:
     Uniform_Texture texture;
     std::vector<Point3 *> points;
     std::vector<Triangle *> faces;
+    Sphere hit_box;
 
     Mesh() = default;
     Mesh(const Point3& a_, const Point3& b_, const Point3& c_, Uniform_Texture uniformMaterial_);
@@ -25,6 +26,12 @@ public:
     int get_point_index(const Point3* point) const;
     std::vector<int> get_face_index(const Triangle& face) const;
     void to_dot_obj(std::string filename); //To .obj
+
+    // Hit_box
+    void update_hit_box();
+    void update_hit_box(const Point3& point);
+    Point3 get_mid(std::vector<Point3 *> points);
+    Point3 get_mid();
 
     // Displacement
     //// Point

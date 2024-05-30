@@ -79,6 +79,7 @@ Mesh::Mesh(std::string filename, Uniform_Texture uniformMaterial_)
     }
 
     texture = uniformMaterial_;
+    update_hit_box();
 }
 
 int Mesh::get_point_index(const Point3* point) const
@@ -125,6 +126,34 @@ void Mesh::to_dot_obj(std::string filename)
     }
 }
 
+// Hit_box
+void Mesh::update_hit_box()
+{
+    Point3 mid = get_mid();
+
+    hit_box.center = mid;
+
+    double dist_max = 0.;
+
+    for (auto point : points)
+    {
+        double dist = (*point - mid).length();
+
+        if (dist > dist_max)
+            dist_max = dist;
+    }
+
+    hit_box.radius = dist_max;
+}
+
+void Mesh::update_hit_box(const Point3& point)
+{
+    double dist_hit_box = (hit_box.center - point).length();
+    if (dist_hit_box > hit_box.radius)
+        hit_box.radius = dist_hit_box;
+}
+
+// Displacement
 bool Mesh::move_point(int index, const Point3& new_pos)
 {
     try
@@ -135,6 +164,7 @@ bool Mesh::move_point(int index, const Point3& new_pos)
         point->z = new_pos.z;
         
         std::cout << "Point moved to " << new_pos << std::endl;
+        update_hit_box();
 
         return true;
     }
@@ -153,6 +183,7 @@ bool Mesh::translate_point(int index, const Point3& new_pos)
         *point += new_pos;
         
         std::cout << "Point translated by " << new_pos << std::endl;
+        update_hit_box(*point);
 
         return true;
     }
@@ -171,8 +202,9 @@ bool Mesh::move_mesh(const Point3& new_pos)
         Vector3 diff = new_pos - *origin; 
         for (auto point : points)
             *point += diff;
+        hit_box.center += diff;
 
-            std::cout << "Mesh moved to " << new_pos << std::endl;
+        std::cout << "Mesh moved to " << new_pos << std::endl;
 
         return true;
     }
@@ -187,6 +219,7 @@ bool Mesh::translate_mesh(const Point3& new_pos)
 {
     for (auto point : points)
         *point += new_pos;
+    hit_box.center += new_pos;
         
         std::cout << "Mesh translated by " << new_pos << std::endl;
     
@@ -199,6 +232,7 @@ bool Mesh::add_point(Point3 *new_point)
         if (point == new_point)
             return false;
 
+    update_hit_box(*new_point);
     points.push_back(new_point);
     return true;
 }
@@ -206,12 +240,17 @@ bool Mesh::add_point(Point3 *new_point)
 bool Mesh::create_point(const Point3& point)
 {
     points.push_back(new Point3(point));
+
+    update_hit_box(point);
     return true;
 }
 
 bool Mesh::create_point(double a, double b, double c)
 {
-    points.push_back(new Point3(a, b, c));
+    Point3 *new_point = new Point3(a, b, c);
+    points.push_back(new_point);
+
+    update_hit_box(*new_point);
     return true;
 }
     
@@ -258,7 +297,7 @@ bool Mesh::create_face(Point3 *a, Point3 *b, Point3 *c, bool add_points=true)
 }
 
 // Usefull
-Point3 get_mid(std::vector<Point3 *> points)
+Point3 Mesh::get_mid(std::vector<Point3 *> points)
 {
     Point3 mid = (0, 0, 0);
     int nb_point = points.size();
@@ -266,6 +305,11 @@ Point3 get_mid(std::vector<Point3 *> points)
         mid += *point / nb_point;
 
     return mid;
+}
+
+Point3 Mesh::get_mid()
+{
+    get_mid(points);
 }
 
 inline std::vector<Point3 *> Mesh::get_points_from_indexes(const std::vector<int> indexes) const
