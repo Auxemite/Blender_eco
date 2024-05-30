@@ -286,18 +286,23 @@ inline std::vector<Point3 *> Mesh::get_points_from_indexes(const std::vector<int
 }
 
 // Dimension
-void Mesh::scale_mesh(double size, const Point3& from)
+void Mesh::scale_selected(double size, const Point3& from, const std::vector<Point3 *> point_list)
 {
     if (size == 1.)
         return;
 
-    for (auto point : points)
-        *point = from + (*point - from) * size;  
+    for (auto point : point_list)
+        *point = from + (*point - from) * size;
+}
+
+void Mesh::scale_mesh(double size, const Point3& from)
+{
+    scale_selected(size, from, points);
 }
 
 void Mesh::scale_mesh(double size)
 {
-    scale_mesh(size, get_mid(points));
+    scale_selected(size, get_mid(points), points);
 }
 
 void Mesh::scale_selected(double size, const std::vector<int> indexes)
@@ -307,21 +312,12 @@ void Mesh::scale_selected(double size, const std::vector<int> indexes)
 
     std::vector<Point3 *> point_list = get_points_from_indexes(indexes);
 
-    Point3 mid = get_mid(point_list);
-
-    for (auto point : point_list)
-        *point = mid + (*point - mid) * size;
+    scale_selected(size, get_mid(point_list), point_list);
 }
 
 void Mesh::scale_selected(double size, const Point3& from, const std::vector<int> indexes)
 {
-    if (size == 1.)
-        return;
-
-    std::vector<Point3 *> point_list = get_points_from_indexes(indexes);
-
-    for (auto point : point_list)
-        *point = from + (*point - from) * size;
+    scale_selected(size, from, get_points_from_indexes(indexes));
 }
 
 inline void rotate_point_axis_x(double angle, Point3 *point, const Point3& from)
@@ -339,28 +335,57 @@ inline void rotate_point_axis_x(double angle, Point3 *point, const Point3& from)
 void Mesh::rotate_axis_x(double angle, std::vector<Point3 *> point_list)
 {
 
-    Point3 mid = (0, 0, 0);
-    int nb_point = point_list.size();
-    for (auto point : point_list)
-        mid += *point / nb_point;
+    Point3 mid = get_mid(point_list);
 
     for (auto point : point_list)
         rotate_point_axis_x(angle, point, mid);
 
-    // Update the normals of the faces; TODO only update changed faces
     for (auto face : faces)
         face->update_normal();
-}
-
-void Mesh::rotate_axis_x(double angle, std::vector<int> indexes)
-{
-    rotate_axis_x(angle, get_points_from_indexes(indexes));
 }
 
 void Mesh::rotate_axis_x(double angle)
 {
     rotate_axis_x(angle, points);
 }
+
+void Mesh::rotate_point_all_axis(double angle_x, double angle_y, double angle_z, Point3 *point, const Point3& from)
+{
+    double x = point->x - from.x;
+    double y = point->y - from.y;
+    double z = point->z - from.z;
+
+    double cos_x = std::cos(angle_x), sin_x = std::sin(angle_x);
+    double cos_y = std::cos(angle_y), sin_y = std::sin(angle_y);
+    double cos_z = std::cos(angle_z), sin_z = std::sin(angle_z);
+
+    point->x = x * (cos_y * cos_z) + y * (sin_x * sin_y * cos_z - cos_x * sin_z) + z * (cos_x * sin_y * cos_z + sin_x * sin_z) + from.x;
+    point->y = x * (cos_y * sin_z) + y * (sin_x * sin_y * sin_z + cos_x * cos_z) + z * (cos_x * sin_y * sin_z - sin_x * cos_z) + from.y;
+    point->z = x * (-sin_y)        + y * (sin_x * cos_y)                         + z * (cos_x * cos_y)                         + from.z;
+}
+
+void Mesh::rotate_all_axis(double angle_x, double angle_y, double angle_z, std::vector<Point3 *> point_list)
+{
+    Point3 mid = get_mid(point_list);
+
+    //// Modulo to simplify calculus
+    double pi = 3.14159;
+    angle_x -= static_cast<int>(angle_x / (2 * pi)) * (2 * pi);
+    angle_y -= static_cast<int>(angle_y / (2 * pi)) * (2 * pi);
+    angle_z -= static_cast<int>(angle_z / (2 * pi)) * (2 * pi);
+
+    for (auto point : point_list)
+        rotate_point_all_axis(angle_x, angle_y, angle_z, point, mid);
+
+    for (auto face : faces)
+        face->update_normal();
+}
+
+void Mesh::rotate_all_axis(double angle_x, double angle_y, double angle_z)
+{
+    rotate_all_axis(angle_x, angle_y, angle_z, points);
+}
+
 
 /***********Extrude***********/
 void Mesh::extrude_face(Triangle *face, Point3* a, Point3 *b, Point3 *c)
@@ -653,7 +678,7 @@ void Mesh::extrude_along_points(double thickness, std::vector<Triangle *> faces_
 
         // Calculating the difference between the face normal and the point normal
         double dot_new_point = dot(face->normal_, *point_direction.at(i));
-        *point_direction.at(i) /= dot_new_point; 
+        *point_direction.at(i) /= abs_(dot_new_point);
 
         // Shift the new point along its normal depending on the dot and the thickness
         Point3 *new_point = new Point3(*border_points.at(i) + *point_direction.at(i) * thickness);
@@ -688,7 +713,7 @@ void Mesh::extrude_along_points(double thickness, std::vector<Triangle *> faces_
 
         // Calculating the difference between the face normal and the point normal
         double dot_new_point = dot(face->normal_, *point_normal);
-        *point_normal /= dot_new_point; 
+        *point_normal /= abs_(dot_new_point); // Absolute value of the dot, the normal should always be positive
 
         // Update the point position by shifting it along its normal depending on the dot and the thickness
         *point += *point_normal * thickness;

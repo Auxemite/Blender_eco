@@ -54,17 +54,20 @@ public:
     //// Selected Points of the Mesh
     void scale_selected(double size, const std::vector<int> indexes);
     void scale_selected(double size, const Point3& from, const std::vector<int> indexes);
+    void scale_selected(double size, const Point3& from, const std::vector<Point3 *> point_list);
 
     // Rotation
     //// All Mesh
     void rotate_axis_x(double angle);
     void rotate_axis_y(double angle);
     void rotate_axis_z(double angle);
+    void rotate_point_all_axis(double angle_x, double angle_y, double angle_z, Point3 *point, const Point3& from);
     //// Selection
-    void rotate_axis_x(double angle, std::vector<int> indexes);
     void rotate_axis_x(double angle, std::vector<Point3 *> points);
-    void rotate_axis_y(double angle, std::vector<int> indexes);
-    void rotate_axis_z(double angle, std::vector<int> indexes);
+    void rotate_axis_y(double angle, std::vector<Point3 *> points);
+    void rotate_axis_z(double angle, std::vector<Point3 *> points);
+    void rotate_all_axis(double angle_x, double angle_y, double angle_z, std::vector<Point3 *> points);
+    void rotate_all_axis(double angle_x, double angle_y, double angle_z);
 
     // Extrude
     void extrude_face(Triangle *face, Point3* a, Point3 *b, Point3 *c);
