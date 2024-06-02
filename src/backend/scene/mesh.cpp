@@ -309,7 +309,7 @@ Point3 Mesh::get_mid(std::vector<Point3 *> points)
 
 Point3 Mesh::get_mid()
 {
-    get_mid(points);
+    return get_mid(points);
 }
 
 inline std::vector<Point3 *> Mesh::get_points_from_indexes(const std::vector<int> indexes) const

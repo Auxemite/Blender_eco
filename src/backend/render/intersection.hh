@@ -13,6 +13,8 @@ class Intersection
         Intersection(const Point3& origin_, const Vector3& dir_);
 
         void update(Point3 origin_, Vector3 dir_);
+        void fast_throw_ray(Shape *object);
+        void fast_throw_ray(const Scene& scene);
         void throw_ray(Shape *object);
         void throw_ray(const Scene& scene);
 

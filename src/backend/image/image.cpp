@@ -23,12 +23,14 @@ void render_thread(std::vector<std::vector<Color>>& data, std::vector<std::vecto
             auto pixel_center = camera.pixel_loc + (i * camera.pixel_u) + (j * camera.pixel_v);
             auto dir = (pixel_center - camera.center).norm();
             auto intersection = Intersection(camera.center, dir);
-            intersection.throw_ray(scene);
-            
-            if (photorealist)
+
+            if (photorealist) {
+                intersection.throw_ray(scene);
                 data[i][j] = intersection.ray_color(scene, 0);
+            }
             else
             {
+                intersection.fast_throw_ray(scene);
                 data[i][j] = intersection.fast_ray_color(scene);
                 if (intersection.object != nullptr && intersection.object->selected)
                     selected[i][j] = true;

@@ -3,6 +3,41 @@
 const Image& fond = load_image("../test/sunset.ppm");
 //const Image& fond = load_image("./test/retro.ppm");
 
+inline void Intersection::fast_throw_ray(Shape *shape)
+{
+    auto inter_scal = shape->ray_intersection(origin, dir);
+    if (inter_scal > 0)
+    {
+        Point3 new_inter_loc = origin + dir * inter_scal;
+        if (inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX)
+            || (new_inter_loc - origin).length() < (inter_loc - origin).length())
+        {
+            object = shape;
+            inter_loc = new_inter_loc;
+        }
+    }
+}
+
+void Intersection::fast_throw_ray(const Scene& scene)
+{
+    for (auto new_object : scene.objects)
+        throw_ray(new_object);
+
+    for (auto mesh : scene.meshes)
+    {
+        // Check hit_box
+        if (mesh->hit_box.ray_intersection(origin, dir) <= 0)
+            continue;
+
+        for (auto face : mesh->faces)
+        {
+            // Check backface culling
+            if (dot(dir, face->normal_) < 0)
+                throw_ray(face);
+        }
+    }
+}
+
 inline void Intersection::throw_ray(Shape *shape)
 {
     auto inter_scal = shape->ray_intersection(origin, dir);
@@ -20,9 +55,6 @@ inline void Intersection::throw_ray(Shape *shape)
 
 void Intersection::throw_ray(const Scene& scene)
 {
-    for (auto new_object : scene.objects)
-        throw_ray(new_object);
-
     for (auto mesh : scene.meshes)
     {
         // Check hit_box
