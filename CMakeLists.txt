@@ -41,6 +41,8 @@ add_executable(blender_eco main.cpp
         src/backend/scene/camera.cpp
         src/backend/scene/scene.hh
         src/backend/scene/scene.cpp
+        src/backend/scene/mesh.cpp
+        src/backend/scene/mesh.hh
         src/backend/utils/texture_material.hh
         src/backend/utils/texture_material.cpp
         src/backend/utils/utils.hh

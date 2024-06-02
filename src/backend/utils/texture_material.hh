@@ -20,7 +20,7 @@ class Texture_Material {
     virtual struct Material get_texture(const Point3& position) const = 0;
 };
 
-class Uniform_Texture : Texture_Material {
+class Uniform_Texture : public Texture_Material {
     public:
         struct Material mat;
 

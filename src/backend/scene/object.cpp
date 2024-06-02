@@ -95,7 +95,7 @@ double grille_intersection(const Point3& point_loc, double distance, const Vecto
 
 //    if (diff_1 > abs_(diff_1 - diff_2) && diff_2 > abs_(diff_1 - diff_2))
 //        return -1; // For beautiful pattern
-    auto diff = 0.6;
+    auto diff = 0.3;
     if (diff_1 * 20 + diff_2 > diff && diff_1 + diff_2 * 20 > diff)
         return -1;
 
@@ -128,11 +128,23 @@ Shape_data Plane::get_obj_data() const
 /////////////////// Triangle ///////////////////////////////
 Triangle::Triangle(const Point3& a_, const Point3& b_, const Point3& c_, Uniform_Texture uniformMaterial_)
 {
+    a = new Point3(a_);
+    b = new Point3(b_);
+    c = new Point3(c_);
+
+    normal_ = cross((*b - *a), (*c - *a));
+    normal_.normalize();
+
+    texture = uniformMaterial_;
+}
+
+Triangle::Triangle(Point3 *a_, Point3 *b_, Point3 *c_, Uniform_Texture uniformMaterial_)
+{
     a = a_;
     b = b_;
     c = c_;
 
-    normal_ = cross((b - a), (c - a));
+    normal_ = cross((*b - *a), (*c - *a));
     normal_.normalize();
 
     texture = uniformMaterial_;
@@ -140,8 +152,8 @@ Triangle::Triangle(const Point3& a_, const Point3& b_, const Point3& c_, Uniform
 
 double Triangle::ray_intersection(const Point3& cam_position, const Vector3& direction)
 {
-    Vector3 edge_1 = b - a;
-    Vector3 edge_2 = c - a;
+    Vector3 edge_1 = *b - *a;
+    Vector3 edge_2 = *c - *a;
     Vector3 normal_vect = direction * edge_2;
     double det = dot(edge_1, normal_vect);
 
@@ -150,7 +162,7 @@ double Triangle::ray_intersection(const Point3& cam_position, const Vector3& dir
         return -1.;
 
     double inv_det = 1.0 / det;
-    Vector3 s = cam_position - a;
+    Vector3 s = cam_position - *a;
     double u = inv_det * dot(s, normal_vect);
 
     if (u < 0 || u > 1)
@@ -174,5 +186,41 @@ Vector3 Triangle::normal(const Point3& point) const { return this->normal_; }
 Material Triangle::get_material(const Point3& point) const { return texture.get_texture(point); }
 Shape_data Triangle::get_obj_data() const
 {
-    return Shape_data(a, b, c, normal_);
+    return Shape_data(*a, *b, *c, normal_);
 };
+
+void Triangle::scale(double size)
+{
+    if (size == 1.)
+        return;
+
+    Point3 mid = *a/3 + *b/3 + *c/3;
+
+    Vector3 diff_a = *a - mid;   
+    Vector3 diff_b = *b - mid;   
+    Vector3 diff_c = *c - mid;
+
+    *a = mid + diff_a * size;   
+    *b = mid + diff_b * size;   
+    *c = mid + diff_c * size;   
+}
+
+void Triangle::scale(double size, const Point3& from)
+{
+    if (size == 1.)
+        return;
+
+    Vector3 diff_a = *a - from;
+    Vector3 diff_b = *b - from;   
+    Vector3 diff_c = *c - from;
+
+    *a = from + diff_a * size;   
+    *b = from + diff_b * size;   
+    *c = from + diff_c * size;   
+}
+
+void Triangle::update_normal()
+{
+    normal_ = cross((*b - *a), (*c - *a));
+    normal_.normalize();
+}

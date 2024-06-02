@@ -22,6 +22,7 @@ class Shape
 {
     public:
     Uniform_Texture texture;
+    bool selected = false;
 
     virtual double ray_intersection(const Point3& p, const Vector3& v) = 0;
     virtual Vector3 normal(const Point3& point) const = 0;
@@ -61,12 +62,19 @@ class Plane : public Shape {
 class Triangle : public Shape
 {
     public:
-    Point3 a, b, c;
+    Point3 *a, *b, *c;
     Vector3 normal_;
 
     Triangle(const Point3& a_, const Point3& b_, const Point3& c_, Uniform_Texture uniformMaterial_);
+    Triangle(Point3 *a_, Point3 *b_, Point3 *c_, Uniform_Texture uniformMaterial_);
     double ray_intersection(const Point3& cam_position, const Vector3& direction) override;
     Vector3 normal(const Point3& point) const override;
     Material get_material(const Point3& point) const override;
     Shape_data get_obj_data() const override;
+
+    // Usefull for mesh transformation
+    void scale(double size);
+    void scale(double size, const Point3& from);
+
+    void update_normal();
 };

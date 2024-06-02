@@ -3,20 +3,37 @@
 const Image& fond = load_image("../test/sunset.ppm");
 //const Image& fond = load_image("./test/retro.ppm");
 
+inline void Intersection::throw_ray(Shape *shape)
+{
+    auto inter_scal = shape->ray_intersection(origin, dir);
+    if (inter_scal > 0)
+    {
+        Point3 new_inter_loc = origin + dir * inter_scal;
+        if (inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX)
+            || (new_inter_loc - origin).length() < (inter_loc - origin).length())
+        {
+            object = shape;
+            inter_loc = new_inter_loc;
+        }
+    }
+}
+
 void Intersection::throw_ray(const Scene& scene)
 {
     for (auto new_object : scene.objects)
+        throw_ray(new_object);
+
+    for (auto mesh : scene.meshes)
     {
-        auto inter_scal = new_object->ray_intersection(origin, dir);
-        if (inter_scal > 0)
+        // Check hit_box
+        if (mesh->hit_box.ray_intersection(origin, dir) <= 0)
+            continue;
+
+        for (auto face : mesh->faces)
         {
-            Point3 new_inter_loc = origin + dir * inter_scal;
-            if (inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX)
-                || (new_inter_loc - origin).length() < (inter_loc - origin).length())
-            {
-                object = new_object;
-                inter_loc = new_inter_loc;
-            }
+            // Check backface culling
+            if (dot(dir, face->normal_) < 0) 
+                throw_ray(face);
         }
     }
 }
@@ -55,17 +72,15 @@ Color Intersection::fast_ray_color(const Scene& scene)
         return basic::color::background_blue;
 
     Vector3 normal = object->normal(inter_loc);
+    // double dot_angle = dot((scene.camera.lookat - scene.camera.center).norm(), normal);
     double dot_angle = dot(dir, normal);
-    bool selected = true;
-    if (abs_(dot_angle) <= 0.15 && selected)
-        return basic::color::orange;
-        
+    
     return object->texture.mat.color * (1 - dot_angle);
 }
 
 Color Intersection::ray_color(const Scene& scene, int recursive)
 {
-    if (recursive > 2)
+    if (recursive > 3)
         return basic::color::black;
 
     if (inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX))

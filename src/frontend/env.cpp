@@ -75,9 +75,9 @@ void Env::move_x(double value) {
     else if (obj_type == "class Plane")
         ((Plane*) scene.objects[focus_index])->origin.x += value;
     else if (obj_type == "class Triangle") {
-        ((Triangle *) scene.objects[focus_index])->a.x += value;
-        ((Triangle *) scene.objects[focus_index])->b.x += value;
-        ((Triangle *) scene.objects[focus_index])->c.x += value;
+        // ((Triangle *) scene.objects[focus_index])->a.x += value;
+        // ((Triangle *) scene.objects[focus_index])->b.x += value;
+        // ((Triangle *) scene.objects[focus_index])->c.x += value;
     }
     fast_render();
 }
@@ -89,9 +89,9 @@ void Env::move_y(double value) {
     else if (obj_type == "class Plane")
         ((Plane*) scene.objects[focus_index])->origin.y += value;
     else if (obj_type == "class Triangle") {
-        ((Triangle *) scene.objects[focus_index])->a.y += value;
-        ((Triangle *) scene.objects[focus_index])->b.y += value;
-        ((Triangle *) scene.objects[focus_index])->c.y += value;
+        // ((Triangle *) scene.objects[focus_index])->a.y += value;
+        // ((Triangle *) scene.objects[focus_index])->b.y += value;
+        // ((Triangle *) scene.objects[focus_index])->c.y += value;
     }
     fast_render();
 }
@@ -103,9 +103,9 @@ void Env::move_z(double value) {
     else if (obj_type == "class Plane")
         ((Plane*) scene.objects[focus_index])->origin.z += value;
     else if (obj_type == "class Triangle") {
-        ((Triangle *) scene.objects[focus_index])->a.z += value;
-        ((Triangle *) scene.objects[focus_index])->b.z += value;
-        ((Triangle *) scene.objects[focus_index])->c.z += value;
+        // ((Triangle *) scene.objects[focus_index])->a.z += value;
+        // ((Triangle *) scene.objects[focus_index])->b.z += value;
+        // ((Triangle *) scene.objects[focus_index])->c.z += value;
     }
     fast_render();
 }
