@@ -30,17 +30,17 @@ void App::Windows()
     if (ImGui::Button("Render")) { env.render(); }
 
     static float c1 = 1.00f;
-    if (ImGui::Button("Move Camera X")) { env.move_camera(); }
+    if (ImGui::Button("Move Camera X")) { env.move_camera_x(PI / 8); }
     ImGui::SameLine();
     ImGui::DragFloat("Cam X", &c1, 0.005f);
 
     static float c2 = 1.00f;
-    if (ImGui::Button("Move Camera Y")) { env.move_camera(); }
+    if (ImGui::Button("Move Camera Y")) { env.move_camera_y(PI / 8); }
     ImGui::SameLine();
     ImGui::DragFloat("Cam Y", &c2, 0.005f);
 
     static float c3 = 1.00f;
-    if (ImGui::Button("Move Camera Z")) { env.move_camera(); }
+    if (ImGui::Button("Move Camera Z")) { env.move_camera_z(PI / 8); }
     ImGui::SameLine();
     ImGui::DragFloat("Cam Z", &c3, 0.005f);
 

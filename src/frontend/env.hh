@@ -23,11 +23,12 @@ class Env {
     explicit Env(const char* filename);
 
     void update_texture();
-    [[nodiscard]] static unsigned char* convertDataToGLRGB(const std::vector<std::vector<Color>>& data, int width, int height);
 
     void render();
     void fast_render();
-    void move_camera();
+    void move_camera_x(double angle);
+    void move_camera_y(double angle);
+    void move_camera_z(double angle);
     void move_x(double value);
     void move_y(double value);
     void move_z(double value);

@@ -47,10 +47,30 @@ void Env::fast_render() {
 //    update_texture();
 }
 
-void Env::move_camera() {
+void Env::move_camera_x(double angle) {
     Point3 p = scene.camera.center;
-    double angle = PI / 8;
-    scene.camera.update_cam(Point3(cos(angle) * p.x - sin(angle) * p.z, 0, sin(angle) * p.x + cos(angle) * p.z) + Point3(0, 5, 0));
+    double x_ = 0;
+    double y_ = sin(angle) * p.z + cos(angle) * p.y;
+    double z_ = cos(angle) * p.z - sin(angle) * p.y;
+    scene.camera.update_cam(Point3(x_, y_, z_) + Point3(p.x, 0, 0));
+    fast_render();
+}
+
+void Env::move_camera_y(double angle) {
+    Point3 p = scene.camera.center;
+    double x_ = cos(angle) * p.x - sin(angle) * p.z;
+    double y_ = 0;
+    double z_ = sin(angle) * p.x + cos(angle) * p.z;
+    scene.camera.update_cam(Point3(x_, y_, z_) + Point3(0, p.y, 0));
+    fast_render();
+}
+
+void Env::move_camera_z(double angle) {
+    Point3 p = scene.camera.center;
+    double x_ = sin(angle) * p.y + cos(angle) * p.x;
+    double y_ = cos(angle) * p.y - sin(angle) * p.x;
+    double z_ = 0;
+    scene.camera.update_cam(Point3(x_, y_, z_) + Point3(0, 0, p.z));
     fast_render();
 }
 

@@ -39,6 +39,6 @@ namespace basic
         static struct Texture basic = {0.5, 0.5, 1};
         static struct Texture simple = {0.9, 0.1, 1};
         static struct Texture plastic = {0.8, 0.5, 10};
-        static struct Texture metal = {0.3, 1, 50};
+        static struct Texture metal = {0, 1, 150};
     }
 }

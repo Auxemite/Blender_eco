@@ -18,7 +18,7 @@ Scene::Scene(int width, int height)
 
     // char *file = "truc_chelou.obj";
     char *file = "../test/test_extrude_nom.obj";
-    Mesh *cube2 = new Mesh(file, Uniform_Texture(basic::texture::simple, basic::color::yellow));
+    Mesh *cube2 = new Mesh(file, Uniform_Texture(basic::texture::metal, basic::color::yellow));
     add_mesh(cube2);
     double pi = 3.14159;
     std::vector<Triangle *> faces(cube2->faces.begin(), cube2->faces.end() - 4.0);
@@ -33,7 +33,7 @@ Scene::Scene(int width, int height)
                                      basic::color::orange));
 
     camera = Camera(
-            {0, 1, -5},
+            {0, 5, -5},
             {0, 0, 0},
             width,
             height);
