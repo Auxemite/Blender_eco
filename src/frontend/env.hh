@@ -14,6 +14,7 @@
 class Env {
     public:
     GLuint render_image{};
+    bool photorealist = false;
     Scene scene;
     Image image;
     Shape_data *focus_obj;
@@ -22,10 +23,9 @@ class Env {
     Env();
     explicit Env(const char* filename);
 
-    void update_texture();
+    void create_texture();
 
     void render();
-    void fast_render();
     void move_camera_x(double angle);
     void move_camera_y(double angle);
     void move_camera_z(double angle);

@@ -8,19 +8,19 @@ Env::Env() {
     image = Image(default_width, default_height);
     scene = Scene(image.width, image.height);
     focus_obj = nullptr;
-    fast_render();
-    update_texture();
+    render();
+    create_texture();
 }
 
 Env::Env(const char* filename) {
     image = load_image(filename);
     scene = Scene(image.width, image.height);
     focus_obj = nullptr;
-    fast_render();
-    update_texture();
+    render();
+    create_texture();
 }
 
-void Env::update_texture() {
+void Env::create_texture() {
     unsigned char* image_data = image.char_data;
     GLuint image_texture;
     glGenTextures(1, &image_texture);
@@ -36,15 +36,8 @@ void Env::update_texture() {
 }
 
 void Env::render() {
-    image.render(scene, true);
+    image.render(scene, photorealist);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, image.width, image.height, GL_RGB, GL_UNSIGNED_BYTE, image.char_data);
-//    update_texture();
-}
-
-void Env::fast_render() {
-    image.render(scene, false);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, image.width, image.height, GL_RGB, GL_UNSIGNED_BYTE, image.char_data);
-//    update_texture();
 }
 
 void Env::move_camera_x(double angle) {
@@ -53,7 +46,7 @@ void Env::move_camera_x(double angle) {
     double y_ = sin(angle) * p.z + cos(angle) * p.y;
     double z_ = cos(angle) * p.z - sin(angle) * p.y;
     scene.camera.update_cam(Point3(x_, y_, z_) + Point3(p.x, 0, 0));
-    fast_render();
+    render();
 }
 
 void Env::move_camera_y(double angle) {
@@ -62,7 +55,7 @@ void Env::move_camera_y(double angle) {
     double y_ = 0;
     double z_ = sin(angle) * p.x + cos(angle) * p.z;
     scene.camera.update_cam(Point3(x_, y_, z_) + Point3(0, p.y, 0));
-    fast_render();
+    render();
 }
 
 void Env::move_camera_z(double angle) {
@@ -71,7 +64,7 @@ void Env::move_camera_z(double angle) {
     double y_ = cos(angle) * p.y - sin(angle) * p.x;
     double z_ = 0;
     scene.camera.update_cam(Point3(x_, y_, z_) + Point3(0, 0, p.z));
-    fast_render();
+    render();
 }
 
 void Env::move_x(double value) {
@@ -85,7 +78,7 @@ void Env::move_x(double value) {
         // ((Triangle *) scene.objects[focus_index])->b.x += value;
         // ((Triangle *) scene.objects[focus_index])->c.x += value;
     }
-    fast_render();
+    render();
 }
 
 void Env::move_y(double value) {
@@ -99,7 +92,7 @@ void Env::move_y(double value) {
         // ((Triangle *) scene.objects[focus_index])->b.y += value;
         // ((Triangle *) scene.objects[focus_index])->c.y += value;
     }
-    fast_render();
+    render();
 }
 
 void Env::move_z(double value) {
@@ -113,7 +106,7 @@ void Env::move_z(double value) {
         // ((Triangle *) scene.objects[focus_index])->b.z += value;
         // ((Triangle *) scene.objects[focus_index])->c.z += value;
     }
-    fast_render();
+    render();
 }
 
 void Env::grow(double value) {
@@ -122,7 +115,7 @@ void Env::grow(double value) {
         ((Sphere*) scene.objects[focus_index])->radius += value;
 //    else if (obj_type == "class Triangle")
 //        // TODO
-    fast_render();
+    render();
 }
 
 void Env::shrink(double value) {
@@ -131,7 +124,7 @@ void Env::shrink(double value) {
         ((Sphere*) scene.objects[focus_index])->radius -= value;
 //    else if (obj_type == "class Triangle")
 //        // TODO
-    fast_render();
+    render();
 }
 
 void Env::change_focus(int index, Shape *shape) {

@@ -27,22 +27,33 @@ void App::Windows()
     // env.image.render(env.scene, true);
     // env.image.save_as_ppm("test.ppm");
 
-    if (ImGui::Button("Render")) { env.render(); }
+    if (env.photorealist) {
+        if (ImGui::Button("Desactivate Render")) {
+            env.photorealist = false;
+            env.render();
+        }
+    }
+    else {
+        if (ImGui::Button("Activate Render")) {
+            env.photorealist = true;
+            env.render();
+        }
+    }
 
-    static float c1 = 1.00f;
+    static float c1 = 45.00f;
     if (ImGui::Button("Move Camera X")) { env.move_camera_x(PI / 8); }
     ImGui::SameLine();
-    ImGui::DragFloat("Cam X", &c1, 0.005f);
+    ImGui::DragFloat("Cam X", &c1, 0.05f);
 
-    static float c2 = 1.00f;
+    static float c2 = 45.00f;
     if (ImGui::Button("Move Camera Y")) { env.move_camera_y(PI / 8); }
     ImGui::SameLine();
-    ImGui::DragFloat("Cam Y", &c2, 0.005f);
+    ImGui::DragFloat("Cam Y", &c2, 0.05f);
 
-    static float c3 = 1.00f;
+    static float c3 = 45.00f;
     if (ImGui::Button("Move Camera Z")) { env.move_camera_z(PI / 8); }
     ImGui::SameLine();
-    ImGui::DragFloat("Cam Z", &c3, 0.005f);
+    ImGui::DragFloat("Cam Z", &c3, 0.05f);
 
     static float v1 = 1.00f;
     if (ImGui::Button("Move X")) { env.move_x(v1); }
