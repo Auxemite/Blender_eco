@@ -16,7 +16,7 @@ class Env {
     GLuint render_image{};
     Scene scene;
     Image image;
-    Shape_data focus_obj;
+    Shape_data *focus_obj;
     int focus_index = 1;
 
     Env();

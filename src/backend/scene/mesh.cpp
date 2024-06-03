@@ -3,6 +3,8 @@
 #include <fstream>
 #include <strstream>
 #include <unordered_map>
+#include <filesystem>
+namespace fs = std::filesystem;
 
 Mesh::Mesh(const Point3& a_, const Point3& b_, const Point3& c_, Uniform_Texture uniformMaterial_)
 {
@@ -34,9 +36,12 @@ Mesh::Mesh(std::vector<Point3 *> points_vec, std::vector<std::vector<int>> faces
 Mesh::Mesh(std::string filename, Uniform_Texture uniformMaterial_)
 {
     // Open file as stream
+    auto path = fs::current_path();
     std::ifstream f(filename);
-    if (!f.is_open())
+    if (!f.is_open()) {
+        //std::cout << "Error File " << filename << " could not be opened";
         return;
+    }
 
     Point3 p;
     char skip;
@@ -766,4 +771,5 @@ void Mesh::extrude_along_points(double thickness, std::vector<Triangle *> faces_
     // Update faces' normal
     for (auto face : faces_)
         face->update_normal();
+    update_hit_box();
 }

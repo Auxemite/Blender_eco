@@ -17,28 +17,15 @@ Scene::Scene(int width, int height)
            e(0, 2, 0), f(0, 0, 2);
 
     // char *file = "truc_chelou.obj";
-    char *file = "test_extrude_nom.obj";
-
-    // Mesh *cube1 = new Mesh(file, Uniform_Texture(basic::texture::simple, basic::color::cyan));
-//    Mesh *cube2 = new Mesh(file, Uniform_Texture(basic::texture::simple, basic::color::yellow));
-
-    // add_mesh(cube1);
-//    add_mesh(cube2);
-
+    char *file = "../test/test_extrude_nom.obj";
+    Mesh *cube2 = new Mesh(file, Uniform_Texture(basic::texture::simple, basic::color::yellow));
+    add_mesh(cube2);
     double pi = 3.14159;
-    // cube2->rotate_all_axis(pi / 4., 0, 0);
-
-    // std::vector<Triangle *> faces = {cube2->faces.at(2), cube2->faces.at(3), cube2->faces.at(4), cube2->faces.at(5)};
-    // cube2->extrude_along_points_normalized(1., faces);
-    // cube2->scale_mesh(-1.);
-//    std::vector<Triangle *> faces(cube2->faces.begin(), cube2->faces.end() - 4);
-    // std::vector<Triangle *> faces(cube2->faces.begin(), cube2->faces.end());
+    std::vector<Triangle *> faces(cube2->faces.begin(), cube2->faces.end() - 4.0);
     cube2->extrude_along_points(0.25, faces);
-    // cube2->rotate_all_axis(8, 1, 4);
-
-//    faces = std::vector<Triangle *>(cube2->faces.begin() + 4, cube2->faces.end() - 4);
-//    for (auto face : faces)
-//        face->selected = true;
+    faces = std::vector<Triangle *>(cube2->faces.begin() + 4.0, cube2->faces.end() - 4.0);
+    for (auto face : faces)
+        face->selected = true;
 
     // cube2->to_dot_obj("test.obj");
 

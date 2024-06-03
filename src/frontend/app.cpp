@@ -107,20 +107,23 @@ void App::TreeNode() {
 }
 
 void App::PrintObjInfo() {
-    string obj_type = env.focus_obj.obj_type;
-    string text = "type : " + obj_type + "\n";
-    if (obj_type == "Sphere")
-        text += "Center : " + env.focus_obj.origin.to_string() + "\n"
-                + "Radius : " + std::to_string(env.focus_obj.radius);
-    if (obj_type == "Plane")
-        text += "Origin : " + env.focus_obj.origin.to_string() + "\n"
-                + "Normal : " + env.focus_obj.normal_.to_string() + "\n"
-                + "Grille : " + std::to_string(env.focus_obj.grille);
-    if (obj_type == "Triangle")
-        text += "A : " + env.focus_obj.a.to_string() + "\n"
-                "B : " + env.focus_obj.b.to_string() + "\n"
-                "C : " + env.focus_obj.c.to_string() + "\n"
-                + "Normal : " + env.focus_obj.normal_.to_string();
+    if (env.focus_obj != nullptr) {
+        string obj_type = env.focus_obj->obj_type;
+        string text = "type : " + obj_type + "\n";
+        if (obj_type == "Sphere")
+            text += "Center : " + env.focus_obj->origin.to_string() + "\n"
+                    + "Radius : " + std::to_string(env.focus_obj->radius);
+        if (obj_type == "Plane")
+            text += "Origin : " + env.focus_obj->origin.to_string() + "\n"
+                    + "Normal : " + env.focus_obj->normal_.to_string() + "\n"
+                    + "Grille : " + std::to_string(env.focus_obj->grille);
+        if (obj_type == "Triangle")
+            text += "A : " + env.focus_obj->a.to_string() + "\n"
+                                                            "B : " + env.focus_obj->b.to_string() + "\n"
+                                                                                                    "C : " +
+                    env.focus_obj->c.to_string() + "\n"
+                    + "Normal : " + env.focus_obj->normal_.to_string();
 //    if (obj_type == "Mesh")
-    ImGui::Text(text.c_str());
+        ImGui::Text(text.c_str());
+    }
 }
