@@ -42,26 +42,29 @@ void Env::render() {
 
 void Env::move_camera_x(double angle) {
     Point3 p = scene.camera.center;
+    double angle_d = PI * angle / 180.0;
     double x_ = 0;
-    double y_ = sin(angle) * p.z + cos(angle) * p.y;
-    double z_ = cos(angle) * p.z - sin(angle) * p.y;
+    double y_ = round(sin(angle_d) * p.z + cos(angle_d) * p.y);
+    double z_ = round(cos(angle_d) * p.z - sin(angle_d) * p.y);
     scene.camera.update_cam(Point3(x_, y_, z_) + Point3(p.x, 0, 0));
     render();
 }
 
 void Env::move_camera_y(double angle) {
     Point3 p = scene.camera.center;
-    double x_ = cos(angle) * p.x - sin(angle) * p.z;
+    double angle_d = PI * angle / 180.0;
+    double x_ = round(cos(angle_d) * p.x - sin(angle_d) * p.z);
     double y_ = 0;
-    double z_ = sin(angle) * p.x + cos(angle) * p.z;
+    double z_ = round(sin(angle_d) * p.x + cos(angle_d) * p.z);
     scene.camera.update_cam(Point3(x_, y_, z_) + Point3(0, p.y, 0));
     render();
 }
 
 void Env::move_camera_z(double angle) {
     Point3 p = scene.camera.center;
-    double x_ = sin(angle) * p.y + cos(angle) * p.x;
-    double y_ = cos(angle) * p.y - sin(angle) * p.x;
+    double angle_d = PI * angle / 180.0;
+    double x_ = round(sin(angle_d) * p.y + cos(angle_d) * p.x);
+    double y_ = round(cos(angle_d) * p.y - sin(angle_d) * p.x);
     double z_ = 0;
     scene.camera.update_cam(Point3(x_, y_, z_) + Point3(0, 0, p.z));
     render();

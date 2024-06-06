@@ -40,20 +40,20 @@ void App::Windows()
         }
     }
 
-    static float c1 = 45.00f;
-    if (ImGui::Button("Move Camera X")) { env.move_camera_x(PI / 8); }
+    static int c1 = 15;
+    if (ImGui::Button("Move Camera X")) { env.move_camera_x(c1); }
     ImGui::SameLine();
-    ImGui::DragFloat("Cam X", &c1, 0.05f);
+    ImGui::DragInt("Cam X", &c1, 1);
 
-    static float c2 = 45.00f;
-    if (ImGui::Button("Move Camera Y")) { env.move_camera_y(PI / 8); }
+    static int c2 = 15;
+    if (ImGui::Button("Move Camera Y")) { env.move_camera_y(c2); }
     ImGui::SameLine();
-    ImGui::DragFloat("Cam Y", &c2, 0.05f);
+    ImGui::DragInt("Cam Y", &c2, 1);
 
-    static float c3 = 45.00f;
-    if (ImGui::Button("Move Camera Z")) { env.move_camera_z(PI / 8); }
+    static int c3 = 15;
+    if (ImGui::Button("Move Camera Z")) { env.move_camera_z(c3); }
     ImGui::SameLine();
-    ImGui::DragFloat("Cam Z", &c3, 0.05f);
+    ImGui::DragInt("Cam Z", &c3, 1);
 
     static float v1 = 1.00f;
     if (ImGui::Button("Move X")) { env.move_x(v1); }
