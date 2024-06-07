@@ -17,7 +17,8 @@ class Env {
     bool photorealist = false;
     Scene scene;
     Image image;
-    Shape_data *focus_obj;
+//    Shape_data *focus_obj;
+    Mesh *focus_mesh;
     int focus_index = 1;
 
     Env();
@@ -32,7 +33,10 @@ class Env {
     void move_x(double value);
     void move_y(double value);
     void move_z(double value);
-    void grow(double value);
-    void shrink(double value);
-    void change_focus(int index, Shape *shape);
+    void rotate_x(double angle);
+    void rotate_y(double angle);
+    void rotate_z(double angle);
+    void scale(double value);
+//    void change_focus(int index, Shape *shape);
+    void change_focus(int index, Mesh *mesh);
 };

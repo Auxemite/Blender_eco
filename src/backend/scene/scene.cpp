@@ -8,9 +8,9 @@ Scene::Scene(int width, int height)
                                 Uniform_Texture(basic::texture::basic, basic::color::dark_gray),
                                 true));
 
-    objects.push_back(new Sphere(
-            {0,0,0}, 1,
-            Uniform_Texture(basic::texture::simple, basic::color::blue)));
+//    objects.push_back(new Sphere(
+//            {0,0,0}, 1,
+//            Uniform_Texture(basic::texture::simple, basic::color::blue)));
 
     // Tests
     Point3 a(1, 0, 0), b(0, 1, 0), c(0, 0, 1), d(2, 0, 0),

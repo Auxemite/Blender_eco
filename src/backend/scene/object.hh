@@ -1,11 +1,12 @@
 #pragma once
 
 #include <cmath>
+#include <vector>
 #include "../utils/texture_material.hh"
 #include "../utils/vector3.hh"
 
 class Shape_data {
-    public:
+public:
     Point3 origin;
     double radius{};
     Vector3 normal_;
