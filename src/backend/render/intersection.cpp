@@ -21,7 +21,7 @@ inline void Intersection::fast_throw_ray(Shape *shape)
 void Intersection::fast_throw_ray(const Scene& scene)
 {
     for (auto object : scene.objects)
-        throw_ray(object);
+        fast_throw_ray(object);
 
     for (auto mesh : scene.meshes)
     {
@@ -33,7 +33,7 @@ void Intersection::fast_throw_ray(const Scene& scene)
         {
             // Check backface culling
             if (dot(dir, face->normal_) < 0)
-                throw_ray(face);
+                fast_throw_ray(face);
         }
     }
 }
@@ -104,11 +104,12 @@ Color Intersection::fast_ray_color(const Scene& scene)
         return basic::color::background_blue;
 
     Vector3 normal = object->normal(inter_loc);
-    // double dot_angle = dot((scene.camera.lookat - scene.camera.center).norm(), normal);
-    double dot_angle = dot(scene.camera.center - scene.camera.lookat, normal);
-    //object->texture.mat.color
-
-    return Color(0.9, 0.9, 0.9) * (dot_angle);
+//    double dot_angle = dot(dir, normal);
+    double dot_angle = dot((scene.camera.lookat - scene.camera.center).norm(), normal);
+    dot_angle = dot_angle / 2.0 + 0.5;
+    if (object->selected)
+        return Color(2, 2, 0) * (1 - dot_angle);
+    return Color(0.7, 0.7, 0.7) * (1 - dot_angle);
 }
 
 Color Intersection::ray_color(const Scene& scene, int recursive)

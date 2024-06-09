@@ -46,8 +46,8 @@ Scene::Scene(int width, int height)
             width,
             height);
 
-    for (int i = 0; i < 1280; i++)
-            select(i, 720/2);
+//    for (int i = 0; i < 1280; i++)
+//            select(i, 720/2);
 }
 
 Scene::Scene(std::vector<Shape*> sphere_, std::vector<Light*> lights_, Camera camera_)

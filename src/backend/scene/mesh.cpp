@@ -352,6 +352,7 @@ void Mesh::scale_mesh(double size, const Point3& from)
 void Mesh::scale_mesh(double size)
 {
     scale_selected(size, get_mid(points), points);
+    update_hit_box();
 }
 
 void Mesh::scale_selected(double size, const std::vector<int> indexes)

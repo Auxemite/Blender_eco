@@ -124,9 +124,15 @@ void Env::rotate_z(double angle) {
 //}
 
 void Env::change_focus(int index, Mesh *mesh) {
+    for (auto & face : focus_mesh->faces) {
+        face->selected = false;
+    }
     if (index >= 0 && index < scene.meshes.size()) {
         focus_index = index;
         focus_mesh = mesh;
+    }
+    for (auto & face : mesh->faces) {
+        face->selected = true;
     }
     render();
 }

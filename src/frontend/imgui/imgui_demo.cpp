@@ -325,7 +325,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
         ImGui::ShowAboutWindow(&show_tool_about);
 
     // Demonstrate the various window flags. Typically you would just use the default!
-    static bool no_titlebar = false;
+    static bool no_titlebar = true;
     static bool no_scrollbar = false;
     static bool no_menu = false;
     static bool no_move = false;

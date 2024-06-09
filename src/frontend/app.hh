@@ -10,7 +10,7 @@ class App {
     explicit App(const char* filename);
 
     void Windows();
-    void TreeMesh(Mesh *mesh);
+    void TreeMesh(Mesh *mesh, int index);
     void TreeNode();
     void MeshOptions();
     void PrintObjInfo();

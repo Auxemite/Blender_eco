@@ -71,32 +71,32 @@ void Image::render(const Scene& scene, const bool& photorealist)
 
     if (!photorealist) 
     {
-        for (size_t i = 1; i < width - 1; i++)
-            for (size_t j = 1; j < height - 1; j++)
-            {
-                if (shapes[i][j] != nullptr)
-                {
-                    if ((shapes[i - 1][j - 1] != shapes[i][j]) && (shapes[i - 1][j - 1] != nullptr) ||
-                        (shapes[i + 1][j - 1] != shapes[i][j]) && (shapes[i + 1][j - 1] != nullptr) ||
-                        (shapes[i - 1][j + 1] != shapes[i][j]) && (shapes[i - 1][j + 1] != nullptr) ||
-                        (shapes[i + 1][j + 1] != shapes[i][j]) && (shapes[i + 1][j + 1] != nullptr))
-                        data[i][j] = Color(0.1, 0.1, 0.1);
-                }
-            }
-
-        for (size_t i = 1; i < width - 1; i++)
-            for (size_t j = 1; j < height - 1; j++)
-                if (shapes[i][j] != nullptr && shapes[i][j]->selected)
-                    for (int x = 0; x < 3; x++)
-                        for (int y = 0; y < 3; y++)
-                        {
-                            if (!shapes[i + x - 1][j + y -1] || !shapes[i + x - 1][j + y - 1]->selected)
-                                data[i + x - 1][j + y - 1] = Color(basic::color::cyan);
-                        }
-
-        shapes = std::vector<std::vector<Shape*>>(width,
-                                              std::vector<Shape*>(height,
-                                                                nullptr));
+//        for (size_t i = 1; i < width - 1; i++)
+//            for (size_t j = 1; j < height - 1; j++)
+//            {
+//                if (shapes[i][j] != nullptr)
+//                {
+//                    if ((shapes[i - 1][j - 1] != shapes[i][j]) && (shapes[i - 1][j - 1] != nullptr) ||
+//                        (shapes[i + 1][j - 1] != shapes[i][j]) && (shapes[i + 1][j - 1] != nullptr) ||
+//                        (shapes[i - 1][j + 1] != shapes[i][j]) && (shapes[i - 1][j + 1] != nullptr) ||
+//                        (shapes[i + 1][j + 1] != shapes[i][j]) && (shapes[i + 1][j + 1] != nullptr))
+//                        data[i][j] = Color(0.1, 0.1, 0.1);
+//                }
+//            }
+//
+//        for (size_t i = 1; i < width - 1; i++)
+//            for (size_t j = 1; j < height - 1; j++)
+//                if (shapes[i][j] != nullptr && shapes[i][j]->selected)
+//                    for (int x = 0; x < 3; x++)
+//                        for (int y = 0; y < 3; y++)
+//                        {
+//                            if (!shapes[i + x - 1][j + y -1] || !shapes[i + x - 1][j + y - 1]->selected)
+//                                data[i + x - 1][j + y - 1] = Color(basic::color::cyan);
+//                        }
+//
+//        shapes = std::vector<std::vector<Shape*>>(width,
+//                                              std::vector<Shape*>(height,
+//                                                                nullptr));
 
         int mid_w = width / 2;
         int mid_h = height / 2;

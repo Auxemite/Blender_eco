@@ -56,17 +56,17 @@ void App::Windows()
 
     ImGui::End();
 
-//    ImGui::ShowDemoWindow();
+    ImGui::ShowDemoWindow();
 }
 
 void App::TreeNode() {
     ImGui::Begin("Tree");
     for (int i = 0; i < env.scene.meshes.size(); i++) {
-        string name = "> Mesh " + i;
+        std::string name = "> Mesh " + to_string(i);
         if (ImGui::Button(name.c_str()))
             env.change_focus(i, env.scene.meshes[i]);
         ImGui::SameLine();
-        TreeMesh(env.scene.meshes[i]);
+        TreeMesh(env.scene.meshes[i], i);
     }
 
     if (env.focus_mesh != nullptr) {
@@ -76,10 +76,11 @@ void App::TreeNode() {
     ImGui::End();
 }
 
-void App::TreeMesh(Mesh *mesh) {
+void App::TreeMesh(Mesh *mesh, int index) {
     static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
     static bool align_label_with_current_x_position = false;
-    if (ImGui::TreeNode("Meshes"))
+    std::string name = "Faces Mesh " + to_string(index);
+    if (ImGui::TreeNode(name.c_str()))
     {
         static int selection_mask = (1 << 2);
         int node_clicked = -1;
@@ -159,13 +160,11 @@ void App::MeshOptions() {
             env.render();
         }
         else if (key == 515) {
-            env.move_camera_x(10);
-            env.move_camera_z(10);
+            env.scene.camera.update_cam(env.scene.camera.center + Point3(0,1,0));
             env.render();
         }
         else if (key == 516) {
-            env.move_camera_x(-10);
-            env.move_camera_z(-10);
+            env.scene.camera.update_cam(env.scene.camera.center - Point3(0,1,0));
             env.render();
         }
     }
