@@ -56,7 +56,7 @@ void App::Windows()
 
     ImGui::End();
 
-    ImGui::ShowDemoWindow();
+//    ImGui::ShowDemoWindow();
 }
 
 void App::TreeNode() {

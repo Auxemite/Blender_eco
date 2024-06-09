@@ -40,8 +40,8 @@ void Image::render_thread(const Scene& scene, const bool& photorealist, int star
                 
                 if (intersection.object != nullptr)
                     shapes[i][j] = intersection.object;
-                // if (intersection.object != nullptr && intersection.object->selected)
-                //     selected[i][j] = true;
+//                if (intersection.object != nullptr && intersection.object->selected)
+//                    selected[i][j] = true;
 
             }
             int k = (j * width + i) * 3;

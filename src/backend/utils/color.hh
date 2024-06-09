@@ -174,6 +174,6 @@ namespace basic
         static const Color dark_yellow(0.5, 0.5, 0);
         static const Color dark_blue(0, 0, 0.25);
         static const Color dark_magenta(0.25, 0, 0.25);
-        static const Color background_blue(0.2, 0.2, 0.3);
+        static const Color background_blue(0.25, 0.25, 0.25);
     }
 }

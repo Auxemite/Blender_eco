@@ -109,6 +109,16 @@ Color Intersection::fast_ray_color(const Scene& scene)
     dot_angle = dot_angle / 2.0 + 0.5;
     if (object->selected)
         return Color(2, 2, 0) * (1 - dot_angle);
+
+    if (object->get_obj_type() == "Plane") {
+        double diff_1 = abs_(round(inter_loc.x) - inter_loc.x);
+        double diff_2 = abs_(round(inter_loc.z) - inter_loc.z);
+        if (diff_1 <= 0.015 && round(inter_loc.x) == 0 && round(inter_loc.z) != 0)
+            return Color(0.5, 0.2, 0.2);
+        if (diff_2 <= 0.015 && round(inter_loc.z) == 0 && round(inter_loc.x) != 0)
+            return Color(0.2, 0.5, 0.2);
+        return Color(0.3, 0.3, 0.3);
+    }
     return Color(0.7, 0.7, 0.7) * (1 - dot_angle);
 }
 

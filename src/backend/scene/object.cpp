@@ -66,9 +66,9 @@ Material Sphere::get_material(const Point3& point) const
     return texture.get_texture(point);
 }
 
-Shape_data *Sphere::get_obj_data() const
+std::string Sphere::get_obj_type() const
 {
-    return new Shape_data(center, radius);
+    return "Sphere";
 };
 
 /////////////////// Plane /////////////////////////////////
@@ -95,11 +95,21 @@ double grille_intersection(const Point3& point_loc, double distance, const Vecto
 
 //    if (diff_1 > abs_(diff_1 - diff_2) && diff_2 > abs_(diff_1 - diff_2))
 //        return -1; // For beautiful pattern
-    auto diff = 0.3;
-    if (diff_1 * 20 + diff_2 > diff && diff_1 + diff_2 * 20 > diff)
-        return -1;
 
-    return distance;
+//    auto diff = 0.3;
+//    if (diff_1 * 20 + diff_2 > diff && diff_1 + diff_2 * 20 > diff)
+//        return -1;
+
+    if (diff_1 <= 0.015 || diff_2 <= 0.015)
+        return distance;
+
+//    if (diff_1 <= 0.03 && round(point_loc.x) == 0 && round(point_loc.z) != 0)
+//        return distance;
+//
+//    if (diff_2 <= 0.03 && round(point_loc.z) == 0 && round(point_loc.x) != 0)
+//        return distance;
+
+    return -1;
 }
 
 double Plane::ray_intersection(const Point3& cam_position, const Vector3& direction)
@@ -120,9 +130,9 @@ double Plane::ray_intersection(const Point3& cam_position, const Vector3& direct
 
 Vector3 Plane::normal(const Point3& point) const { return this->normal_; }
 Material Plane::get_material(const Point3& point) const { return texture.get_texture(point); }
-Shape_data *Plane::get_obj_data() const
+std::string Plane::get_obj_type() const
 {
-    return new Shape_data(origin, normal_, grille);
+    return "Plane";
 };
 
 /////////////////// Triangle ///////////////////////////////
@@ -184,9 +194,9 @@ double Triangle::ray_intersection(const Point3& cam_position, const Vector3& dir
 
 Vector3 Triangle::normal(const Point3& point) const { return this->normal_; }
 Material Triangle::get_material(const Point3& point) const { return texture.get_texture(point); }
-Shape_data *Triangle::get_obj_data() const
+std::string Triangle::get_obj_type() const
 {
-    return new Shape_data(*a, *b, *c, normal_);
+    return "Triangle";
 };
 
 void Triangle::scale(double size)

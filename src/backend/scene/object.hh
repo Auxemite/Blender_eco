@@ -28,7 +28,7 @@ class Shape
     virtual double ray_intersection(const Point3& p, const Vector3& v) = 0;
     virtual Vector3 normal(const Point3& point) const = 0;
     virtual Material get_material(const Point3& point) const = 0;
-    virtual Shape_data *get_obj_data() const = 0;
+    virtual std::string get_obj_type() const = 0;
 };
 
 class Sphere : public Shape {
@@ -43,7 +43,7 @@ class Sphere : public Shape {
     double ray_intersection(const Point3& cam_center, const Vector3& dir) override;
     Vector3 normal(const Point3& point) const override;
     Material get_material(const Point3& point) const override;
-    Shape_data *get_obj_data() const override;
+    std::string get_obj_type() const override;
 };
 
 class Plane : public Shape {
@@ -57,7 +57,7 @@ class Plane : public Shape {
     double ray_intersection(const Point3& cam_position, const Vector3& direction) override;
     Vector3 normal(const Point3& point) const override;
     Material get_material(const Point3& point) const override;
-    Shape_data *get_obj_data() const override;
+    std::string get_obj_type() const override;
 };
 
 class Triangle : public Shape
@@ -71,7 +71,7 @@ class Triangle : public Shape
     double ray_intersection(const Point3& cam_position, const Vector3& direction) override;
     Vector3 normal(const Point3& point) const override;
     Material get_material(const Point3& point) const override;
-    Shape_data *get_obj_data() const override;
+    std::string get_obj_type() const override;
 
     // Usefull for mesh transformation
     void scale(double size);
