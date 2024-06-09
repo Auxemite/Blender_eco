@@ -14,24 +14,29 @@
 class Env {
     public:
     GLuint render_image{};
+    bool photorealist = false;
     Scene scene;
     Image image;
-    Shape_data focus_obj;
+//    Shape_data *focus_obj;
+    Mesh *focus_mesh;
     int focus_index = 1;
 
     Env();
     explicit Env(const char* filename);
 
-    void update_texture();
-    [[nodiscard]] static unsigned char* convertDataToGLRGB(const std::vector<std::vector<Color>>& data, int width, int height);
+    void create_texture();
 
     void render();
-    void fast_render();
-    void move_camera();
+    void move_camera_x(double angle);
+    void move_camera_y(double angle);
+    void move_camera_z(double angle);
     void move_x(double value);
     void move_y(double value);
     void move_z(double value);
-    void grow(double value);
-    void shrink(double value);
-    void change_focus(int index, Shape *shape);
+    void rotate_x(double angle);
+    void rotate_y(double angle);
+    void rotate_z(double angle);
+    void scale(double value);
+//    void change_focus(int index, Shape *shape);
+    void change_focus(int index, Mesh *mesh);
 };

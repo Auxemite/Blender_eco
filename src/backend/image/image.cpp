@@ -10,10 +10,15 @@ Image::Image(int width_, int height_)
     shapes = std::vector<std::vector<Shape*>>(width,
                                               std::vector<Shape*>(height,
                                                                 nullptr));
+    size_t size = width * height * 3;
+    char_data = (unsigned char *)calloc(size + 1, sizeof(unsigned char));
+    char_data[size] = '\0';
+    selected = std::vector<std::vector<bool>>(width,
+                                              std::vector<bool>(height,
+                                                                false));
 };
 
-void render_thread(std::vector<std::vector<Color>>& data, std::vector<std::vector<Shape*>>& shapes, int width, const Scene& scene,
-                   const bool& photorealist, int start, int end)
+void Image::render_thread(const Scene& scene, const bool& photorealist, int start, int end)
 {
     Camera camera = scene.camera;
     for (int j = start; j < end; ++j)
@@ -23,18 +28,26 @@ void render_thread(std::vector<std::vector<Color>>& data, std::vector<std::vecto
             auto pixel_center = camera.pixel_loc + (i * camera.pixel_u) + (j * camera.pixel_v);
             auto dir = (pixel_center - camera.center).norm();
             auto intersection = Intersection(camera.center, dir);
-            intersection.throw_ray(scene);
-            
-            if (photorealist)
+
+            if (photorealist) {
+                intersection.throw_ray(scene);
                 data[i][j] = intersection.ray_color(scene, 0);
+            }
             else
             {
+                intersection.fast_throw_ray(scene);
                 data[i][j] = intersection.fast_ray_color(scene);
+                
                 if (intersection.object != nullptr)
                     shapes[i][j] = intersection.object;
                 // if (intersection.object != nullptr && intersection.object->selected)
                 //     selected[i][j] = true;
+
             }
+            int k = (j * width + i) * 3;
+            char_data[k] = static_cast<unsigned char>(data[i][j].r * 255);
+            char_data[k+1] = static_cast<unsigned char>(data[i][j].g * 255);
+            char_data[k+2] = static_cast<unsigned char>(data[i][j].b * 255);
         }
     }
 }
@@ -50,7 +63,7 @@ void Image::render(const Scene& scene, const bool& photorealist)
 
     for (int i = 0; i < numThreads; ++i) {
         end = (i == numThreads - 1) ? height : start + batchSize;
-        threads.push_back(std::thread(render_thread, std::ref(data), std::ref(shapes), width, scene, photorealist, start, end));
+        threads.emplace_back(&Image::render_thread, this, scene, photorealist, start, end);
         start = end;
     }
     for (auto& t : threads)
@@ -95,9 +108,7 @@ void Image::render(const Scene& scene, const bool& photorealist)
 }
 
 void Image::render_debug(const Scene& scene, const bool& photorealist) {
-
-    render_thread(std::ref(data), std::ref(shapes), width, scene, photorealist, 0, height);
-
+    render_thread(scene, photorealist, 0, height);
     if (!photorealist) {
         int mid_w = width / 2;
         int mid_h = height / 2;

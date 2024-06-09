@@ -66,9 +66,9 @@ Material Sphere::get_material(const Point3& point) const
     return texture.get_texture(point);
 }
 
-Shape_data Sphere::get_obj_data() const
+Shape_data *Sphere::get_obj_data() const
 {
-    return Shape_data(center, radius);
+    return new Shape_data(center, radius);
 };
 
 /////////////////// Plane /////////////////////////////////
@@ -120,9 +120,9 @@ double Plane::ray_intersection(const Point3& cam_position, const Vector3& direct
 
 Vector3 Plane::normal(const Point3& point) const { return this->normal_; }
 Material Plane::get_material(const Point3& point) const { return texture.get_texture(point); }
-Shape_data Plane::get_obj_data() const
+Shape_data *Plane::get_obj_data() const
 {
-    return Shape_data(origin, normal_, grille);
+    return new Shape_data(origin, normal_, grille);
 };
 
 /////////////////// Triangle ///////////////////////////////
@@ -184,9 +184,9 @@ double Triangle::ray_intersection(const Point3& cam_position, const Vector3& dir
 
 Vector3 Triangle::normal(const Point3& point) const { return this->normal_; }
 Material Triangle::get_material(const Point3& point) const { return texture.get_texture(point); }
-Shape_data Triangle::get_obj_data() const
+Shape_data *Triangle::get_obj_data() const
 {
-    return Shape_data(*a, *b, *c, normal_);
+    return new Shape_data(*a, *b, *c, normal_);
 };
 
 void Triangle::scale(double size)

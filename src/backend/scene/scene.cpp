@@ -9,9 +9,9 @@ Scene::Scene(int width, int height)
                                 Uniform_Texture(basic::texture::basic, basic::color::dark_gray),
                                 true));
 
-    objects.push_back(new Sphere(
-            {0,0,0}, 0.1,
-            Uniform_Texture(basic::texture::simple, basic::color::blue)));
+//    objects.push_back(new Sphere(
+//            {0,0,0}, 1,
+//            Uniform_Texture(basic::texture::simple, basic::color::blue)));
 
     // Tests
     Point3 a(1, 0, 0), b(0, 1, 0), c(0, 0, 1), d(2, 0, 0),
@@ -24,16 +24,10 @@ Scene::Scene(int width, int height)
     Mesh *cube2 = new Mesh(file, Uniform_Texture(basic::texture::simple, basic::color::yellow));
 
     add_mesh(cube1);
+
     add_mesh(cube2);
-
     double pi = 3.14159;
-    // cube2->rotate_all_axis(pi / 4., 0, 0);
-
-    // std::vector<Triangle *> faces = {cube2->faces.at(2), cube2->faces.at(3), cube2->faces.at(4), cube2->faces.at(5)};
-    // cube2->extrude_along_points_normalized(1., faces);
-    // cube2->scale_mesh(-1.);
-    std::vector<Triangle *> faces(cube2->faces.begin(), cube2->faces.end() - 4);
-    // std::vector<Triangle *> faces(cube2->faces.begin(), cube2->faces.end());
+    std::vector<Triangle *> faces(cube2->faces.begin(), cube2->faces.end() - 4.0);
     cube2->extrude_along_points(0.25, faces);
     // cube2->rotate_all_axis(8, 1, 4);
 
@@ -42,6 +36,9 @@ Scene::Scene(int width, int height)
     //     face->selected = true;
 
     cube2->move_mesh({1, 1, 1});
+//     faces = std::vector<Triangle *>(cube2->faces.begin() + 4.0, cube2->faces.end() - 4.0);
+//     for (auto face : faces)
+//         face->selected = true;
 
     // cube2->to_dot_obj("test.obj");
 
@@ -49,7 +46,7 @@ Scene::Scene(int width, int height)
                                      basic::color::orange));
 
     camera = Camera(
-            {0, 1, -5},
+            {0, 5, -5},
             {0, 0, 0},
             width,
             height);
