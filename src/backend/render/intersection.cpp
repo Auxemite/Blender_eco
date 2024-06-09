@@ -20,8 +20,8 @@ inline void Intersection::fast_throw_ray(Shape *shape)
 
 void Intersection::fast_throw_ray(const Scene& scene)
 {
-    for (auto new_object : scene.objects)
-        throw_ray(new_object);
+    for (auto object : scene.objects)
+        throw_ray(object);
 
     for (auto mesh : scene.meshes)
     {
@@ -105,9 +105,10 @@ Color Intersection::fast_ray_color(const Scene& scene)
 
     Vector3 normal = object->normal(inter_loc);
     // double dot_angle = dot((scene.camera.lookat - scene.camera.center).norm(), normal);
-    double dot_angle = dot(dir, normal);
-    
-    return object->texture.mat.color * (1 - dot_angle);
+    double dot_angle = dot(scene.camera.center - scene.camera.lookat, normal);
+    //object->texture.mat.color
+
+    return Color(0.9, 0.9, 0.9) * (dot_angle);
 }
 
 Color Intersection::ray_color(const Scene& scene, int recursive)

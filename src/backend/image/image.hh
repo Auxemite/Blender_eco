@@ -11,6 +11,7 @@ class Image {
         int width = 0;
         int height = 0;
         std::vector<std::vector<Color>> data;
+        std::vector<std::vector<Shape*>> shapes;
         unsigned char* char_data;
         std::vector<std::vector<bool>> selected;
 
