@@ -18,7 +18,7 @@ Scene::Scene(int width, int height)
            e(0, 2, 0), f(0, 0, 2);
 
     // char *file = "truc_chelou.obj";
-    char *file = "test_extrude_nom.obj";
+    char *file = "../test/test_extrude_nom.obj"; // Put ../test/ for file to be found
 
     Mesh *cube1 = new Mesh(file, Uniform_Texture(basic::texture::simple, basic::color::cyan));
     Mesh *cube2 = new Mesh(file, Uniform_Texture(basic::texture::simple, basic::color::yellow));
@@ -26,14 +26,9 @@ Scene::Scene(int width, int height)
     add_mesh(cube1);
 
     add_mesh(cube2);
-    double pi = 3.14159;
     std::vector<Triangle *> faces(cube2->faces.begin(), cube2->faces.end() - 4.0);
     cube2->extrude_along_points(0.25, faces);
     // cube2->rotate_all_axis(8, 1, 4);
-
-    // faces = std::vector<Triangle *>(cube2->faces.begin() + 4, cube2->faces.end() - 4);
-    // for (auto face : faces)
-    //     face->selected = true;
 
     cube2->move_mesh({1, 1, 1});
 //     faces = std::vector<Triangle *>(cube2->faces.begin() + 4.0, cube2->faces.end() - 4.0);
