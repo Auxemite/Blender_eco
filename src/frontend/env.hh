@@ -38,5 +38,6 @@ class Env {
     void rotate_z(double angle);
     void scale(double value);
 //    void change_focus(int index, Shape *shape);
-    void change_focus(int index, Mesh *mesh);
+    void select_mesh(int x, int y);
+    void change_focus(Mesh *mesh);
 };

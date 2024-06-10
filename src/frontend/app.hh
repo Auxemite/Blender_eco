@@ -10,6 +10,7 @@ class App {
     explicit App(const char* filename);
 
     void Windows();
+    void SelectMesh(const ImGuiIO& io, ImVec2 pos);
     void TreeMesh(Mesh *mesh, int index);
     void TreeNode();
     void MeshOptions();

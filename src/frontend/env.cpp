@@ -123,16 +123,45 @@ void Env::rotate_z(double angle) {
 //    }
 //}
 
-void Env::change_focus(int index, Mesh *mesh) {
+void Env::select_mesh(int x, int y) {
+    auto c = scene.camera;
+    auto pixel_center = c.pixel_loc + (x * c.pixel_u) + (y * c.pixel_v);
+    auto dir = (pixel_center - c.center).norm();
+    auto inter = Intersection(c.center, dir);
+    Mesh *selected_mesh = nullptr;
+    for (auto mesh : scene.meshes)
+    {
+        for (auto face : mesh->faces)
+        {
+            // Check backface culling
+            if (dot(dir, face->normal_) < 0) {
+                auto inter_scal = face->ray_intersection(c.center, dir);
+                if (inter_scal > 0)
+                {
+                    Point3 new_inter_loc = c.center + dir * inter_scal;
+                    if (inter.inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX)
+                        || (new_inter_loc - scene.camera.center).length() < (inter.inter_loc - c.center).length()) {
+                        inter.inter_loc = new_inter_loc;
+                        selected_mesh = mesh;
+                    }
+                }
+            }
+        }
+    }
+    if (inter.inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX) || selected_mesh == nullptr)
+        return;
+    change_focus(selected_mesh);
+}
+
+void Env::change_focus(Mesh *mesh) {
     for (auto & face : focus_mesh->faces) {
         face->selected = false;
     }
-    if (index >= 0 && index < scene.meshes.size()) {
-        focus_index = index;
+    if (focus_mesh != mesh) {
         focus_mesh = mesh;
-    }
-    for (auto & face : mesh->faces) {
-        face->selected = true;
+        for (auto &face: mesh->faces) {
+            face->selected = true;
+        }
     }
     render();
 }
