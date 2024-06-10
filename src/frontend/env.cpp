@@ -154,14 +154,16 @@ void Env::select_mesh(int x, int y) {
 }
 
 void Env::change_focus(Mesh *mesh) {
-    for (auto & face : focus_mesh->faces) {
-        face->selected = false;
+    if (focus_mesh != nullptr) {
+        for (auto &face: focus_mesh->faces)
+            face->selected = false;
     }
-    if (focus_mesh != mesh) {
+    if (focus_mesh == nullptr || focus_mesh != mesh) {
         focus_mesh = mesh;
-        for (auto &face: mesh->faces) {
+        for (auto &face: mesh->faces)
             face->selected = true;
-        }
     }
+    else
+        focus_mesh = nullptr;
     render();
 }

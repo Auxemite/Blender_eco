@@ -194,10 +194,13 @@ void App::MeshOptions() {
 }
 
 void App::PrintObjInfo() {
+    if (env.focus_mesh == nullptr) {
+        ImGui::Text("No Mesh Selected");
+        return;
+    }
     string text = "type : Mesh\n";
     text += "Number of Faces : " + to_string(env.focus_mesh->faces.size()) + "\n";
     text += "Number of Edges : " + to_string(env.focus_mesh->points.size()) + "\n";
-//    text += "First edge : " + env.focus_mesh->points[0]->to_string();
     text += "Edges :\n";
     for (auto & edge : env.focus_mesh->points) {
         text += edge->to_string() + "\n";
