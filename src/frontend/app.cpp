@@ -47,6 +47,12 @@ void App::Windows()
     if (ImGui::Button("Save Render")) { env.image.save_as_ppm("../test/result.ppm"); }
 
     ImGui::SameLine();
+    if (ImGui::Button("Add Mesh")) { env.add_mesh("cube"); }
+
+    ImGui::SameLine();
+    if (ImGui::Button("Delete Mesh")) { env.delete_mesh(env.focus_mesh); }
+
+    ImGui::SameLine();
     SelectMesh(io, pos);
 
     ImGui::End();
@@ -106,7 +112,6 @@ void App::SelectMesh(const ImGuiIO& io, ImVec2 pos) {
         else if (key == 655) { // Left Click
             env.select_mesh(region_x, region_y);
         }
-
     }
 }
 

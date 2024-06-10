@@ -27,6 +27,8 @@ class Env {
     void create_texture();
 
     void render();
+    void add_mesh(std::string name);
+    void delete_mesh(Mesh *mesh);
     void move_camera_x(double angle);
     void move_camera_y(double angle);
     void move_camera_z(double angle);
@@ -36,8 +38,10 @@ class Env {
     void rotate_x(double angle);
     void rotate_y(double angle);
     void rotate_z(double angle);
+    void extrude();
     void scale(double value);
 //    void change_focus(int index, Shape *shape);
     void select_mesh(int x, int y);
     void change_focus(Mesh *mesh);
+    void save_scene(std::string filename);
 };

@@ -44,6 +44,22 @@ void Env::render() {
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, image.width, image.height, GL_RGB, GL_UNSIGNED_BYTE, image.char_data);
 }
 
+void Env::add_mesh(std::string name) {
+    Mesh *cube = new Mesh("../data/" + name + ".obj", Uniform_Texture(basic::texture::simple, basic::color::cyan));
+    scene.add_mesh(cube);
+    render();
+}
+
+void Env::delete_mesh(Mesh *mesh) {
+    if (mesh == nullptr)
+        return;
+    for (int i = 0; i < scene.meshes.size(); ++i) {
+        if (scene.meshes[i] == mesh)
+            scene.meshes.erase(scene.meshes.begin()+i);
+    }
+    render();
+}
+
 void Env::move_camera_x(double angle) {
     if (angle == 0)
         return;
@@ -106,22 +122,14 @@ void Env::rotate_x(double angle) {
 }
 
 void Env::rotate_y(double angle) {
-//    focus_mesh->rotate_axis_y(angle);
+    focus_mesh->rotate_all_axis(0, angle, 0);
     render();
 }
 
 void Env::rotate_z(double angle) {
-//    focus_mesh->rotate_axis_z(angle);
+    focus_mesh->rotate_all_axis(0, 0, angle);
     render();
 }
-
-//void Env::change_focus(int index, Shape *shape) {
-//    // TOFIX UPDATE AT EVERY CHANGE
-//    if (index >= 0 && index < scene.objects.size()) {
-//        focus_index = index;
-//        focus_obj = shape->get_obj_data();
-//    }
-//}
 
 void Env::select_mesh(int x, int y) {
     auto c = scene.camera;
