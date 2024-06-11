@@ -47,10 +47,26 @@ void App::Windows()
     if (ImGui::Button("Save Render")) { env.image.save_as_ppm("../test/result.ppm"); }
 
     ImGui::SameLine();
-    if (ImGui::Button("Add Mesh")) { env.add_mesh("cube"); }
+    static int selected_fish = -1;
+    const char* names[] = { "Cube", "Plane", "Cone", "Sphere", "Icosphere", "Cylinder", "Donut", "Monkey"};
+
+    if (ImGui::Button("Add Mesh"))
+        ImGui::OpenPopup("add_mesh");
+    if (ImGui::BeginPopup("add_mesh"))
+    {
+        ImGui::SeparatorText("Mesh Types");
+        for (int i = 0; i < IM_ARRAYSIZE(names); i++)
+            if (ImGui::Selectable(names[i])) {
+                std::string name = names[i];
+                name[0] = tolower(name[0]);
+                env.add_mesh(name);
+            }
+        ImGui::EndPopup();
+    }
 
     ImGui::SameLine();
     if (ImGui::Button("Delete Mesh")) { env.delete_mesh(env.focus_mesh); }
+
 
     ImGui::SameLine();
     SelectMesh(io, pos);
@@ -212,3 +228,4 @@ void App::PrintObjInfo() {
     }
     ImGui::Text(text.c_str());
 }
+
