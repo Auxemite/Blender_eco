@@ -18,7 +18,7 @@ class Image {
         Image()= default;
         Image(int width_, int height_);
 
-        void render(const Scene& scene, const bool& photorealist=false);
+        void render(const Scene& scene, const bool& photorealist=false, const bool& fasts_selection=true);
         void render_debug(const Scene& scene, const bool& photorealist=false);
         void render_thread(const Scene& scene, const bool& photorealist, int start, int end);
 

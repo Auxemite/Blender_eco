@@ -50,6 +50,8 @@ public:
     bool add_face(Triangle *new_triangle);
     bool create_face(const Triangle& new_triangle);
     bool create_face(Point3 *a, Point3 *b, Point3 *c, bool add_points);
+    bool move_face(Triangle *face, const Point3& new_pos);
+    void scale_face(double size, Triangle *face);
 
     // Usefull
     std::vector<Point3 *> get_points_from_indexes(const std::vector<int>) const;
@@ -66,13 +68,13 @@ public:
     // Rotation
     //// All Mesh
     void rotate_axis_x(double angle);
-    void rotate_axis_y(double angle);
-    void rotate_axis_z(double angle);
+//    void rotate_axis_y(double angle);
+//    void rotate_axis_z(double angle);
     void rotate_point_all_axis(double angle_x, double angle_y, double angle_z, Point3 *point, const Point3& from);
     //// Selection
     void rotate_axis_x(double angle, std::vector<Point3 *> points);
-    void rotate_axis_y(double angle, std::vector<Point3 *> points);
-    void rotate_axis_z(double angle, std::vector<Point3 *> points);
+//    void rotate_axis_y(double angle, std::vector<Point3 *> points);
+//    void rotate_axis_z(double angle, std::vector<Point3 *> points);
     void rotate_all_axis(double angle_x, double angle_y, double angle_z, std::vector<Point3 *> points);
     void rotate_all_axis(double angle_x, double angle_y, double angle_z);
 

@@ -129,6 +129,8 @@ void Mesh::to_dot_obj(std::string filename)
 
         f << "f " << index[0] << ' ' << index[1] << ' ' << index[2] << '\n';
     }
+
+    std::cout << "File Saved\n";
 }
 
 // Hit_box
@@ -189,6 +191,27 @@ bool Mesh::translate_point(int index, const Point3& new_pos)
         
         std::cout << "Point translated by " << new_pos << std::endl;
         update_hit_box(*point);
+
+        return true;
+    }
+    catch (std::out_of_range const& exc)
+    {
+        std::cout << "Point out of range\n";
+        return false;
+    }
+}
+
+bool Mesh::move_face(Triangle *face, const Point3& new_pos)
+{
+    try
+    {
+        *face->a += new_pos;
+        *face->b += new_pos;
+        *face->c += new_pos;
+        update_hit_box(*face->a);
+        update_hit_box(*face->b);
+        update_hit_box(*face->c);
+        std::cout << "Face translated by " << new_pos << std::endl;
 
         return true;
     }
@@ -349,6 +372,16 @@ void Mesh::scale_mesh(double size, const Point3& from)
     scale_selected(size, from, points);
 }
 
+void Mesh::scale_face(double size, Triangle *face)
+{
+    std::vector<Point3 *> point_list;
+    point_list.push_back(face->a);
+    point_list.push_back(face->b);
+    point_list.push_back(face->c);
+    scale_selected(size, get_mid(point_list), point_list);
+    update_hit_box();
+}
+
 void Mesh::scale_mesh(double size)
 {
     scale_selected(size, get_mid(points), points);
@@ -459,6 +492,8 @@ void Mesh::extrude_face(Triangle *face, Point3* a, Point3 *b, Point3 *c)
     points.push_back(a);
     points.push_back(b);
     points.push_back(c);
+
+    update_hit_box();
 }
 
 void Mesh::extrude_along_normal(double thickness, Triangle *face)

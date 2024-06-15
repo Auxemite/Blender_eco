@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "env.hh"
 
 inline double aspect_ratio = 16.0 / 9.0;
@@ -8,8 +10,6 @@ Env::Env() {
     image = Image(default_width, default_height);
     scene = Scene(image.width, image.height);
     focus_mesh = nullptr;
-    if (!scene.meshes.empty())
-        focus_mesh = scene.meshes[0];
     render();
     create_texture();
 }
@@ -18,8 +18,6 @@ Env::Env(const char* filename) {
     image = load_image(filename);
     scene = Scene(image.width, image.height);
     focus_mesh = nullptr;
-    if (!scene.meshes.empty())
-        focus_mesh = scene.meshes[0];
     render();
     create_texture();
 }
@@ -40,13 +38,14 @@ void Env::create_texture() {
 }
 
 void Env::render() {
-    image.render(scene, photorealist);
+    image.render(scene, photorealist, fast_selection);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, image.width, image.height, GL_RGB, GL_UNSIGNED_BYTE, image.char_data);
 }
 
 void Env::add_mesh(std::string name) {
-    Mesh *cube = new Mesh("../data/" + name + ".obj", Uniform_Texture(basic::texture::simple, basic::color::cyan));
-    scene.add_mesh(cube);
+    Mesh *mesh = new Mesh("../data/" + name + ".obj", Uniform_Texture(basic::texture::simple, basic::color::cyan));
+    scene.add_mesh(mesh);
+    std::cout << "Added Mesh\n";
     render();
 }
 
@@ -57,6 +56,9 @@ void Env::delete_mesh(Mesh *mesh) {
         if (scene.meshes[i] == mesh)
             scene.meshes.erase(scene.meshes.begin()+i);
     }
+    focus_mesh = nullptr;
+    focus_face = nullptr;
+    std::cout << "Deleted Mesh\n";
     render();
 }
 
@@ -93,41 +95,99 @@ void Env::move_camera_z(double angle) {
     scene.camera.update_cam(Point3(x_, y_, z_) + Point3(0, 0, p.z));
 }
 
+void Env::change_material(Color color, Texture texture) {
+    Uniform_Texture uni_text = Uniform_Texture(color, texture);
+    focus_mesh->texture = uni_text;
+    for (auto & face : focus_mesh->faces)
+        face->texture = uni_text;
+    render();
+}
+
 void Env::move_x(double value) {
-    Point3 new_location = *focus_mesh->points[0] + Point3(value, 0, 0);
-    focus_mesh->move_mesh(new_location);
+    if (selected_mode == 0) {
+        Point3 new_location = *focus_mesh->points[0] + Point3(value, 0, 0);
+        focus_mesh->move_mesh(new_location);
+    }
+    else if (selected_mode == 1)
+        focus_mesh->move_face(focus_face, Point3(value, 0, 0));
     render();
 }
 
 void Env::move_y(double value) {
-    Point3 new_location = *focus_mesh->points[0] + Point3(0, value, 0);
-    focus_mesh->move_mesh(new_location);
+    if (selected_mode == 0) {
+        Point3 new_location = *focus_mesh->points[0] + Point3(0, value, 0);
+        focus_mesh->move_mesh(new_location);
+    }
+    else if (selected_mode == 1)
+        focus_mesh->move_face(focus_face, Point3(0, value, 0));
     render();
 }
 
 void Env::move_z(double value) {
-    Point3 new_location = *focus_mesh->points[0] + Point3(0, 0, value);
-    focus_mesh->move_mesh(new_location);
+    if (selected_mode == 0) {
+        Point3 new_location = *focus_mesh->points[0] + Point3(0, 0, value);
+        focus_mesh->move_mesh(new_location);
+    }
+    else if (selected_mode == 1)
+        focus_mesh->move_face(focus_face, Point3(0, 0, value));
     render();
 }
 
 void Env::scale(double value) {
-    focus_mesh->scale_mesh(value);
+    if (selected_mode == 0)
+        focus_mesh->scale_mesh(value);
+    else if (selected_mode == 1)
+        focus_mesh->scale_face(value, focus_face);
     render();
 }
 
 void Env::rotate_x(double angle) {
-    focus_mesh->rotate_axis_x(angle);
+    if (selected_mode == 0)
+        focus_mesh->rotate_axis_x(angle);
+    else if (selected_mode == 1) {
+        std::vector<Point3 *> point_list;
+        point_list.push_back(focus_face->a);
+        point_list.push_back(focus_face->b);
+        point_list.push_back(focus_face->c);
+        focus_mesh->rotate_all_axis(angle, 0, 0, point_list);
+    }
     render();
 }
 
 void Env::rotate_y(double angle) {
-    focus_mesh->rotate_all_axis(0, angle, 0);
+    if (selected_mode == 0)
+        focus_mesh->rotate_all_axis(0, angle, 0);
+    else if (selected_mode == 1) {
+        std::vector<Point3 *> point_list;
+        point_list.push_back(focus_face->a);
+        point_list.push_back(focus_face->b);
+        point_list.push_back(focus_face->c);
+        focus_mesh->rotate_all_axis(0, angle, 0, point_list);
+    }
     render();
 }
 
 void Env::rotate_z(double angle) {
-    focus_mesh->rotate_all_axis(0, 0, angle);
+    if (selected_mode == 0)
+        focus_mesh->rotate_all_axis(0, 0, angle);
+    else if (selected_mode == 1) {
+        std::vector<Point3 *> point_list;
+        point_list.push_back(focus_face->a);
+        point_list.push_back(focus_face->b);
+        point_list.push_back(focus_face->c);
+        focus_mesh->rotate_all_axis(0, 0, angle, point_list);
+    }
+    render();
+}
+
+
+void Env::extrude(double x_, double y_, double z_) {
+    if (selected_mode == 0 || focus_face == nullptr)
+        return;
+    auto *a_ = new Point3(*focus_face->a + Point3(x_, y_, z_));
+    auto *b_ = new Point3(*focus_face->b + Point3(x_, y_, z_));
+    auto *c_ = new Point3(*focus_face->c + Point3(x_, y_, z_));
+    focus_mesh->extrude_face(focus_face, a_, b_, c_);
     render();
 }
 
@@ -137,6 +197,7 @@ void Env::select_mesh(int x, int y) {
     auto dir = (pixel_center - c.center).norm();
     auto inter = Intersection(c.center, dir);
     Mesh *selected_mesh = nullptr;
+    Triangle *selected_face = nullptr;
     for (auto mesh : scene.meshes)
     {
         for (auto face : mesh->faces)
@@ -151,6 +212,7 @@ void Env::select_mesh(int x, int y) {
                         || (new_inter_loc - scene.camera.center).length() < (inter.inter_loc - c.center).length()) {
                         inter.inter_loc = new_inter_loc;
                         selected_mesh = mesh;
+                        selected_face = face;
                     }
                 }
             }
@@ -158,10 +220,15 @@ void Env::select_mesh(int x, int y) {
     }
     if (inter.inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX) || selected_mesh == nullptr)
         return;
-    change_focus(selected_mesh);
+    if (selected_mode == 0)
+        change_focus(selected_mesh);
+    else if (selected_mode == 1)
+        change_focus(selected_mesh, selected_face);
 }
 
 void Env::change_focus(Mesh *mesh) {
+    if (selected_mode != 0)
+        return;
     if (focus_mesh != nullptr) {
         for (auto &face: focus_mesh->faces)
             face->selected = false;
@@ -174,4 +241,39 @@ void Env::change_focus(Mesh *mesh) {
     else
         focus_mesh = nullptr;
     render();
+}
+
+void Env::change_focus(Mesh *mesh, Triangle *face) {
+    if (selected_mode != 1)
+        return;
+    if (focus_face != nullptr)
+        focus_face->selected = false;
+    if (focus_face == nullptr || focus_face != face) {
+        focus_face = face;
+        focus_face->selected = true;
+        focus_mesh = mesh;
+    }
+    else {
+        focus_face = nullptr;
+        focus_mesh = nullptr;
+    }
+    render();
+}
+
+void Env::update_selection_mode() {
+    if (focus_mesh != nullptr) {
+        for (auto &face: focus_mesh->faces)
+            face->selected = false;
+    }
+    if (focus_face != nullptr)
+        focus_face->selected = false;
+    std::cout << "Changed Selection Mode " << selected_mode << "\n";
+    render();
+};
+
+void Env::save_mesh(std::string filename) {
+    if (focus_mesh == nullptr)
+        std::cerr << "Save Mesh Error: NO MESH SELECTED\n";
+    else
+        focus_mesh->to_dot_obj(std::move(filename));
 }

@@ -37,7 +37,7 @@ void Image::render_thread(const Scene& scene, const bool& photorealist, int star
             {
                 intersection.fast_throw_ray(scene);
                 data[i][j] = intersection.fast_ray_color(scene);
-                
+
                 if (intersection.object != nullptr)
                     shapes[i][j] = intersection.object;
 //                if (intersection.object != nullptr && intersection.object->selected)
@@ -52,7 +52,7 @@ void Image::render_thread(const Scene& scene, const bool& photorealist, int star
     }
 }
 
-void Image::render(const Scene& scene, const bool& photorealist)
+void Image::render(const Scene& scene, const bool& photorealist, const bool& fasts_selection)
 {
     const int numThreads = std::thread::hardware_concurrency();
     std::vector<std::thread> threads;
@@ -97,13 +97,20 @@ void Image::render(const Scene& scene, const bool& photorealist)
 //        shapes = std::vector<std::vector<Shape*>>(width,
 //                                              std::vector<Shape*>(height,
 //                                                                nullptr));
-
         int mid_w = width / 2;
         int mid_h = height / 2;
-        for (int i = 0; i < 11; ++i)
-            data[mid_w - 5 + i][mid_h] = basic::color::red;
-        for (int i = 0; i < 11; ++i)
-            data[mid_w][mid_h - 5 + i] = basic::color::red;
+        for (int i = 0; i < 11; ++i) {
+            int k = (mid_h * width + mid_w - 5 + i) * 3;
+            char_data[k] = static_cast<unsigned char>(255);
+            char_data[k+1] = static_cast<unsigned char>(255);
+            char_data[k+2] = static_cast<unsigned char>(255);
+        }
+        for (int i = 0; i < 11; ++i) {
+            int k = ((mid_h - 5 + i) * width + mid_w) * 3;
+            char_data[k] = static_cast<unsigned char>(255);
+            char_data[k+1] = static_cast<unsigned char>(255);
+            char_data[k+2] = static_cast<unsigned char>(255);
+        }
     }
 }
 

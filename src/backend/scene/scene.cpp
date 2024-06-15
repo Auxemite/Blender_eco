@@ -18,8 +18,10 @@ Scene::Scene(int width, int height)
            e(0, 2, 0), f(0, 0, 2);
 
     // char *file = "truc_chelou.obj";
-    char *file = "../test/test_extrude_nom.obj"; // Put ../test/ for file to be found
+    char *file = "../data/cube.obj"; // Put ../test/ for file to be found
 
+    Mesh *cube = new Mesh(file, Uniform_Texture(basic::texture::simple, basic::color::red));
+    add_mesh(cube);
 //    Mesh *cube1 = new Mesh(file, Uniform_Texture(basic::texture::simple, basic::color::cyan));
 //    Mesh *cube2 = new Mesh(file, Uniform_Texture(basic::texture::simple, basic::color::yellow));
 //
@@ -33,7 +35,7 @@ Scene::Scene(int width, int height)
 
     // cube2->to_dot_obj("test.obj");
 
-    lights.push_back(new Point_Light({0,5,1}, 10,
+    lights.push_back(new Point_Light({3,5,3}, 20,
                                      basic::color::orange));
 
     camera = Camera(

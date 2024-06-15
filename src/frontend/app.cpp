@@ -10,21 +10,7 @@ App::App(const char* filename) {
     env = Env(filename);
 }
 
-void App::Windows()
-{
-    ImGui::Begin("Viewport");
-
-    static int vec3i[4] = { 0, 15, 0};
-    if (ImGui::Button("Move Camera")) {
-        env.move_camera_x(vec3i[0]);
-        env.move_camera_y(vec3i[1]);
-        env.move_camera_z(vec3i[2]);
-        env.render();
-    }
-
-    ImGui::SameLine();
-    ImGui::SliderInt3("Angle on X,Y,Z", vec3i, 0, 90);
-
+void App::MainOptions() {
     ImGui::SameLine();
     if (env.photorealist) {
         if (ImGui::Button("Desactivate Render")) {
@@ -38,6 +24,54 @@ void App::Windows()
             env.render();
         }
     }
+    ImGui::SameLine();
+    if (!env.editmode) {
+        if (ImGui::Button("Edit Mode")) {
+            env.editmode = true;
+            env.render();
+        }
+    }
+    else {
+        if (ImGui::Button("Normal Mode")) {
+            env.render();
+            env.editmode = false;
+        }
+        ImGui::SameLine();
+
+        ImGui::Text("| Selection Mode : ");
+        ImGui::SameLine();
+        if (ImGui::RadioButton("Mesh", &env.selected_mode, 0)) { env.update_selection_mode(); };
+        ImGui::SameLine();
+        if (ImGui::RadioButton("Face", &env.selected_mode, 1)) { env.update_selection_mode(); };
+//        ImGui::SameLine();
+//        if (ImGui::RadioButton("Edge", &env.selected_mode, 2)) {};
+    }
+    ImGui::SameLine();
+    ImGui::Text("|");
+    ImGui::SameLine();
+    ImGui::RadioButton("Fast Selection", &env.fast_selection, 1); ImGui::SameLine();
+    ImGui::RadioButton("Normal Selection", &env.fast_selection, 0);
+}
+
+void App::Windows()
+{
+    ImGui::Begin("Actions");
+    if (env.focus_mesh != nullptr)
+        MeshOptions();
+    ImGui::End();
+
+    CameraOption();
+
+    ImGui::Begin("Material");
+    if (env.focus_mesh != nullptr)
+        Material();
+    ImGui::End();
+
+    App::TreeNode();
+
+    ImGui::Begin("Viewport");
+
+    MainOptions();
 
     ImGuiIO &io = ImGui::GetIO();
     ImVec2 pos = ImGui::GetCursorScreenPos();
@@ -45,9 +79,23 @@ void App::Windows()
                  ImVec2(static_cast<float>(env.image.width), static_cast<float>(env.image.height)));
 
     if (ImGui::Button("Save Render")) { env.image.save_as_ppm("../test/result.ppm"); }
+//    if (ImGui::Button("Save File")) { env.image.save_as_ppm("../test/result.ppm"); }
 
     ImGui::SameLine();
-    static int selected_fish = -1;
+
+    if (ImGui::Button("Save file as"))
+        ImGui::OpenPopup("save_file");
+    if (ImGui::BeginPopup("save_file"))
+    {
+        static char filename[128] = "";
+        ImGui::InputText("File Name", filename, IM_ARRAYSIZE(filename));
+        ImGui::SameLine();
+        if (ImGui::Button("Save file"))
+            env.save_mesh("../test/" + string(filename) + ".obj");
+        ImGui::EndPopup();
+    }
+
+    ImGui::SameLine();
     const char* names[] = { "Cube", "Plane", "Cone", "Sphere", "Icosphere", "Cylinder", "Donut", "Monkey"};
 
     if (ImGui::Button("Add Mesh"))
@@ -73,18 +121,71 @@ void App::Windows()
 
     ImGui::End();
 
+//    ImGui::ShowDemoWindow();
+}
 
-    App::TreeNode();
+void App::Material() {
+    static bool alpha_preview = true;
+    static bool alpha_half_preview = false;
+    static bool drag_and_drop = true;
+    static bool options_menu = true;
+    static bool hdr = false;
+    ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
 
-    ImGui::Begin("Actions");
+    Color cc = env.focus_mesh->texture.mat.color;
+    Texture texture1 = env.focus_mesh->texture.mat.texture;
+    static ImVec4 color = ImVec4(cc.r, cc.g, cc.b, 255.0f / 255.0f);
+    static float kd = texture1.kd;
+    static float ks = texture1.ks;
+    static float ns = texture1.ns;
+    static bool side_preview = true;
+    static int display_mode = 0;
+    static int picker_mode = 0;
+    ImGui::Checkbox("With Side Preview", &side_preview);
 
-    if (env.focus_mesh != nullptr) {
-        MeshOptions();
+    ImGui::Combo("Display Mode", &display_mode, "Auto/Current\0None\0RGB Only\0HSV Only\0Hex Only\0");
+    ImGuiColorEditFlags flags = misc_flags;
+    if (!side_preview)     flags |= ImGuiColorEditFlags_NoSidePreview;
+    if (picker_mode == 1)  flags |= ImGuiColorEditFlags_PickerHueBar;
+    if (picker_mode == 2)  flags |= ImGuiColorEditFlags_PickerHueWheel;
+    if (display_mode == 1) flags |= ImGuiColorEditFlags_NoInputs;
+    if (display_mode == 2) flags |= ImGuiColorEditFlags_DisplayRGB;
+    if (display_mode == 3) flags |= ImGuiColorEditFlags_DisplayHSV;
+    if (display_mode == 4) flags |= ImGuiColorEditFlags_DisplayHex;
+    ImGui::ColorPicker4("MyColor##4", (float*)&color, flags);
+
+    ImGui::SliderFloat("kd", &kd, 0, 1);
+    ImGui::SliderFloat("ks", &ks, 0, 1);
+    ImGui::SliderFloat("ns", &ns, 1, 150);
+
+    if (ImGui::Button("Update Material")) {
+        Texture texture = {kd, ks, ns};
+        Color material_color = Color(color.x, color.y, color.z);
+        env.change_material(material_color, texture);
+    }
+}
+
+void App::CameraOption() {
+    ImGui::Begin("Camera");
+
+    static int angle[3] = { 0, 15, 0};
+    static int move[3] = { 0, 0, 0};
+    ImGui::SliderInt3("Angle", angle, -90, 90);
+    if (ImGui::Button("Rotate Camera")) {
+        env.move_camera_x(angle[0]);
+        env.move_camera_y(angle[1]);
+        env.move_camera_z(angle[2]);
+        env.render();
     }
 
-    ImGui::End();
+    ImGui::SliderInt3("X,Y,Z", move, -5, 5);
+    if (ImGui::Button("Move Camera")) {
+        env.scene.camera.update_cam(Point3(move[0], move[1], move[2]));
+        env.render();
+    }
 
-//    ImGui::ShowDemoWindow();
+
+    ImGui::End();
 }
 
 void App::SelectMesh(const ImGuiIO& io, ImVec2 pos) {
@@ -166,6 +267,7 @@ void App::TreeMesh(Mesh *mesh, int index) {
             ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, "> %s %d", "Face", i);
             if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()) {
                 node_clicked = i;
+                env.change_focus(mesh, mesh->faces[i]);
                 // BEHAVIOR IS HERE
             }
         }
@@ -178,6 +280,7 @@ void App::TreeMesh(Mesh *mesh, int index) {
 }
 
 void App::MeshOptions() {
+    ImGui::Text("Main Mesh Actions : ");
     static float v1 = 1.00f;
     if (ImGui::Button("Move X")) { env.move_x(v1); }
     ImGui::SameLine();
@@ -201,17 +304,25 @@ void App::MeshOptions() {
     static float a1 = 0;
     if (ImGui::Button("Rotate X")) { env.rotate_x(a1); }
     ImGui::SameLine();
-    ImGui::SliderAngle("RX", &a1, 0, 180);
+    ImGui::SliderAngle("RX", &a1, -90, 90);
 
     static float a2 = 0;
     if (ImGui::Button("Rotate Y")) { env.rotate_y(a2); }
     ImGui::SameLine();
-    ImGui::SliderAngle("RY", &a2, 0, 180);
+    ImGui::SliderAngle("RY", &a2, -90, 90);
 
     static float a3 = 0;
     if (ImGui::Button("Rotate Z")) { env.rotate_z(a3); }
     ImGui::SameLine();
-    ImGui::SliderAngle("RZ", &a3, 0, 180);
+    ImGui::SliderAngle("RZ", &a3, -90, 90);
+
+    ImGui::Text("Special Mesh Actions : ");
+    if (env.editmode) {
+        static int move[3] = { 0, 0, 0};
+        ImGui::SliderInt3("X Y Z", move, -3, 3);
+        if (ImGui::Button("Extrude"))
+            env.extrude(move[0], move[1], move[2]);
+    }
 }
 
 void App::PrintObjInfo() {
