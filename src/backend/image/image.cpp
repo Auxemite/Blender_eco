@@ -18,7 +18,92 @@ Image::Image(int width_, int height_)
                                                                 false));
 };
 
-void Image::render_thread(const Scene& scene, const bool& photorealist, int start, int end)
+Color Image::bg_color(Image *bg, Vector3 dir)
+{
+    auto dirz = dir.z;
+    if (dir.z < 0)
+        dirz = -dirz;
+
+    dir.normalize();
+    auto w = bg->width;
+    auto h = bg->height;
+    auto theta =  static_cast<int>(acos(dir.y) * h / PI); // because dir is a unit vector
+    int phi;
+    if (dirz == 0)
+        phi = w-1;
+    else
+        phi = static_cast<int>((atan(dir.x / dirz) + PI/2) * w / PI);
+
+    return bg->data[phi][theta];
+}
+
+Color Image::fast_ray_color(const Scene& scene, Intersection inter)
+{
+    Point3 inter_loc = inter.inter_loc;
+    if (inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX))
+        return basic::color::background_blue;
+
+    Vector3 normal = inter.object->normal(inter_loc);
+//    double dot_angle = dot(dir, normal);
+    double dot_angle = dot((scene.camera.lookat - scene.camera.center).norm(), normal);
+    dot_angle = 1.0 - (dot_angle / 2.0 + 0.5);
+    if (inter.object->selected)
+        return Color(2, 2, 0) * dot_angle;
+
+    if (inter.object->get_obj_type() == "Plane") {
+        double diff_1 = abs_(round(inter_loc.x) - inter_loc.x);
+        double diff_2 = abs_(round(inter_loc.z) - inter_loc.z);
+        if (diff_1 <= 0.015 && round(inter_loc.x) == 0 && (round(inter_loc.z) != 0 || inter_loc.z < 0.5))
+            return {0.5, 0.2, 0.2};
+        if (diff_2 <= 0.015 && round(inter_loc.z) == 0 && (round(inter_loc.x) != 0 || inter_loc.x < 0.5))
+            return {0.2, 0.5, 0.2};
+        return {0.3, 0.3, 0.3};
+    }
+    return Color(0.7, 0.7, 0.7) * dot_angle;
+}
+
+Color Image::ray_color(const Scene& scene, Image *bg, Intersection inter, int recursive)
+{
+    if (recursive > 3)
+        return basic::color::black;
+
+    Point3 inter_loc = inter.inter_loc;
+    if (inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX))
+        return bg_color(bg, inter.dir);
+
+    Color diff_color = basic::color::black;
+    Color spec_color = basic::color::black;
+    Vector3 normal = inter.object->normal(inter_loc);
+    Vector3 refraction = (2 * normal - inter.dir).norm();
+    for (auto light : scene.lights)
+    {
+//        if (intersection.inside_object(scene, light))
+//            continue;
+
+        auto light_ray = (light->center - inter_loc).norm();
+        auto inter_light = Intersection(light->center, -light_ray);
+        inter_light.throw_ray(scene);
+        if (inter_light.object != inter.object) // Check shadows
+            continue;
+
+        normal = inter.object->normal(inter_loc);
+        refraction = (2 * normal - inter.dir).norm();
+        // refraction = (2 * dot(normal, light_ray) * normal - light_ray).norm();
+        diff_color = diff_color + inter.diffuse(light_ray, normal);
+        spec_color = spec_color + inter.specular(light, light_ray, refraction);
+    }
+    inter.update(inter_loc + (refraction * 0.01), refraction);
+    inter.throw_ray(scene);
+    auto second = ray_color(scene, bg, inter, recursive + 1);
+
+    if (refraction == Vector3(0,0,0))
+        return cap(inter.object->get_material(inter_loc).texture.ks * second);
+    // return cap(spec_color + diff_color);
+
+    return cap(diff_color + spec_color + inter.object->get_material(inter_loc).texture.ks * second);
+}
+
+void Image::render_thread(const Scene& scene, Image *bg, const bool& photorealist, int start, int end)
 {
     Camera camera = scene.camera;
     for (int j = start; j < end; ++j)
@@ -31,12 +116,15 @@ void Image::render_thread(const Scene& scene, const bool& photorealist, int star
 
             if (photorealist) {
                 intersection.throw_ray(scene);
-                data[i][j] = intersection.ray_color(scene, 0);
+                data[i][j] = ray_color(scene, bg, intersection, 0);
+                if (data[i][j] == Color(-1,-1,-1)) {
+                    data[i][j] = bg_color(bg, dir);
+                }
             }
             else
             {
                 intersection.fast_throw_ray(scene);
-                data[i][j] = intersection.fast_ray_color(scene);
+                data[i][j] = fast_ray_color(scene, intersection);
 
                 if (intersection.object != nullptr)
                     shapes[i][j] = intersection.object;
@@ -52,7 +140,7 @@ void Image::render_thread(const Scene& scene, const bool& photorealist, int star
     }
 }
 
-void Image::render(const Scene& scene, const bool& photorealist, const bool& fasts_selection)
+void Image::render(const Scene& scene, Image *bg, const bool& photorealist, const bool& fast_selection)
 {
     const int numThreads = std::thread::hardware_concurrency();
     std::vector<std::thread> threads;
@@ -63,7 +151,7 @@ void Image::render(const Scene& scene, const bool& photorealist, const bool& fas
 
     for (int i = 0; i < numThreads; ++i) {
         end = (i == numThreads - 1) ? height : start + batchSize;
-        threads.emplace_back(&Image::render_thread, this, scene, photorealist, start, end);
+        threads.emplace_back(&Image::render_thread, this, scene, bg, photorealist, start, end);
         start = end;
     }
     for (auto& t : threads)
@@ -114,8 +202,8 @@ void Image::render(const Scene& scene, const bool& photorealist, const bool& fas
     }
 }
 
-void Image::render_debug(const Scene& scene, const bool& photorealist) {
-    render_thread(scene, photorealist, 0, height);
+void Image::render_debug(const Scene& scene, Image *bg, const bool& photorealist) {
+    render_thread(scene, bg, photorealist, 0, height);
     if (!photorealist) {
         int mid_w = width / 2;
         int mid_h = height / 2;
@@ -140,14 +228,14 @@ void Image::save_as_ppm(const std::string& pathname)
         }
     }
     ofs.close();
-};
+}
 
-Image load_image(const std::string& path_name) {
+Image *load_image(const std::string& path_name) {
     std::string line;
     std::ifstream ifs(path_name, std::ifstream::binary);
     if (!ifs.is_open()) {
         std::cerr << "Error Image: Unable to open file." << std::endl;
-        return {};
+        return nullptr;
     }
 
     std::string magicNumber;
@@ -170,5 +258,5 @@ Image load_image(const std::string& path_name) {
         }
 
     ifs.close();
-    return image;
+    return new Image(image);
 }

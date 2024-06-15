@@ -28,6 +28,7 @@ class Env {
 
     void create_texture();
     void save_mesh(std::string filename);
+    void change_bg(const std::string& name);
 
     void render();
     void move_camera_x(double angle);

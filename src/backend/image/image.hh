@@ -18,11 +18,14 @@ class Image {
         Image()= default;
         Image(int width_, int height_);
 
-        void render(const Scene& scene, const bool& photorealist=false, const bool& fasts_selection=true);
-        void render_debug(const Scene& scene, const bool& photorealist=false);
-        void render_thread(const Scene& scene, const bool& photorealist, int start, int end);
+        Color bg_color(Image *bg, Vector3 dir);
+        Color fast_ray_color(const Scene& scene, Intersection inter);
+        Color ray_color(const Scene& scene, Image *bg, Intersection intersection, int recursive);
+        void render(const Scene& scene, Image *bg, const bool& photorealist=false, const bool& fast_selection=true);
+        void render_debug(const Scene& scene, Image *bg, const bool& photorealist=false);
+        void render_thread(const Scene& scene, Image *bg, const bool& photorealist, int start, int end);
 
         void save_as_ppm(const std::string& pathname);
 };
 
-Image load_image(const std::string& path_name);
+Image *load_image(const std::string& path_name);

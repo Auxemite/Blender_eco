@@ -46,6 +46,7 @@ Scene::Scene(int width, int height)
 
 //    for (int i = 0; i < 1280; i++)
 //            select(i, 720/2);
+    //bg = new Image(load_image("../test/sunset.ppm"));
 }
 
 Scene::Scene(std::vector<Shape*> sphere_, std::vector<Light*> lights_, Camera camera_)
@@ -53,6 +54,7 @@ Scene::Scene(std::vector<Shape*> sphere_, std::vector<Light*> lights_, Camera ca
     objects = std::move(sphere_);
     lights = std::move(lights_);
     camera = camera_;
+    //bg = new Image(load_image("../test/sunset.ppm"));
 }
 
 void Scene::add_mesh(Mesh *mesh)

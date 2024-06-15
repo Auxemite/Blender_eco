@@ -5,6 +5,7 @@
 inline double aspect_ratio = 16.0 / 9.0;
 inline int default_width = 1280;
 inline int default_height = static_cast<int>(default_width / aspect_ratio);
+Image *bg = load_image("../data/sunset.ppm");
 
 Env::Env() {
     image = Image(default_width, default_height);
@@ -15,7 +16,7 @@ Env::Env() {
 }
 
 Env::Env(const char* filename) {
-    image = load_image(filename);
+    image = *load_image(filename);
     scene = Scene(image.width, image.height);
     focus_mesh = nullptr;
     render();
@@ -37,8 +38,19 @@ void Env::create_texture() {
     render_image = image_texture;
 }
 
+void Env::change_bg(const std::string& name) {
+    Image *img = load_image("../data/" + name + ".ppm");
+    if (img == nullptr) {
+        return;
+    }
+    delete bg;
+    bg = img;
+    std::cout << "Changed Background Image";
+    render();
+};
+
 void Env::render() {
-    image.render(scene, photorealist, fast_selection);
+    image.render(scene, bg, photorealist, fast_selection);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, image.width, image.height, GL_RGB, GL_UNSIGNED_BYTE, image.char_data);
 }
 

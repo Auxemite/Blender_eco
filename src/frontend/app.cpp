@@ -17,6 +17,22 @@ void App::MainOptions() {
             env.photorealist = false;
             env.render();
         }
+        ImGui::SameLine();
+
+        const char* names[] = { "Sky", "Sky2", "Sunset", "Sunset2", "Synthwave", "Space", "Tree"};
+        if (ImGui::Button("Change background"))
+            ImGui::OpenPopup("change_bg");
+        if (ImGui::BeginPopup("change_bg"))
+        {
+            ImGui::SeparatorText("Background Images");
+            for (int i = 0; i < IM_ARRAYSIZE(names); i++)
+                if (ImGui::Selectable(names[i])) {
+                    std::string name = names[i];
+                    name[0] = tolower(name[0]);
+                    env.change_bg(name);
+                }
+            ImGui::EndPopup();
+        }
     }
     else {
         if (ImGui::Button("Activate Render")) {

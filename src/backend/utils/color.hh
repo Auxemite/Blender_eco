@@ -88,14 +88,14 @@ inline Color operator*(const Color& c1, const Color& c2)
                  c1.b * c2.b);
 }
 
-inline Color operator*(const Color& c, float f)
+inline Color operator*(const Color& c, double f)
 {
     return Color(c.r * f,
                  c.g * f,
                  c.b * f);
 }
 
-inline Color operator*(float f, const Color& c)
+inline Color operator*(double f, const Color& c)
 {
     return Color(f * c.r,
                  f * c.g,
@@ -110,14 +110,14 @@ inline Color operator/(const Color& c1, const Color& c2)
                  c1.b / c2.b);
 }
 
-inline Color operator/(const Color& c, float f)
+inline Color operator/(const Color& c, double f)
 {
     return Color(c.r / f,
                  c.g / f,
                  c.b / f);
 }
 
-inline Color operator/(float f, const Color& c)
+inline Color operator/(double f, const Color& c)
 {
     return Color(f / c.r,
                  f / c.g,
