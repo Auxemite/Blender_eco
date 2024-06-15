@@ -15,7 +15,7 @@ Intersection::Intersection(const Point3& origin_, const Vector3& dir_) {
 
 inline void Intersection::fast_throw_ray(Shape *shape)
 {
-    auto inter_scal = shape->ray_intersection(origin, dir);
+    float inter_scal = shape->ray_intersection(origin, dir);
     if (inter_scal > 0)
     {
         Point3 new_inter_loc = origin + dir * inter_scal;
@@ -30,7 +30,7 @@ inline void Intersection::fast_throw_ray(Shape *shape)
 
 inline void Intersection::throw_ray(Shape *shape)
 {
-    auto inter_scal = shape->ray_intersection(origin, dir);
+    float inter_scal = shape->ray_intersection(origin, dir);
     if (inter_scal > 0)
     {
         Point3 new_inter_loc = origin + dir * inter_scal;
@@ -92,7 +92,7 @@ bool Intersection::inside_object(const Scene& scene, Light *light)
 
 Color Intersection::diffuse(Vector3 light_ray, Vector3 normal) const
 {
-    auto diffuse = dot(normal, light_ray);
+    float diffuse = dot(normal, light_ray);
     if (diffuse < 0)
         return basic::color::black;
 
@@ -103,17 +103,17 @@ Color Intersection::diffuse(Vector3 light_ray, Vector3 normal) const
 }
 
 Color Intersection::specular(Light *light, const Vector3& light_ray, const Vector3& refaction) const {
-    auto spec = dot(light_ray, refaction);
+    float spec = dot(light_ray, refaction);
     if (spec <= 0)
         return basic::color::black;
 
-    auto dist = (light->center - inter_loc).length(); // Not a unit vector is normal
-    /* auto spec_color = cap(light->color
+    float dist = (light->center - inter_loc).length(); // Not a unit vector is normal
+    /* Color spec_color = cap(light->color
                           * sphere->texture.material.texture.ks
                           * pow(spec, sphere->texture.material.texture.ns)
                           * light->power / dist); */
 
-    auto spec_color = light->color
+    Color spec_color = light->color
                       * object->texture.material.texture.ks
                       * pow(spec, object->texture.material.texture.ns)
                       * light->power / dist;

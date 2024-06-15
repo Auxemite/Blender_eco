@@ -25,9 +25,9 @@ void App::MainOptions() {
         if (ImGui::BeginPopup("change_bg"))
         {
             ImGui::SeparatorText("Background Images");
-            for (int i = 0; i < IM_ARRAYSIZE(names); i++)
-                if (ImGui::Selectable(names[i])) {
-                    std::string name = names[i];
+            for (auto & i : names)
+                if (ImGui::Selectable(i)) {
+                    std::string name = i;
                     name[0] = tolower(name[0]);
                     env.change_bg(name);
                 }
@@ -56,25 +56,25 @@ void App::MainOptions() {
 
         ImGui::Text("| Selection Mode : ");
         ImGui::SameLine();
-        if (ImGui::RadioButton("Mesh", &env.selected_mode, 0)) { env.update_selection_mode(); };
+        if (ImGui::RadioButton("Mesh", &env.selected_mode, 0)) { env.update_selection_mode(); }
         ImGui::SameLine();
-        if (ImGui::RadioButton("Face", &env.selected_mode, 1)) { env.update_selection_mode(); };
+        if (ImGui::RadioButton("Face", &env.selected_mode, 1)) { env.update_selection_mode(); }
 //        ImGui::SameLine();
 //        if (ImGui::RadioButton("Edge", &env.selected_mode, 2)) {};
     }
     ImGui::SameLine();
     ImGui::Text("|");
     ImGui::SameLine();
-    if (ImGui::RadioButton("Fast Selection", &env.fast_selection, 1)) { env.render(); };
+    if (ImGui::RadioButton("Fast Selection", &env.fast_selection, 1)) { env.render(); }
     ImGui::SameLine();
-    if (ImGui::RadioButton("Normal Selection", &env.fast_selection, 0)) { env.render(); };
+    if (ImGui::RadioButton("Normal Selection", &env.fast_selection, 0)) { env.render(); }
 
     ImGui::SameLine();
     ImGui::Text("|");
     ImGui::SameLine();
-    if (ImGui::RadioButton("Grid", &env.scene.activate_grid, 1)) { env.render(); };
+    if (ImGui::RadioButton("Grid", &env.scene.activate_grid, 1)) { env.render(); }
     ImGui::SameLine();
-    if (ImGui::RadioButton("No Grid", &env.scene.activate_grid, 0)) { env.render(); };
+    if (ImGui::RadioButton("No Grid", &env.scene.activate_grid, 0)) { env.render(); }
 }
 
 void App::Windows()
@@ -127,9 +127,9 @@ void App::Windows()
     if (ImGui::BeginPopup("add_mesh"))
     {
         ImGui::SeparatorText("Mesh Types");
-        for (int i = 0; i < IM_ARRAYSIZE(names); i++)
-            if (ImGui::Selectable(names[i])) {
-                std::string name = names[i];
+        for (auto & i : names)
+            if (ImGui::Selectable(i)) {
+                std::string name = i;
                 name[0] = tolower(name[0]);
                 env.add_mesh(name);
             }
@@ -229,7 +229,7 @@ void App::SelectMesh(const ImGuiIO& io, ImVec2 pos) {
         }
     };
 
-    ImGuiKey start_key = (ImGuiKey)0;
+    auto start_key = (ImGuiKey)0;
     for (ImGuiKey key = start_key; key < ImGuiKey_NamedKey_END; key = (ImGuiKey)(key + 1)) {
         if (funcs::IsLegacyNativeDupe(key) || !ImGui::IsKeyDown(key))
             continue;
@@ -361,6 +361,6 @@ void App::PrintObjInfo() {
     for (auto & edge : env.focus_mesh->points) {
         text += edge->to_string() + "\n";
     }
-    ImGui::Text(text.c_str());
+    ImGui::Text("%s", text.c_str());
 }
 

@@ -1,5 +1,6 @@
+#include <utility>
+
 #include "scene.hh"
-#include "../utils/utils.hh"
 #include "../render/intersection.hh"
 
 Scene::Scene(int width, int height)
@@ -9,31 +10,8 @@ Scene::Scene(int width, int height)
                                 Uniform_Texture(basic::texture::basic, basic::color::dark_gray),
                                 true));
 
-//    objects.push_back(new Sphere(
-//            {0,0,0}, 1,
-//            Uniform_Texture(basic::texture::simple, basic::color::blue)));
-
-    // Tests
-    Point3 a(1, 0, 0), b(0, 1, 0), c(0, 0, 1), d(2, 0, 0),
-           e(0, 2, 0), f(0, 0, 2);
-
-    // char *file = "truc_chelou.obj";
-    char *file = "../data/cube.obj"; // Put ../test/ for file to be found
-
-    Mesh *cube = new Mesh(file, Uniform_Texture(basic::texture::simple, basic::color::red));
+    Mesh *cube = new Mesh("../data/cube.obj", Uniform_Texture(basic::texture::simple, basic::color::red));
     add_mesh(cube);
-//    Mesh *cube1 = new Mesh(file, Uniform_Texture(basic::texture::simple, basic::color::cyan));
-//    Mesh *cube2 = new Mesh(file, Uniform_Texture(basic::texture::simple, basic::color::yellow));
-//
-//    add_mesh(cube1);
-//
-//    add_mesh(cube2);
-//    std::vector<Triangle *> faces(cube2->faces.begin(), cube2->faces.end() - 4.0);
-//    cube2->extrude_along_points(0.25, faces);
-//
-//    cube2->move_mesh({1, 1, 1});
-
-    // cube2->to_dot_obj("test.obj");
 
     lights.push_back(new Point_Light({3,5,3}, 20,
                                      basic::color::orange));
@@ -43,18 +21,13 @@ Scene::Scene(int width, int height)
             {0, 0, 0},
             width,
             height);
-
-//    for (int i = 0; i < 1280; i++)
-//            select(i, 720/2);
-    //bg = new Image(load_image("../test/sunset.ppm"));
 }
 
 Scene::Scene(std::vector<Shape*> sphere_, std::vector<Light*> lights_, Camera camera_)
 {
     objects = std::move(sphere_);
     lights = std::move(lights_);
-    camera = camera_;
-    //bg = new Image(load_image("../test/sunset.ppm"));
+    camera = std::move(camera_);
 }
 
 void Scene::add_mesh(Mesh *mesh)
@@ -62,9 +35,9 @@ void Scene::add_mesh(Mesh *mesh)
     meshes.push_back(mesh);
 }
 
-void Scene::select(int x, int y)
+void Scene::select(int x, int y) const
 {
-    auto pixel_center = camera.pixel_loc + (x * camera.pixel_u) + (y * camera.pixel_v);
+    auto pixel_center = camera.pixel_loc + (static_cast<float>(x) * camera.pixel_u) + (static_cast<float>(y) * camera.pixel_v);
     auto dir = (pixel_center - camera.center).norm();
     auto intersection = Intersection(camera.center, dir);
     intersection.throw_ray(*this);

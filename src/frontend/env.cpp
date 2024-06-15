@@ -2,7 +2,7 @@
 
 #include "env.hh"
 
-inline double aspect_ratio = 16.0 / 9.0;
+inline float aspect_ratio = 16.0f / 9.0f;
 inline int default_width = 1280;
 inline int default_height = static_cast<int>(default_width / aspect_ratio);
 Image *bg = load_image("../data/sunset.ppm");
@@ -47,14 +47,14 @@ void Env::change_bg(const std::string& name) {
     bg = img;
     std::cout << "Changed Background Image";
     render();
-};
+}
 
 void Env::render() {
     image.render(scene, bg, photorealist, fast_selection);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, image.width, image.height, GL_RGB, GL_UNSIGNED_BYTE, image.char_data);
 }
 
-void Env::add_mesh(std::string name) {
+void Env::add_mesh(const std::string& name) {
     Mesh *mesh = new Mesh("../data/" + name + ".obj", Uniform_Texture(basic::texture::simple, basic::color::cyan));
     scene.add_mesh(mesh);
     std::cout << "Added Mesh\n";
@@ -74,36 +74,36 @@ void Env::delete_mesh(Mesh *mesh) {
     render();
 }
 
-void Env::move_camera_x(double angle) {
+void Env::move_camera_x(float angle) {
     if (angle == 0)
         return;
     Point3 p = scene.camera.center;
-    double angle_d = PI * angle / 180.0;
-    double x_ = 0;
-    double y_ = sin(angle_d) * p.z + cos(angle_d) * p.y;
-    double z_ = cos(angle_d) * p.z - sin(angle_d) * p.y;
+    float angle_d = PI * angle / 180.0;
+    float x_ = 0;
+    float y_ = sin(angle_d) * p.z + cos(angle_d) * p.y;
+    float z_ = cos(angle_d) * p.z - sin(angle_d) * p.y;
     scene.camera.update_cam(Point3(x_, y_, z_) + Point3(p.x, 0, 0));
 }
 
-void Env::move_camera_y(double angle) {
+void Env::move_camera_y(float angle) {
     if (angle == 0)
         return;
     Point3 p = scene.camera.center;
-    double angle_d = PI * angle / 180.0;
-    double x_ = cos(angle_d) * p.x - sin(angle_d) * p.z;
-    double y_ = 0;
-    double z_ = sin(angle_d) * p.x + cos(angle_d) * p.z;
+    float angle_d = PI * angle / 180.0;
+    float x_ = cos(angle_d) * p.x - sin(angle_d) * p.z;
+    float y_ = 0;
+    float z_ = sin(angle_d) * p.x + cos(angle_d) * p.z;
     scene.camera.update_cam(Point3(x_, y_, z_) + Point3(0, p.y, 0));
 }
 
-void Env::move_camera_z(double angle) {
+void Env::move_camera_z(float angle) {
     if (angle == 0)
         return;
     Point3 p = scene.camera.center;
-    double angle_d = PI * angle / 180.0;
-    double x_ = sin(angle_d) * p.y + cos(angle_d) * p.x;
-    double y_ = cos(angle_d) * p.y - sin(angle_d) * p.x;
-    double z_ = 0;
+    float angle_d = PI * angle / 180.0;
+    float x_ = sin(angle_d) * p.y + cos(angle_d) * p.x;
+    float y_ = cos(angle_d) * p.y - sin(angle_d) * p.x;
+    float z_ = 0;
     scene.camera.update_cam(Point3(x_, y_, z_) + Point3(0, 0, p.z));
 }
 
@@ -115,7 +115,7 @@ void Env::change_material(Color color, Texture texture) {
     render();
 }
 
-void Env::move_x(double value) {
+void Env::move_x(float value) {
     if (selected_mode == 0) {
         Point3 new_location = *focus_mesh->points[0] + Point3(value, 0, 0);
         focus_mesh->move_mesh(new_location);
@@ -125,7 +125,7 @@ void Env::move_x(double value) {
     render();
 }
 
-void Env::move_y(double value) {
+void Env::move_y(float value) {
     if (selected_mode == 0) {
         Point3 new_location = *focus_mesh->points[0] + Point3(0, value, 0);
         focus_mesh->move_mesh(new_location);
@@ -135,7 +135,7 @@ void Env::move_y(double value) {
     render();
 }
 
-void Env::move_z(double value) {
+void Env::move_z(float value) {
     if (selected_mode == 0) {
         Point3 new_location = *focus_mesh->points[0] + Point3(0, 0, value);
         focus_mesh->move_mesh(new_location);
@@ -145,7 +145,7 @@ void Env::move_z(double value) {
     render();
 }
 
-void Env::scale(double value) {
+void Env::scale(float value) {
     if (selected_mode == 0)
         focus_mesh->scale_mesh(value);
     else if (selected_mode == 1)
@@ -153,7 +153,7 @@ void Env::scale(double value) {
     render();
 }
 
-void Env::rotate_x(double angle) {
+void Env::rotate_x(float angle) {
     if (selected_mode == 0)
         focus_mesh->rotate_axis_x(angle);
     else if (selected_mode == 1) {
@@ -166,7 +166,7 @@ void Env::rotate_x(double angle) {
     render();
 }
 
-void Env::rotate_y(double angle) {
+void Env::rotate_y(float angle) {
     if (selected_mode == 0)
         focus_mesh->rotate_all_axis(0, angle, 0);
     else if (selected_mode == 1) {
@@ -179,7 +179,7 @@ void Env::rotate_y(double angle) {
     render();
 }
 
-void Env::rotate_z(double angle) {
+void Env::rotate_z(float angle) {
     if (selected_mode == 0)
         focus_mesh->rotate_all_axis(0, 0, angle);
     else if (selected_mode == 1) {
@@ -193,7 +193,7 @@ void Env::rotate_z(double angle) {
 }
 
 
-void Env::extrude(double x_, double y_, double z_) {
+void Env::extrude(float x_, float y_, float z_) {
     if (selected_mode == 0 || focus_face == nullptr)
         return;
     auto *a_ = new Point3(*focus_face->a + Point3(x_, y_, z_));
@@ -203,9 +203,9 @@ void Env::extrude(double x_, double y_, double z_) {
     render();
 }
 
-void Env::select_mesh(int x, int y) {
+void Env::select_mesh(float x, float y) {
     auto c = scene.camera;
-    auto pixel_center = c.pixel_loc + (x * c.pixel_u) + (y * c.pixel_v);
+    auto pixel_center = c.pixel_loc + (static_cast<float>(x) * c.pixel_u) + (static_cast<float>(y) * c.pixel_v);
     auto dir = (pixel_center - c.center).norm();
     auto inter = Intersection(c.center, dir);
     Mesh *selected_mesh = nullptr;
@@ -283,9 +283,9 @@ void Env::update_selection_mode() {
     render();
 };
 
-void Env::save_mesh(std::string filename) {
+void Env::save_mesh(const std::string& filename) const {
     if (focus_mesh == nullptr)
         std::cerr << "Save Mesh Error: NO MESH SELECTED\n";
     else
-        focus_mesh->to_dot_obj(std::move(filename));
+        focus_mesh->to_dot_obj(filename);
 }

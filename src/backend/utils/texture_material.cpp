@@ -12,7 +12,7 @@ Uniform_Texture::Uniform_Texture(Texture texture, Color color)
     material.texture = texture;
 }
 
-Uniform_Texture::Uniform_Texture(Color color, double kd, double ks, double ns)
+Uniform_Texture::Uniform_Texture(Color color, float kd, float ks, float ns)
 {
     material.color = color;
     material.texture = {kd, ks, ns};

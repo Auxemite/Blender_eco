@@ -11,14 +11,14 @@ class Camera
         Vector3 pixel_u;
         Point3 pixel_loc;
         Point3 lookat;
-        int width;
-        int height;
+        int width=0;
+        int height=0;
 
         Camera()= default;
-        Camera(Point3 center_, Point3 lookat_, int width_, int height_);
+        Camera(const Point3& center_, const Point3& lookat_, int width_, int height_);
 
         void update(const Point3& center_, const Point3& lookat_);
         Vector3 get_dir(int i, int j);
-        void update_cam(Point3 center_);
-        void update_lookat(Point3 lookat_);
+        void update_cam(const Point3& center_);
+        void update_lookat(const Point3& lookat_);
 };

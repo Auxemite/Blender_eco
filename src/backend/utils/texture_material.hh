@@ -5,7 +5,7 @@
 
 struct Texture
 {
-    double kd, ks, ns;
+    float kd, ks, ns;
 };
 
 struct Material
@@ -22,12 +22,12 @@ class Texture_Material {
 
 class Uniform_Texture : public Texture_Material {
     public:
-        struct Material material;
+        struct Material material={};
 
         Uniform_Texture()= default;
         Uniform_Texture(Color color, Texture texture);
         Uniform_Texture(Texture texture, Color color);
-        Uniform_Texture(Color color, double kd, double ks, double ns);
+        Uniform_Texture(Color color, float kd, float ks, float ns);
 
     struct Material get_texture(const Point3& position) const override;
 };

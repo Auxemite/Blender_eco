@@ -2,18 +2,18 @@
 
 #include <ostream>
 
-inline void cap_color(double *value)
+inline void cap_color(float *value)
 {
-    (*value) = (*value) > 1.0 ? 1.0: (*value);
-    (*value) = (*value) < 0.0 ? 0.0: (*value);
+    (*value) = (*value) > 1.0f ? 1.0f: (*value);
+    (*value) = (*value) < 0.0f ? 0.0f: (*value);
 }
 
 class Color {
     public :
-        double r, g, b;
+        float r, g, b;
 
         Color()= default;
-        Color (double r_, double g_, double b_) : r(r_), g(g_), b(b_) {};
+        Color (float r_, float g_, float b_) : r(r_), g(g_), b(b_) {};
 
         void cap()
         {
@@ -88,14 +88,14 @@ inline Color operator*(const Color& c1, const Color& c2)
                  c1.b * c2.b);
 }
 
-inline Color operator*(const Color& c, double f)
+inline Color operator*(const Color& c, float f)
 {
     return Color(c.r * f,
                  c.g * f,
                  c.b * f);
 }
 
-inline Color operator*(double f, const Color& c)
+inline Color operator*(float f, const Color& c)
 {
     return Color(f * c.r,
                  f * c.g,
@@ -110,14 +110,14 @@ inline Color operator/(const Color& c1, const Color& c2)
                  c1.b / c2.b);
 }
 
-inline Color operator/(const Color& c, double f)
+inline Color operator/(const Color& c, float f)
 {
     return Color(c.r / f,
                  c.g / f,
                  c.b / f);
 }
 
-inline Color operator/(double f, const Color& c)
+inline Color operator/(float f, const Color& c)
 {
     return Color(f / c.r,
                  f / c.g,

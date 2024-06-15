@@ -17,8 +17,6 @@ class Intersection
         void throw_ray(Shape *object);
         void throw_ray(const Scene& scene);
 
-//        Color fast_ray_color(const Scene& scene) const;
-//        Color ray_color(const Scene& scene, int recursive);
         Color diffuse(Vector3 light_ray, Vector3 normale) const;
         Color specular(Light *light, const Vector3& light_ray, const Vector3& refaction) const;
 
@@ -27,5 +25,5 @@ class Intersection
         Point3 origin;
         Vector3 dir;
         Point3 inter_loc;
-        Shape* object;
+        Shape* object={};
 };

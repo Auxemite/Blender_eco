@@ -11,30 +11,30 @@ static std::string vector3_msg_create = "Create Vector3 : ";
 
     // Constructor & Destructor
 Vector3::Vector3(): x(0), y(0), z(0) {}
-Vector3::Vector3(double f): x(f), y(f), z(f) {}
-Vector3::Vector3(double x, double y, double z): x(x), y(y), z(z) {}
+Vector3::Vector3(float f): x(f), y(f), z(f) {}
+Vector3::Vector3(float x, float y, float z): x(x), y(y), z(z) {}
 Vector3::Vector3(const Vector3& v): x(v.x), y(v.y), z(v.z) {}
 
 
     // Methods
-double Vector3::length_sqr()
+float Vector3::length_sqr()
 {
     return sqr(x) + sqr(y) + sqr(z);
 }
 
-double Vector3::length()
+float Vector3::length()
 {
     return std::sqrt(length_sqr());
 }
 
-double Vector3::dot(const Vector3& v) const
+float Vector3::dot(const Vector3& v) const
 {
     return x * v.x + y * v.y + z * v.z;
 }
 
-double Vector3::normalize()
+float Vector3::normalize()
 {
-    double len = length();
+    float len = length();
 
     *this /= len;
 
@@ -65,7 +65,7 @@ std::string Vector3::to_string() const
 
 
     // Usefull Operators on Vectors
-double dot(const Vector3& v1, const Vector3& v2)
+float dot(const Vector3& v1, const Vector3& v2)
 {
     return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 }
@@ -122,7 +122,7 @@ Vector3 Vector3::operator-() const
 }
 
 
-Vector3& Vector3::operator*=(const double& f)
+Vector3& Vector3::operator*=(const float& f)
 {
     x *= f;
     y *= f;
@@ -131,7 +131,7 @@ Vector3& Vector3::operator*=(const double& f)
     return *this;
 }
 
-Vector3& Vector3::operator/=(const double& f)
+Vector3& Vector3::operator/=(const float& f)
 {
     x /= f;
     y /= f;

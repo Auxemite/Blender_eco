@@ -6,7 +6,7 @@
 #include <filesystem>
 namespace fs = std::filesystem;
 
-Mesh::Mesh(const Point3& a_, const Point3& b_, const Point3& c_, Uniform_Texture uniformMaterial_)
+Mesh::Mesh(const Point3& a_, const Point3& b_, const Point3& c_, const Uniform_Texture& uniformMaterial_)
 {
     faces.push_back(new Triangle(a_, b_, c_, uniformMaterial_));
     points.push_back(new Point3(a_));
@@ -16,7 +16,7 @@ Mesh::Mesh(const Point3& a_, const Point3& b_, const Point3& c_, Uniform_Texture
     texture = uniformMaterial_;
 }
 
-Mesh::Mesh(std::vector<Point3 *> points_vec, std::vector<std::vector<int>> faces_vec, Uniform_Texture uniformMaterial_)
+Mesh::Mesh(std::vector<Point3 *> points_vec, const std::vector<std::vector<int>>& faces_vec, const Uniform_Texture& uniformMaterial_)
 {
     points = points_vec;
 
@@ -33,13 +33,13 @@ Mesh::Mesh(std::vector<Point3 *> points_vec, std::vector<std::vector<int>> faces
 }
 
 #define LINE_LEN 512
-Mesh::Mesh(std::string filename, Uniform_Texture uniformMaterial_)
+Mesh::Mesh(const std::string& filename, const Uniform_Texture& uniformMaterial_)
 {
     // Open file as stream
     auto path = fs::current_path();
     std::ifstream f(filename);
     if (!f.is_open()) {
-        //std::cout << "Error File " << filename << " could not be opened";
+        std::cout << "Error File " << filename << " could not be opened";
         return;
     }
 
@@ -68,7 +68,7 @@ Mesh::Mesh(std::string filename, Uniform_Texture uniformMaterial_)
         {
             // Handle different format such as "f 3 6 9" and "f 3/4/5 6/7/8 9/10/11"
             int f[3];
-            for (int i = 0; i < 3; i++)
+            for (unsigned int i = 0; i < 3; i++)
             {
                 s >> f[i];
                 while (s.peek() != ' ' && !s.eof())
@@ -110,7 +110,7 @@ std::vector<int> Mesh::get_face_index(const Triangle& face) const
     });
 }
 
-void Mesh::to_dot_obj(std::string filename)
+void Mesh::to_dot_obj(const std::string& filename)
 {
     std::ofstream f(filename);
     if (!f)
@@ -140,11 +140,11 @@ void Mesh::update_hit_box()
 
     hit_box.center = mid;
 
-    double dist_max = 0.;
+    float dist_max = 0.;
 
     for (auto point : points)
     {
-        double dist = (*point - mid).length();
+        float dist = (*point - mid).length();
 
         if (dist > dist_max)
             dist_max = dist;
@@ -155,7 +155,7 @@ void Mesh::update_hit_box()
 
 void Mesh::update_hit_box(const Point3& point)
 {
-    double dist_hit_box = (hit_box.center - point).length();
+    float dist_hit_box = (hit_box.center - point).length();
     if (dist_hit_box > hit_box.radius)
         hit_box.radius = dist_hit_box;
 }
@@ -227,7 +227,7 @@ bool Mesh::move_mesh(const Point3& new_pos)
     try
     {
         Point3 *origin = points.at(0);
-        Vector3 diff = new_pos - *origin; 
+        Vector3 diff = new_pos - *origin;
         for (auto point : points)
             *point += diff;
         hit_box.center += diff;
@@ -273,9 +273,9 @@ bool Mesh::create_point(const Point3& point)
     return true;
 }
 
-bool Mesh::create_point(double a, double b, double c)
+bool Mesh::create_point(float a, float b, float c)
 {
-    Point3 *new_point = new Point3(a, b, c);
+    auto *new_point = new Point3(a, b, c);
     points.push_back(new_point);
 
     update_hit_box(*new_point);
@@ -299,7 +299,7 @@ bool Mesh::add_face(Triangle *new_face)
 
 bool Mesh::create_face(const Triangle& new_face)
 {
-    Triangle *face = new Triangle(new_face);
+    auto *face = new Triangle(new_face);
     faces.push_back(face);
 
     add_point(face->a);
@@ -311,7 +311,7 @@ bool Mesh::create_face(const Triangle& new_face)
 
 bool Mesh::create_face(Point3 *a, Point3 *b, Point3 *c, bool add_points=true)
 {
-    Triangle *face = new Triangle(a, b, c, texture);
+    auto *face = new Triangle(a, b, c, texture);
     faces.push_back(face);
 
     if (add_points)
@@ -325,12 +325,12 @@ bool Mesh::create_face(Point3 *a, Point3 *b, Point3 *c, bool add_points=true)
 }
 
 // Usefull
-Point3 Mesh::get_mid(std::vector<Point3 *> points)
+Point3 Mesh::get_mid(const std::vector<Point3 *>& pts)
 {
-    Point3 mid = (0, 0, 0);
-    int nb_point = points.size();
-    for (auto point : points)
-        mid += *point / nb_point;
+    Point3 mid = (0.0f, 0.0f, 0.0f);
+    int nb_point = pts.size();
+    for (auto point : pts)
+        mid += *point / static_cast<float>(nb_point);
 
     return mid;
 }
@@ -340,7 +340,7 @@ Point3 Mesh::get_mid()
     return get_mid(points);
 }
 
-inline std::vector<Point3 *> Mesh::get_points_from_indexes(const std::vector<int> indexes) const
+inline std::vector<Point3 *> Mesh::get_points_from_indexes(const std::vector<int>& indexes) const
 {
     std::vector<Point3 *> point_list;
 
@@ -358,7 +358,7 @@ inline std::vector<Point3 *> Mesh::get_points_from_indexes(const std::vector<int
 }
 
 // Dimension
-void Mesh::scale_selected(double size, const Point3& from, const std::vector<Point3 *> point_list)
+void Mesh::scale_selected(float size, const Point3& from, const std::vector<Point3 *>& point_list)
 {
     if (size == 1.)
         return;
@@ -367,12 +367,12 @@ void Mesh::scale_selected(double size, const Point3& from, const std::vector<Poi
         *point = from + (*point - from) * size;
 }
 
-void Mesh::scale_mesh(double size, const Point3& from)
+void Mesh::scale_mesh(float size, const Point3& from)
 {
     scale_selected(size, from, points);
 }
 
-void Mesh::scale_face(double size, Triangle *face)
+void Mesh::scale_face(float size, Triangle *face)
 {
     std::vector<Point3 *> point_list;
     point_list.push_back(face->a);
@@ -382,13 +382,13 @@ void Mesh::scale_face(double size, Triangle *face)
     update_hit_box();
 }
 
-void Mesh::scale_mesh(double size)
+void Mesh::scale_mesh(float size)
 {
     scale_selected(size, get_mid(points), points);
     update_hit_box();
 }
 
-void Mesh::scale_selected(double size, const std::vector<int> indexes)
+void Mesh::scale_selected(float size, const std::vector<int>& indexes)
 {
     if (size == 1.)
         return;
@@ -398,16 +398,16 @@ void Mesh::scale_selected(double size, const std::vector<int> indexes)
     scale_selected(size, get_mid(point_list), point_list);
 }
 
-void Mesh::scale_selected(double size, const Point3& from, const std::vector<int> indexes)
+void Mesh::scale_selected(float size, const Point3& from, const std::vector<int>& indexes)
 {
     scale_selected(size, from, get_points_from_indexes(indexes));
 }
 
-inline void rotate_point_axis_x(double angle, Point3 *point, const Point3& from)
+inline void rotate_point_axis_x(float angle, Point3 *point, const Point3& from)
 {
-    // double x = point->x - from.x;
-    double y = point->y - from.y;
-    double z = point->z - from.z;
+    // float x = point->x - from.x;
+    float y = point->y - from.y;
+    float z = point->z - from.z;
 
     // point->x = x * std::cos(angle) - z * sin(angle);
     point->y = y * std::cos(angle) - z * sin(angle) + from.y;
@@ -415,7 +415,7 @@ inline void rotate_point_axis_x(double angle, Point3 *point, const Point3& from)
 
 }
 
-void Mesh::rotate_axis_x(double angle, std::vector<Point3 *> point_list)
+void Mesh::rotate_axis_x(float angle, const std::vector<Point3 *>& point_list)
 {
 
     Point3 mid = get_mid(point_list);
@@ -427,32 +427,32 @@ void Mesh::rotate_axis_x(double angle, std::vector<Point3 *> point_list)
         face->update_normal();
 }
 
-void Mesh::rotate_axis_x(double angle)
+void Mesh::rotate_axis_x(float angle)
 {
     rotate_axis_x(angle, points);
 }
 
-void Mesh::rotate_point_all_axis(double angle_x, double angle_y, double angle_z, Point3 *point, const Point3& from)
+void Mesh::rotate_point_all_axis(float angle_x, float angle_y, float angle_z, Point3 *point, const Point3& from)
 {
-    double x = point->x - from.x;
-    double y = point->y - from.y;
-    double z = point->z - from.z;
+    float x = point->x - from.x;
+    float y = point->y - from.y;
+    float z = point->z - from.z;
 
-    double cos_x = std::cos(angle_x), sin_x = std::sin(angle_x);
-    double cos_y = std::cos(angle_y), sin_y = std::sin(angle_y);
-    double cos_z = std::cos(angle_z), sin_z = std::sin(angle_z);
+    float cos_x = std::cos(angle_x), sin_x = std::sin(angle_x);
+    float cos_y = std::cos(angle_y), sin_y = std::sin(angle_y);
+    float cos_z = std::cos(angle_z), sin_z = std::sin(angle_z);
 
     point->x = x * (cos_y * cos_z) + y * (sin_x * sin_y * cos_z - cos_x * sin_z) + z * (cos_x * sin_y * cos_z + sin_x * sin_z) + from.x;
     point->y = x * (cos_y * sin_z) + y * (sin_x * sin_y * sin_z + cos_x * cos_z) + z * (cos_x * sin_y * sin_z - sin_x * cos_z) + from.y;
     point->z = x * (-sin_y)        + y * (sin_x * cos_y)                         + z * (cos_x * cos_y)                         + from.z;
 }
 
-void Mesh::rotate_all_axis(double angle_x, double angle_y, double angle_z, std::vector<Point3 *> point_list)
+void Mesh::rotate_all_axis(float angle_x, float angle_y, float angle_z, const std::vector<Point3 *>& point_list)
 {
     Point3 mid = get_mid(point_list);
 
     //// Modulo to simplify calculus
-    double pi = 3.14159;
+    float pi = 3.14159;
     angle_x -= static_cast<int>(angle_x / (2 * pi)) * (2 * pi);
     angle_y -= static_cast<int>(angle_y / (2 * pi)) * (2 * pi);
     angle_z -= static_cast<int>(angle_z / (2 * pi)) * (2 * pi);
@@ -464,7 +464,7 @@ void Mesh::rotate_all_axis(double angle_x, double angle_y, double angle_z, std::
         face->update_normal();
 }
 
-void Mesh::rotate_all_axis(double angle_x, double angle_y, double angle_z)
+void Mesh::rotate_all_axis(float angle_x, float angle_y, float angle_z)
 {
     rotate_all_axis(angle_x, angle_y, angle_z, points);
 }
@@ -496,16 +496,16 @@ void Mesh::extrude_face(Triangle *face, Point3* a, Point3 *b, Point3 *c)
     update_hit_box();
 }
 
-void Mesh::extrude_along_normal(double thickness, Triangle *face)
+void Mesh::extrude_along_normal(float thickness, Triangle *face)
 {
-    Point3 *a = new Point3(*face->a + face->normal_ * thickness);
-    Point3 *b = new Point3(*face->b + face->normal_ * thickness);
-    Point3 *c = new Point3(*face->c + face->normal_ * thickness);
+    auto *a = new Point3(*face->a + face->normal_ * thickness);
+    auto *b = new Point3(*face->b + face->normal_ * thickness);
+    auto *c = new Point3(*face->c + face->normal_ * thickness);
 
     extrude_face(face, a, b, c);
 }
 
-void Mesh::extrude_along_normal(double thickness, std::vector<Triangle *> faces_)
+void Mesh::extrude_along_normal(float thickness, const std::vector<Triangle *>& faces_)
 {
     for (auto face : faces_)
         extrude_along_normal(thickness, face);
@@ -522,7 +522,7 @@ inline std::vector<Triangle *> Mesh::get_faces(const Point3 *point)
     return connected_faces;
 }
 
-void add_normal(std::vector<Vector3> *list, Vector3 normal)
+void add_normal(std::vector<Vector3> *list, const Vector3& normal)
 {
     for (auto n : *list)
         if (n == normal)
@@ -534,7 +534,7 @@ void add_normal(std::vector<Vector3> *list, Vector3 normal)
 Vector3* Mesh::get_point_normal(const Point3 *point)
 {
     std::vector<Triangle *> connected = get_faces(point);
-    Vector3 *normal = new Vector3(0, 0, 0);
+    auto *normal = new Vector3(0, 0, 0);
     std::vector<Vector3> connected_normals;
 
     for (const auto face : connected)
@@ -542,39 +542,39 @@ Vector3* Mesh::get_point_normal(const Point3 *point)
 
     // std::cout << connected_normals.at(0) << std::endl;
 
-    for (const auto n : connected_normals)
+    for (const auto& n : connected_normals)
         *normal += n;
     
     normal->normalize();
     return normal;
 }
 
-void Mesh::extrude_along_points_normalized(double thickness, Triangle *face)
+void Mesh::extrude_along_points_normalized(float thickness, Triangle *face)
 {
-    Point3 *a = new Point3(*face->a + *get_point_normal(face->a) * thickness);
-    Point3 *b = new Point3(*face->b + *get_point_normal(face->b) * thickness);
-    Point3 *c = new Point3(*face->c + *get_point_normal(face->c) * thickness);
+    auto *a = new Point3(*face->a + *get_point_normal(face->a) * thickness);
+    auto *b = new Point3(*face->b + *get_point_normal(face->b) * thickness);
+    auto *c = new Point3(*face->c + *get_point_normal(face->c) * thickness);
 
     extrude_face(face, a, b, c);
 }
 
-void Mesh::extrude_along_points(double thickness, Triangle *face)
+void Mesh::extrude_along_points(float thickness, Triangle *face)
 {
     Vector3 *normal_a = get_point_normal(face->a);
     Vector3 *normal_b = get_point_normal(face->b);
     Vector3 *normal_c = get_point_normal(face->c);
 
-    double dot_a = dot(face->normal_, *normal_a);
-    double dot_b = dot(face->normal_, *normal_b);
-    double dot_c = dot(face->normal_, *normal_c);
+    float dot_a = dot(face->normal_, *normal_a);
+    float dot_b = dot(face->normal_, *normal_b);
+    float dot_c = dot(face->normal_, *normal_c);
 
     *normal_a /= dot_a; 
     *normal_b /= dot_b; 
     *normal_c /= dot_c; 
 
-    Point3 *a = new Point3(*face->a + *normal_a * thickness);
-    Point3 *b = new Point3(*face->b + *normal_b * thickness);
-    Point3 *c = new Point3(*face->c + *normal_c * thickness);
+    auto *a = new Point3(*face->a + *normal_a * thickness);
+    auto *b = new Point3(*face->b + *normal_b * thickness);
+    auto *c = new Point3(*face->c + *normal_c * thickness);
 
     extrude_face(face, a, b, c);
 }
@@ -589,7 +589,7 @@ bool add_point_(std::vector<Point3 *> *point_list, Point3 *point)
     return true;
 }
 
-std::vector<Point3 *> Mesh::get_points_from_faces(const std::vector<Triangle *> faces_)
+std::vector<Point3 *> Mesh::get_points_from_faces(const std::vector<Triangle *>& faces_)
 {
     std::vector<Point3 *> point_list;
 
@@ -603,7 +603,7 @@ std::vector<Point3 *> Mesh::get_points_from_faces(const std::vector<Triangle *> 
     return point_list;
 }
 
-std::vector<Point3 *> get_points_from_edges(const std::vector<Edge> edges)
+std::vector<Point3 *> get_points_from_edges(const std::vector<Edge>& edges)
 {
     std::vector<Point3 *> point_list;
 
@@ -616,7 +616,7 @@ std::vector<Point3 *> get_points_from_edges(const std::vector<Edge> edges)
     return point_list;
 }
 
-std::vector<Vector3 *> Mesh::get_points_normal(const std::vector<Point3 *> point_list)
+std::vector<Vector3 *> Mesh::get_points_normal(const std::vector<Point3 *>& point_list)
 {
     std::vector<Vector3 *> normals;
     
@@ -656,7 +656,7 @@ void add_edge(std::vector<Edge> *edges, std::vector<int> *count, Edge edge)
     count->push_back(1);
 }
 
-std::vector<Edge> Mesh::get_edges(const std::vector<Triangle *> faces_, std::vector<int> *count)
+std::vector<Edge> Mesh::get_edges(const std::vector<Triangle *>& faces_, std::vector<int> *count)
 {
     std::vector<Edge> edges;
 
@@ -673,7 +673,7 @@ std::vector<Edge> Mesh::get_edges(const std::vector<Triangle *> faces_, std::vec
 
     return edges;
 }
-std::vector<Edge> Mesh::get_border_edges(const std::vector<Triangle *> faces_)
+std::vector<Edge> Mesh::get_border_edges(const std::vector<Triangle *>& faces_)
 {
     std::vector<int> count;
     std::vector<Edge> edges = get_edges(faces_, &count);
@@ -696,7 +696,7 @@ int get_index(std::vector<Point3 *> list, Point3 *element)
     return -1;
 }
 
-void Mesh::extrude_along_points_normalized(double thickness, std::vector<Triangle *> faces_)
+void Mesh::extrude_along_points_normalized(float thickness, const std::vector<Triangle *>& faces_)
 {
     std::vector<Point3 *> surrounded_points = get_points_from_faces(faces_);
     std::vector<Edge> border_edges = get_border_edges(faces_);
@@ -737,7 +737,7 @@ void Mesh::extrude_along_points_normalized(double thickness, std::vector<Triangl
         face->update_normal();
 }
 
-Triangle* get_face_from_point(std::vector<Triangle *> faces, Point3* point)
+Triangle* get_face_from_point(const std::vector<Triangle *>& faces, Point3* point)
 {
     for (auto face : faces)
         if (face->a == point || face->b == point || face->c == point)
@@ -747,7 +747,7 @@ Triangle* get_face_from_point(std::vector<Triangle *> faces, Point3* point)
     return nullptr;
 }
 
-void Mesh::extrude_along_points(double thickness, std::vector<Triangle *> faces_)
+void Mesh::extrude_along_points(float thickness, const std::vector<Triangle *>& faces_)
 {
     std::vector<Point3 *> surrounded_points = get_points_from_faces(faces_);
     std::vector<Edge> border_edges = get_border_edges(faces_);
@@ -762,11 +762,11 @@ void Mesh::extrude_along_points(double thickness, std::vector<Triangle *> faces_
         Triangle* face = get_face_from_point(faces_, border_points.at(i));
 
         // Calculating the difference between the face normal and the point normal
-        double dot_new_point = dot(face->normal_, *point_direction.at(i));
+        float dot_new_point = dot(face->normal_, *point_direction.at(i));
         *point_direction.at(i) /= abs_(dot_new_point);
 
         // Shift the new point along its normal depending on the dot and the thickness
-        Point3 *new_point = new Point3(*border_points.at(i) + *point_direction.at(i) * thickness);
+        auto *new_point = new Point3(*border_points.at(i) + *point_direction.at(i) * thickness);
 
         new_border_points.push_back(new_point);
 
@@ -797,7 +797,7 @@ void Mesh::extrude_along_points(double thickness, std::vector<Triangle *> faces_
         Vector3 *point_normal = get_point_normal(point);
 
         // Calculating the difference between the face normal and the point normal
-        double dot_new_point = dot(face->normal_, *point_normal);
+        float dot_new_point = dot(face->normal_, *point_normal);
         *point_normal /= abs_(dot_new_point); // Absolute value of the dot, the normal should always be positive
 
         // Update the point position by shifting it along its normal depending on the dot and the thickness

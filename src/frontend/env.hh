@@ -29,28 +29,28 @@ class Env {
     explicit Env(const char* filename);
 
     void create_texture();
-    void save_mesh(std::string filename);
+    void save_mesh(const std::string& filename) const;
     void change_bg(const std::string& name);
 
     void render();
-    void move_camera_x(double angle);
-    void move_camera_y(double angle);
+    void move_camera_x(float angle);
+    void move_camera_y(float angle);
     void change_material(Color color, Texture texture);
 
-    void move_camera_z(double angle);
-    void add_mesh(std::string name);
+    void move_camera_z(float angle);
+    void add_mesh(const std::string& name);
     void delete_mesh(Mesh *mesh);
-    void select_mesh(int x, int y);
+    void select_mesh(float x, float y);
     void change_focus(Mesh *mesh);
     void change_focus(Mesh *mesh, Triangle *face);
     void update_selection_mode();
 
-    void move_x(double value);
-    void move_y(double value);
-    void move_z(double value);
-    void rotate_x(double angle);
-    void rotate_y(double angle);
-    void rotate_z(double angle);
-    void scale(double value);
-    void extrude(double x_, double y_, double z_);
+    void move_x(float value);
+    void move_y(float value);
+    void move_z(float value);
+    void rotate_x(float angle);
+    void rotate_y(float angle);
+    void rotate_z(float angle);
+    void scale(float value);
+    void extrude(float x_, float y_, float z_);
 };

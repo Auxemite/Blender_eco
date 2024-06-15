@@ -21,5 +21,5 @@ class Scene
         Scene(int width, int height);
         Scene(std::vector<Shape*> sphere_, std::vector<Light*> lights_, Camera camera_);
         void add_mesh(Mesh *mesh);
-        void select(int x, int y);
+        void select(int x, int y) const;
 };

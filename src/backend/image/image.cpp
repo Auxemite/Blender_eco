@@ -4,30 +4,30 @@ Image::Image(int width_, int height_)
 {
     width = width_;
     height = height_;
+    unsigned int size = width * height * 3;
+    char_data = (unsigned char *)calloc(size + 1, sizeof(unsigned char));
+    char_data[size] = '\0';
     data = std::vector<std::vector<Color>>(width,
                                            std::vector<Color>(height,
                                                               {0.0, 0.0, 0.0}));
     shapes = std::vector<std::vector<Shape*>>(width,
                                               std::vector<Shape*>(height,
                                                                 nullptr));
-    unsigned int size = width * height * 3;
-    char_data = (unsigned char *)calloc(size + 1, sizeof(unsigned char));
-    char_data[size] = '\0';
     selected = std::vector<std::vector<bool>>(width,
                                               std::vector<bool>(height,
                                                                 false));
-};
+}
 
 Color Image::bg_color(Image *bg, Vector3 dir)
 {
-    auto dirz = dir.z;
+    float dirz = dir.z;
     if (dir.z < 0)
         dirz = -dirz;
 
     dir.normalize();
-    auto w = bg->width;
-    auto h = bg->height;
-    auto theta =  static_cast<int>(acos(dir.y) * h / PI); // because dir is a unit vector
+    int w = bg->width;
+    int h = bg->height;
+    int theta = static_cast<int>(acos(dir.y) * h / PI); // because dir is a unit vector
     int phi;
     if (dirz == 0)
         phi = w-1;
@@ -44,14 +44,14 @@ Color Image::fast_ray_color(const Scene& scene, const Intersection& inter)
         return basic::color::background_blue;
 
     Vector3 normal = inter.object->normal(inter_loc);
-    double dot_angle = dot((scene.camera.lookat - scene.camera.center).norm(), normal);
-    dot_angle = 1.0 - (dot_angle / 2.0 + 0.5);
+    float dot_angle = dot((scene.camera.lookat - scene.camera.center).norm(), normal);
+    dot_angle = 1.0f - (dot_angle / 2.0f + 0.5f);
     if (inter.object->selected)
         return Color(2, 2, 0) * dot_angle;
 
     if (scene.activate_grid && inter.object->get_obj_type() == "Plane") {
-        double diff_1 = abs_(round(inter_loc.x) - inter_loc.x);
-        double diff_2 = abs_(round(inter_loc.z) - inter_loc.z);
+        float diff_1 = abs_(round(inter_loc.x) - inter_loc.x);
+        float diff_2 = abs_(round(inter_loc.z) - inter_loc.z);
         if (diff_1 <= 0.015 && round(inter_loc.x) == 0 && (round(inter_loc.z) != 0 || inter_loc.z < 0.5))
             return {0.5, 0.2, 0.2};
         if (diff_2 <= 0.015 && round(inter_loc.z) == 0 && (round(inter_loc.x) != 0 || inter_loc.x < 0.5))
@@ -74,7 +74,7 @@ Color Image::ray_color(const Scene& scene, Image *bg, Intersection inter, int re
     Color diff_color = basic::color::black;
     Color spec_color = basic::color::black;
     Vector3 normal = inter.object->normal(inter_loc);
-    Vector3 refraction = (2 * normal - inter.dir).norm();
+    Vector3 refraction = (2.0f * normal - inter.dir).norm();
     for (auto light : scene.lights)
     {
 //        if (intersection.inside_object(scene, light))
@@ -87,16 +87,16 @@ Color Image::ray_color(const Scene& scene, Image *bg, Intersection inter, int re
             continue;
 
         normal = inter.object->normal(inter_loc);
-        refraction = (2 * normal - inter.dir).norm();
+        refraction = (2.0f * normal - inter.dir).norm();
         // refraction = (2 * dot(normal, light_ray) * normal - light_ray).norm();
         diff_color = diff_color + inter.diffuse(light_ray, normal);
         spec_color = spec_color + inter.specular(light, light_ray, refraction);
     }
-    inter.update(inter_loc + (refraction * 0.01), refraction);
+    inter.update(inter_loc + (refraction * 0.01f), refraction);
     inter.throw_ray(scene);
-    auto second = ray_color(scene, bg, inter, recursive + 1);
+    Color second = ray_color(scene, bg, inter, recursive + 1);
 
-    if (refraction == Vector3(0,0,0))
+    if (refraction == Vector3(0.0f,0.0f,0.0f))
         return cap(inter.object->get_material(inter_loc).texture.ks * second);
     // return cap(spec_color + diff_color);
 
@@ -113,9 +113,9 @@ void Image::update_char_data(unsigned int i, unsigned int j) {
 void Image::render_thread(const Scene& scene, Image *bg, const bool& photorealist, int start, int end)
 {
     Camera camera = scene.camera;
-    for (int j = start; j < end; ++j)
+    for (unsigned int j = start; j < end; ++j)
     {
-        for (int i = 0; i < width; ++i)
+        for (unsigned int i = 0; i < width; ++i)
         {
             auto pixel_center = camera.pixel_loc + (i * camera.pixel_u) + (j * camera.pixel_v);
             auto dir = (pixel_center - camera.center).norm();
@@ -143,7 +143,7 @@ void Image::render_thread(const Scene& scene, Image *bg, const bool& photorealis
 
 void Image::render(const Scene& scene, Image *bg, const bool& photorealist, const bool& fast_selection)
 {
-    const int numThreads = std::thread::hardware_concurrency();
+    const unsigned int numThreads = std::thread::hardware_concurrency();
     std::vector<std::thread> threads;
 
     int batchSize = height / numThreads; // Height is data size
@@ -211,7 +211,7 @@ void Image::save_as_ppm(const std::string& pathname)
     ofs << "P6\n" << width << " " << height << "\n255\n";
     for (int j = 0; j < height; ++j) {
         for (int i = 0; i < width; ++i) {
-            auto c = data[i][j];
+            Color c = data[i][j];
             ofs << static_cast<char>(255 * c.r)
                 << static_cast<char>(255 * c.g)
                 << static_cast<char>(255 * c.b);
@@ -241,9 +241,9 @@ Image *load_image(const std::string& path_name) {
     Image image = Image(width, height);
     for (int j = 0; j < height; ++j)
         for (int i = 0; i < width; ++i) {
-            double r = ifs.get();
-            double g = ifs.get();
-            double b = ifs.get();
+            float r = ifs.get();
+            float g = ifs.get();
+            float b = ifs.get();
             image.data[i][j] = Color(r, g, b) / 255;
         }
 

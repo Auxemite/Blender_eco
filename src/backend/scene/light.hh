@@ -6,8 +6,8 @@ class Light
 {
 public:
     Point3 center;
-    double power = 1;
-    Color color;
+    float power = 1.0f;
+    Color color={};
 };
 
 class Point_Light : public Light
@@ -15,14 +15,14 @@ class Point_Light : public Light
 public:
 
     Point_Light()= default;
-    Point_Light(Point3 center_, double power_)
+    Point_Light(const Point3& center_, float power_)
     {
         center = center_;
         power = power_;
-        color = Color(1., 1., 1.);
+        color = Color(1.0f, 1.0f, 1.0f);
     };
 
-    Point_Light(Point3 center_, double power_, Color color_)
+    Point_Light(const Point3& center_, float power_, Color color_)
     {
         center = center_;
         power = power_;
