@@ -10,7 +10,7 @@ Image::Image(int width_, int height_)
     shapes = std::vector<std::vector<Shape*>>(width,
                                               std::vector<Shape*>(height,
                                                                 nullptr));
-    size_t size = width * height * 3;
+    unsigned int size = width * height * 3;
     char_data = (unsigned char *)calloc(size + 1, sizeof(unsigned char));
     char_data[size] = '\0';
     selected = std::vector<std::vector<bool>>(width,
@@ -37,20 +37,19 @@ Color Image::bg_color(Image *bg, Vector3 dir)
     return bg->data[phi][theta];
 }
 
-Color Image::fast_ray_color(const Scene& scene, Intersection inter)
+Color Image::fast_ray_color(const Scene& scene, const Intersection& inter)
 {
     Point3 inter_loc = inter.inter_loc;
     if (inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX))
         return basic::color::background_blue;
 
     Vector3 normal = inter.object->normal(inter_loc);
-//    double dot_angle = dot(dir, normal);
     double dot_angle = dot((scene.camera.lookat - scene.camera.center).norm(), normal);
     dot_angle = 1.0 - (dot_angle / 2.0 + 0.5);
     if (inter.object->selected)
         return Color(2, 2, 0) * dot_angle;
 
-    if (inter.object->get_obj_type() == "Plane") {
+    if (scene.activate_grid && inter.object->get_obj_type() == "Plane") {
         double diff_1 = abs_(round(inter_loc.x) - inter_loc.x);
         double diff_2 = abs_(round(inter_loc.z) - inter_loc.z);
         if (diff_1 <= 0.015 && round(inter_loc.x) == 0 && (round(inter_loc.z) != 0 || inter_loc.z < 0.5))
@@ -59,6 +58,7 @@ Color Image::fast_ray_color(const Scene& scene, Intersection inter)
             return {0.2, 0.5, 0.2};
         return {0.3, 0.3, 0.3};
     }
+
     return Color(0.7, 0.7, 0.7) * dot_angle;
 }
 
@@ -103,6 +103,13 @@ Color Image::ray_color(const Scene& scene, Image *bg, Intersection inter, int re
     return cap(diff_color + spec_color + inter.object->get_material(inter_loc).texture.ks * second);
 }
 
+void Image::update_char_data(unsigned int i, unsigned int j) {
+    unsigned int k = (j * width + i) * 3;
+    char_data[k] = static_cast<unsigned char>(data[i][j].r * 255);
+    char_data[k+1] = static_cast<unsigned char>(data[i][j].g * 255);
+    char_data[k+2] = static_cast<unsigned char>(data[i][j].b * 255);
+}
+
 void Image::render_thread(const Scene& scene, Image *bg, const bool& photorealist, int start, int end)
 {
     Camera camera = scene.camera;
@@ -117,9 +124,6 @@ void Image::render_thread(const Scene& scene, Image *bg, const bool& photorealis
             if (photorealist) {
                 intersection.throw_ray(scene);
                 data[i][j] = ray_color(scene, bg, intersection, 0);
-                if (data[i][j] == Color(-1,-1,-1)) {
-                    data[i][j] = bg_color(bg, dir);
-                }
             }
             else
             {
@@ -132,10 +136,7 @@ void Image::render_thread(const Scene& scene, Image *bg, const bool& photorealis
 //                    selected[i][j] = true;
 
             }
-            int k = (j * width + i) * 3;
-            char_data[k] = static_cast<unsigned char>(data[i][j].r * 255);
-            char_data[k+1] = static_cast<unsigned char>(data[i][j].g * 255);
-            char_data[k+2] = static_cast<unsigned char>(data[i][j].b * 255);
+            update_char_data(i, j);
         }
     }
 }
@@ -157,61 +158,50 @@ void Image::render(const Scene& scene, Image *bg, const bool& photorealist, cons
     for (auto& t : threads)
         t.join();
 
-    if (!photorealist) 
-    {
-//        for (size_t i = 1; i < width - 1; i++)
-//            for (size_t j = 1; j < height - 1; j++)
-//            {
-//                if (shapes[i][j] != nullptr)
-//                {
-//                    if ((shapes[i - 1][j - 1] != shapes[i][j]) && (shapes[i - 1][j - 1] != nullptr) ||
-//                        (shapes[i + 1][j - 1] != shapes[i][j]) && (shapes[i + 1][j - 1] != nullptr) ||
-//                        (shapes[i - 1][j + 1] != shapes[i][j]) && (shapes[i - 1][j + 1] != nullptr) ||
-//                        (shapes[i + 1][j + 1] != shapes[i][j]) && (shapes[i + 1][j + 1] != nullptr))
-//                        data[i][j] = Color(0.1, 0.1, 0.1);
-//                }
-//            }
-//
-//        for (size_t i = 1; i < width - 1; i++)
-//            for (size_t j = 1; j < height - 1; j++)
-//                if (shapes[i][j] != nullptr && shapes[i][j]->selected)
-//                    for (int x = 0; x < 3; x++)
-//                        for (int y = 0; y < 3; y++)
-//                        {
-//                            if (!shapes[i + x - 1][j + y -1] || !shapes[i + x - 1][j + y - 1]->selected)
-//                                data[i + x - 1][j + y - 1] = Color(basic::color::cyan);
-//                        }
-//
-//        shapes = std::vector<std::vector<Shape*>>(width,
-//                                              std::vector<Shape*>(height,
-//                                                                nullptr));
-        int mid_w = width / 2;
-        int mid_h = height / 2;
-        for (int i = 0; i < 11; ++i) {
-            int k = (mid_h * width + mid_w - 5 + i) * 3;
-            char_data[k] = static_cast<unsigned char>(255);
-            char_data[k+1] = static_cast<unsigned char>(255);
-            char_data[k+2] = static_cast<unsigned char>(255);
-        }
-        for (int i = 0; i < 11; ++i) {
-            int k = ((mid_h - 5 + i) * width + mid_w) * 3;
-            char_data[k] = static_cast<unsigned char>(255);
-            char_data[k+1] = static_cast<unsigned char>(255);
-            char_data[k+2] = static_cast<unsigned char>(255);
-        }
-    }
+    if (!photorealist)
+        postprocess(fast_selection);
 }
 
-void Image::render_debug(const Scene& scene, Image *bg, const bool& photorealist) {
+void Image::render_debug(const Scene& scene, Image *bg, const bool& photorealist, const bool& fast_selection) {
     render_thread(scene, bg, photorealist, 0, height);
-    if (!photorealist) {
-        int mid_w = width / 2;
-        int mid_h = height / 2;
-        for (int i = 0; i < 11; ++i)
-            data[mid_w - 5 + i][mid_h] = basic::color::red;
-        for (int i = 0; i < 11; ++i)
-            data[mid_w][mid_h - 5 + i] = basic::color::red;
+    if (!photorealist)
+        postprocess(fast_selection);
+}
+
+void Image::postprocess(const bool& fast_selection) {
+    if (!fast_selection) {
+        for (unsigned int j = 1; j < height - 1; j++)
+            for (unsigned int i = 1; i < width - 1; i++)
+                if (shapes[i][j] != nullptr &&
+                    ((shapes[i - 1][j - 1] != shapes[i][j]) && (shapes[i - 1][j - 1] != nullptr) ||
+                    (shapes[i + 1][j - 1] != shapes[i][j]) && (shapes[i + 1][j - 1] != nullptr) ||
+                    (shapes[i - 1][j + 1] != shapes[i][j]) && (shapes[i - 1][j + 1] != nullptr) ||
+                    (shapes[i + 1][j + 1] != shapes[i][j]) && (shapes[i + 1][j + 1] != nullptr)))
+                {
+                    data[i][j] = Color(0.1, 0.1, 0.1);
+                    update_char_data(i, j);
+                }
+
+        for (unsigned int j = 1; j < height - 1; j++)
+            for (unsigned int i = 1; i < width - 1; i++)
+                if (shapes[i][j] != nullptr && shapes[i][j]->selected)
+                    for (int x = 0; x < 3; x++)
+                        for (int y = 0; y < 3; y++)
+                            if (!shapes[i + x - 1][j + y -1] || !shapes[i + x - 1][j + y - 1]->selected) {
+                                data[i + x - 1][j + y - 1] = Color(basic::color::cyan);
+                                update_char_data(i, j);
+                            }
+
+        shapes = std::vector<std::vector<Shape*>>(width,
+                                                  std::vector<Shape*>(height,
+                                                                      nullptr));
     }
+    int mid_w = width / 2;
+    int mid_h = height / 2;
+    for (int i = 0; i < 11; ++i)
+        update_char_data(mid_h, mid_w - 5 + i);
+    for (int i = 0; i < 11; ++i)
+        update_char_data(mid_h - 5 + i, mid_w);
 }
 
 void Image::save_as_ppm(const std::string& pathname)

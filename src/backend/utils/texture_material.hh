@@ -22,7 +22,7 @@ class Texture_Material {
 
 class Uniform_Texture : public Texture_Material {
     public:
-        struct Material mat;
+        struct Material material;
 
         Uniform_Texture()= default;
         Uniform_Texture(Color color, Texture texture);

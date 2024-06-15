@@ -65,8 +65,16 @@ void App::MainOptions() {
     ImGui::SameLine();
     ImGui::Text("|");
     ImGui::SameLine();
-    ImGui::RadioButton("Fast Selection", &env.fast_selection, 1); ImGui::SameLine();
-    ImGui::RadioButton("Normal Selection", &env.fast_selection, 0);
+    if (ImGui::RadioButton("Fast Selection", &env.fast_selection, 1)) { env.render(); };
+    ImGui::SameLine();
+    if (ImGui::RadioButton("Normal Selection", &env.fast_selection, 0)) { env.render(); };
+
+    ImGui::SameLine();
+    ImGui::Text("|");
+    ImGui::SameLine();
+    if (ImGui::RadioButton("Grid", &env.scene.activate_grid, 1)) { env.render(); };
+    ImGui::SameLine();
+    if (ImGui::RadioButton("No Grid", &env.scene.activate_grid, 0)) { env.render(); };
 }
 
 void App::Windows()
@@ -148,8 +156,8 @@ void App::Material() {
     static bool hdr = false;
     ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
 
-    Color cc = env.focus_mesh->texture.mat.color;
-    Texture texture1 = env.focus_mesh->texture.mat.texture;
+    Color cc = env.focus_mesh->texture.material.color;
+    Texture texture1 = env.focus_mesh->texture.material.texture;
     static ImVec4 color = ImVec4(cc.r, cc.g, cc.b, 255.0f / 255.0f);
     static float kd = texture1.kd;
     static float ks = texture1.ks;

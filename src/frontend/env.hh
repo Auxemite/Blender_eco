@@ -14,14 +14,16 @@
 class Env {
     public:
     GLuint render_image{};
-    bool photorealist = false;
-    int fast_selection = 1;
-    int selected_mode = 0;
-    bool editmode = false;
     Scene scene;
     Image image;
     Mesh *focus_mesh;
     Triangle *focus_face = nullptr;
+
+    // Flags
+    bool photorealist = false;
+    int fast_selection = 1;
+    int selected_mode = 0;
+    bool editmode = false;
 
     Env();
     explicit Env(const char* filename);

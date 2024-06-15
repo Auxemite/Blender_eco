@@ -19,11 +19,13 @@ class Image {
         Image(int width_, int height_);
 
         Color bg_color(Image *bg, Vector3 dir);
-        Color fast_ray_color(const Scene& scene, Intersection inter);
+        Color fast_ray_color(const Scene& scene, const Intersection& inter);
+        void Image::update_char_data(unsigned int i, unsigned int j);
         Color ray_color(const Scene& scene, Image *bg, Intersection intersection, int recursive);
         void render(const Scene& scene, Image *bg, const bool& photorealist=false, const bool& fast_selection=true);
-        void render_debug(const Scene& scene, Image *bg, const bool& photorealist=false);
+        void render_debug(const Scene& scene, Image *bg, const bool& photorealist=false, const bool& fast_selection=true);
         void render_thread(const Scene& scene, Image *bg, const bool& photorealist, int start, int end);
+        void postprocess(const bool& fast_selection);
 
         void save_as_ppm(const std::string& pathname);
 };

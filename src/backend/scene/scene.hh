@@ -14,6 +14,9 @@ class Scene
         std::vector<Light*> lights;
         Camera camera;
 
+        // Flags
+        int activate_grid = 1;
+
         Scene()=default;
         Scene(int width, int height);
         Scene(std::vector<Shape*> sphere_, std::vector<Light*> lights_, Camera camera_);
