@@ -17,6 +17,7 @@ public:
     std::vector<Point3 *> points;
     std::vector<Triangle *> faces;
     Sphere hit_box;
+    bool watch=true;
 
     Mesh() = default;
     Mesh(const Point3& a_, const Point3& b_, const Point3& c_, const Uniform_Texture& uniformMaterial_);

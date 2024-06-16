@@ -15,41 +15,18 @@ class Env {
     GLuint render_image{};
     Scene scene;
     Image image;
-    Mesh *focus_mesh;
-    Triangle *focus_face = nullptr;
 
     // Flags
     bool photorealist = false;
     int fast_selection = 1;
-    int selected_mode = 0;
-    bool editmode = false;
+    int action_mode = 0; // 0 = Camera; 1 = Move; 2 = Rotate; 3 = Scale
+    int focus_axe = 0; // 0 = x; 1 = y; 2 = z
 
     Env();
     explicit Env(const char* filename);
 
-    void create_texture();
     void save_mesh(const std::string& filename) const;
+    void create_texture();
     void change_bg(const std::string& name);
-
     void render();
-    void move_camera_x(float angle);
-    void move_camera_y(float angle);
-    void change_material(Color color, Texture texture);
-
-    void move_camera_z(float angle);
-    void add_mesh(const std::string& name);
-    void delete_mesh(Mesh *mesh);
-    void select_mesh(float x, float y);
-    void change_focus(Mesh *mesh);
-    void change_focus(Mesh *mesh, Triangle *face);
-    void update_selection_mode();
-
-    void move_x(float value);
-    void move_y(float value);
-    void move_z(float value);
-    void rotate_x(float angle);
-    void rotate_y(float angle);
-    void rotate_z(float angle);
-    void scale(float value);
-    void extrude(float x_, float y_, float z_);
 };

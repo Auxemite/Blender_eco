@@ -49,17 +49,27 @@ void Intersection::fast_throw_ray(const Scene& scene)
         for (auto obj : scene.objects)
             fast_throw_ray(obj);
 
-    for (auto mesh : scene.meshes)
-    {
-        // Check hit_box
-        if (mesh->hit_box.ray_intersection(origin, dir) <= 0)
-            continue;
-
-        for (auto face : mesh->faces)
-        {
+    if (scene.editmode) {
+        for (auto face: scene.focus_mesh->faces) {
             // Check backface culling
             if (dot(dir, face->normal_) < 0)
                 fast_throw_ray(face);
+        }
+    }
+    else {
+        for (auto mesh: scene.meshes) {
+            // Check if watch is enable
+            if (!mesh->watch)
+                continue;
+            // Check hit_box
+            if (mesh->hit_box.ray_intersection(origin, dir) <= 0)
+                continue;
+
+            for (auto face: mesh->faces) {
+                // Check backface culling
+                if (dot(dir, face->normal_) < 0)
+                    fast_throw_ray(face);
+            }
         }
     }
 }
@@ -68,6 +78,9 @@ void Intersection::throw_ray(const Scene& scene)
 {
     for (auto mesh : scene.meshes)
     {
+        // Check if watch is enable
+        if (!mesh->watch)
+            continue;
         // Check hit_box
         if (mesh->hit_box.ray_intersection(origin, dir) <= 0)
             continue;

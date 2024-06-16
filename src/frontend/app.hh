@@ -13,9 +13,10 @@ class App {
     void MainOptions();
     void CameraOption();
     void Material();
-    void SelectMesh(const ImGuiIO& io, ImVec2 pos);
+    void Inputs(const ImGuiIO& io, ImVec2 pos);
+    void Add_Mesh();
     void TreeMesh(Mesh *mesh, int index);
     void TreeNode();
     void MeshOptions();
-    void PrintObjInfo();
+    void PrintObjInfo() const;
 };

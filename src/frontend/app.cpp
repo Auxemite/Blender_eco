@@ -2,6 +2,8 @@
 
 using namespace std;
 
+const char* names[] = { "Cube", "Plane", "Triangle", "Cone", "Sphere", "Icosphere", "Cylinder", "Donut", "Monkey"};
+
 App::App(){
     env = Env();
 }
@@ -41,24 +43,29 @@ void App::MainOptions() {
         }
     }
     ImGui::SameLine();
-    if (!env.editmode) {
+    if (!env.scene.editmode) {
         if (ImGui::Button("Edit Mode")) {
-            env.editmode = true;
-            env.render();
+            if (env.scene.focus_mesh != nullptr) {
+                env.scene.editmode = true;
+                env.render();
+            }
         }
     }
     else {
         if (ImGui::Button("Normal Mode")) {
+            env.scene.editmode = false;
+            Mesh *mesh = env.scene.focus_mesh;
+            env.scene.update_selection_mode();
+            env.scene.change_focus(mesh);
             env.render();
-            env.editmode = false;
         }
         ImGui::SameLine();
 
         ImGui::Text("| Selection Mode : ");
         ImGui::SameLine();
-        if (ImGui::RadioButton("Mesh", &env.selected_mode, 0)) { env.update_selection_mode(); }
+        if (ImGui::RadioButton("Mesh", &env.scene.selected_mode, 0)) { env.scene.update_selection_mode(); env.render(); }
         ImGui::SameLine();
-        if (ImGui::RadioButton("Face", &env.selected_mode, 1)) { env.update_selection_mode(); }
+        if (ImGui::RadioButton("Face", &env.scene.selected_mode, 1)) { env.scene.update_selection_mode(); env.render(); }
 //        ImGui::SameLine();
 //        if (ImGui::RadioButton("Edge", &env.selected_mode, 2)) { env.update_selection_mode(); }
     }
@@ -80,14 +87,14 @@ void App::MainOptions() {
 void App::Windows()
 {
     ImGui::Begin("Actions");
-    if (env.focus_mesh != nullptr)
+    if (env.scene.focus_mesh != nullptr)
         MeshOptions();
     ImGui::End();
 
     CameraOption();
 
     ImGui::Begin("Material");
-    if (env.focus_mesh != nullptr)
+    if (env.scene.focus_mesh != nullptr)
         Material();
     ImGui::End();
 
@@ -102,8 +109,17 @@ void App::Windows()
     ImGui::Image((void*)(intptr_t)env.render_image,
                  ImVec2(static_cast<float>(env.image.width), static_cast<float>(env.image.height)));
 
-    if (ImGui::Button("Save Render")) { env.image.save_as_ppm("../test/result.ppm"); }
-//    if (ImGui::Button("Save File")) { env.image.save_as_ppm("../test/result.ppm"); }
+    if (ImGui::Button("Save Render"))
+        ImGui::OpenPopup("save_render");
+    if (ImGui::BeginPopup("save_render"))
+    {
+        static char filename[128] = "";
+        ImGui::InputText("File Name", filename, IM_ARRAYSIZE(filename));
+        ImGui::SameLine();
+        if (ImGui::Button("Save file"))
+            env.image.save_as_ppm("../test/" + string(filename) + ".ppm");
+        ImGui::EndPopup();
+    }
 
     ImGui::SameLine();
 
@@ -120,10 +136,23 @@ void App::Windows()
     }
 
     ImGui::SameLine();
-    const char* names[] = { "Cube", "Plane", "Triangle", "Cone", "Sphere", "Icosphere", "Cylinder", "Donut", "Monkey"};
 
     if (ImGui::Button("Add Mesh"))
         ImGui::OpenPopup("add_mesh");
+    Add_Mesh();
+
+    ImGui::SameLine();
+    if (ImGui::Button("Delete Mesh")) { env.scene.delete_mesh(); env.render(); }
+
+    ImGui::SameLine();
+    Inputs(io, pos);
+
+    ImGui::End();
+
+//    ImGui::ShowDemoWindow();
+}
+
+void App::Add_Mesh() {
     if (ImGui::BeginPopup("add_mesh"))
     {
         ImGui::SeparatorText("Mesh Types");
@@ -131,21 +160,11 @@ void App::Windows()
             if (ImGui::Selectable(i)) {
                 std::string name = i;
                 name[0] = tolower(name[0]);
-                env.add_mesh(name);
+                env.scene.add_mesh(name);
+                env.render();
             }
         ImGui::EndPopup();
     }
-
-    ImGui::SameLine();
-    if (ImGui::Button("Delete Mesh")) { env.delete_mesh(env.focus_mesh); }
-
-
-    ImGui::SameLine();
-    SelectMesh(io, pos);
-
-    ImGui::End();
-
-//    ImGui::ShowDemoWindow();
 }
 
 void App::Material() {
@@ -156,8 +175,8 @@ void App::Material() {
     static bool hdr = false;
     ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
 
-    Color cc = env.focus_mesh->texture.material.color;
-    Texture texture1 = env.focus_mesh->texture.material.texture;
+    Color cc = env.scene.focus_mesh->texture.material.color;
+    Texture texture1 = env.scene.focus_mesh->texture.material.texture;
     static ImVec4 color = ImVec4(cc.r, cc.g, cc.b, 255.0f / 255.0f);
     static float kd = texture1.kd;
     static float ks = texture1.ks;
@@ -185,7 +204,8 @@ void App::Material() {
     if (ImGui::Button("Update Material")) {
         Texture texture = {kd, ks, ns};
         Color material_color = Color(color.x, color.y, color.z);
-        env.change_material(material_color, texture);
+        env.scene.change_material(material_color, texture);
+        env.render();
     }
 }
 
@@ -194,15 +214,15 @@ void App::CameraOption() {
 
     static int angle[3] = { 0, 15, 0};
     static int move[3] = { 0, 0, 0};
-    ImGui::SliderInt3("Angle", angle, -90, 90);
+    ImGui::SliderInt3("Angle", angle, -45, 45);
     if (ImGui::Button("Rotate Camera")) {
-        env.move_camera_x(angle[0]);
-        env.move_camera_y(angle[1]);
-        env.move_camera_z(angle[2]);
+        env.scene.move_camera_x(angle[0]);
+        env.scene.move_camera_y(angle[1]);
+        env.scene.move_camera_z(angle[2]);
         env.render();
     }
 
-    ImGui::SliderInt3("X,Y,Z", move, -5, 5);
+    ImGui::SliderInt3("X,Y,Z", move, -10, 10);
     if (ImGui::Button("Move Camera")) {
         env.scene.camera.update_cam(Point3(move[0], move[1], move[2]));
         env.render();
@@ -212,61 +232,36 @@ void App::CameraOption() {
     ImGui::End();
 }
 
-void App::SelectMesh(const ImGuiIO& io, ImVec2 pos) {
-    float region_sz = 32.0f;
-    float region_x = io.MousePos.x - pos.x - region_sz * 0.5f;
-    float region_y = io.MousePos.y - pos.y - region_sz * 0.5f;
-    if (region_x < 0.0f) { region_x = 0.0f; }
-    else if (region_x > 1280 - region_sz) { region_x = 1280 - region_sz; }
-    if (region_y < 0.0f) { region_y = 0.0f; }
-    else if (region_y > 720 - region_sz) { region_y = 720 - region_sz; }
-    ImGui::Text("Min: (%.2f, %.2f)", region_x, region_y);
-    ImGui::SameLine();
-    ImGui::Text("Keys down:");
-    struct funcs {
-        static bool IsLegacyNativeDupe(ImGuiKey key) {
-            return key >= 0 && key < 512 && ImGui::GetIO().KeyMap[key] != -1;
-        }
-    };
-
-    auto start_key = (ImGuiKey)0;
-    for (ImGuiKey key = start_key; key < ImGuiKey_NamedKey_END; key = (ImGuiKey)(key + 1)) {
-        if (funcs::IsLegacyNativeDupe(key) || !ImGui::IsKeyDown(key))
-            continue;
-        ImGui::SameLine(); ImGui::Text((key < ImGuiKey_NamedKey_BEGIN) ? "\"%s\"" : "\"%s\" %d", ImGui::GetKeyName(key), key);
-        if (key == 513) { // Left Arrow
-            env.move_camera_y(-15);
-            env.render();
-        }
-        else if (key == 514) { // Right Arrow
-            env.move_camera_y(15);
-            env.render();
-        }
-        else if (key == 515) { // Up Arrow
-            env.scene.camera.update_cam(env.scene.camera.center + Point3(0,1,0));
-            env.render();
-        }
-        else if (key == 516) { // Down Arrow
-            env.scene.camera.update_cam(env.scene.camera.center - Point3(0,1,0));
-            env.render();
-        }
-        else if (key == 655) { // Left Click
-            env.select_mesh(region_x, region_y);
-        }
-    }
-}
-
 void App::TreeNode() {
     ImGui::Begin("Tree");
     for (int i = 0; i < env.scene.meshes.size(); i++) {
         std::string name = "> Mesh " + to_string(i);
-        if (ImGui::Button(name.c_str()))
-            env.change_focus(env.scene.meshes[i]);
+        if (ImGui::Button(name.c_str())) {
+            env.scene.change_focus(env.scene.meshes[i]);
+            env.render();
+        }
+        ImGui::SameLine();
+        if (!env.scene.meshes[i]->watch) {
+            ImGui::PushID(i);
+            if (ImGui::Button("<Ø>")) {
+                env.scene.meshes[i]->watch = true;
+                env.render();
+            }
+            ImGui::PopID();
+        }
+        else {
+            ImGui::PushID(i);
+            if (ImGui::Button("<O>")) {
+                env.scene.meshes[i]->watch = false;
+                env.render();
+            }
+            ImGui::PopID();
+        }
         ImGui::SameLine();
         TreeMesh(env.scene.meshes[i], i);
     }
 
-    if (env.focus_mesh != nullptr) {
+    if (env.scene.focus_mesh != nullptr) {
         PrintObjInfo();
     }
 
@@ -291,7 +286,8 @@ void App::TreeMesh(Mesh *mesh, int index) {
             ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, "> %s %d", "Face", i);
             if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()) {
                 node_clicked = i;
-                env.change_focus(mesh, mesh->faces[i]);
+                env.scene.change_focus(mesh, mesh->faces[i]);
+                env.render();
                 // BEHAVIOR IS HERE
             }
         }
@@ -306,61 +302,115 @@ void App::TreeMesh(Mesh *mesh, int index) {
 void App::MeshOptions() {
     ImGui::Text("Main Mesh Actions : ");
     static float v1 = 1.00f;
-    if (ImGui::Button("Move X")) { env.move_x(v1); }
+    if (ImGui::Button("Move X")) { env.scene.move_x(v1); env.render(); }
     ImGui::SameLine();
     ImGui::SliderFloat("X", &v1, -5, 5);
 
     static float v2 = 1.00f;
-    if (ImGui::Button("Move Y")) { env.move_y(v2); }
+    if (ImGui::Button("Move Y")) { env.scene.move_y(v2); env.render(); }
     ImGui::SameLine();
     ImGui::SliderFloat("Y", &v2, -5, 5);
 
     static float v3 = 1.00f;
-    if (ImGui::Button("Move Z")) { env.move_z(v3); }
+    if (ImGui::Button("Move Z")) { env.scene.move_z(v3); env.render(); }
     ImGui::SameLine();
     ImGui::SliderFloat("Z", &v3, -5, 5);
 
     static float scale = 1.00f;
-    if (ImGui::Button("Scale")) { env.scale(scale); }
+    if (ImGui::Button("Scale")) { env.scene.scale(scale); env.render(); }
     ImGui::SameLine();
     ImGui::SliderFloat("Value", &scale, 0.1f, 3);
 
     static float a1 = 0;
-    if (ImGui::Button("Rotate X")) { env.rotate_x(a1); }
+    if (ImGui::Button("Rotate X")) { env.scene.rotate_x(a1); env.render(); }
     ImGui::SameLine();
     ImGui::SliderAngle("RX", &a1, -90, 90);
 
     static float a2 = 0;
-    if (ImGui::Button("Rotate Y")) { env.rotate_y(a2); }
+    if (ImGui::Button("Rotate Y")) { env.scene.rotate_y(a2); env.render(); }
     ImGui::SameLine();
     ImGui::SliderAngle("RY", &a2, -90, 90);
 
     static float a3 = 0;
-    if (ImGui::Button("Rotate Z")) { env.rotate_z(a3); }
+    if (ImGui::Button("Rotate Z")) { env.scene.rotate_z(a3); env.render(); }
     ImGui::SameLine();
     ImGui::SliderAngle("RZ", &a3, -90, 90);
 
     ImGui::Text("Special Mesh Actions : ");
-    if (env.editmode) {
+    if (env.scene.editmode) {
         static int move[3] = { 0, 0, 0};
         ImGui::SliderInt3("X Y Z", move, -3, 3);
-        if (ImGui::Button("Extrude"))
-            env.extrude(move[0], move[1], move[2]);
+        if (ImGui::Button("Extrude")) {
+            env.scene.extrude(move[0], move[1], move[2]);
+            env.render();
+        }
     }
 }
 
-void App::PrintObjInfo() {
-    if (env.focus_mesh == nullptr) {
+void App::PrintObjInfo() const {
+    if (env.scene.focus_mesh == nullptr) {
         ImGui::Text("No Mesh Selected");
         return;
     }
     string text = "type : Mesh\n";
-    text += "Number of Faces : " + to_string(env.focus_mesh->faces.size()) + "\n";
-    text += "Number of Edges : " + to_string(env.focus_mesh->points.size()) + "\n";
+    text += "Number of Faces : " + to_string(env.scene.focus_mesh->faces.size()) + "\n";
+    text += "Number of Edges : " + to_string(env.scene.focus_mesh->points.size()) + "\n";
     text += "Edges :\n";
-    for (auto & edge : env.focus_mesh->points) {
+    for (auto & edge : env.scene.focus_mesh->points) {
         text += edge->to_string() + "\n";
     }
     ImGui::Text("%s", text.c_str());
 }
 
+void App::Inputs(const ImGuiIO& io, ImVec2 pos) {
+    float region_sz = 32.0f;
+    float region_x = io.MousePos.x - pos.x - region_sz * 0.5f;
+    float region_y = io.MousePos.y - pos.y - region_sz * 0.5f;
+    if (region_x < 0.0f) { region_x = 0.0f; }
+    else if (region_x > 1280 - region_sz) { region_x = 1280 - region_sz; }
+    if (region_y < 0.0f) { region_y = 0.0f; }
+    else if (region_y > 720 - region_sz) { region_y = 720 - region_sz; }
+    ImGui::Text("Min: (%.2f, %.2f)", region_x, region_y);
+    ImGui::SameLine();
+    ImGui::Text("Keys down:");
+    struct funcs {
+        static bool IsLegacyNativeDupe(ImGuiKey key) {
+            return key >= 0 && key < 512 && ImGui::GetIO().KeyMap[key] != -1;
+        }
+    };
+
+    auto start_key = (ImGuiKey)0;
+    for (ImGuiKey key = start_key; key < ImGuiKey_NamedKey_END; key = (ImGuiKey)(key + 1)) {
+        if (funcs::IsLegacyNativeDupe(key) || !ImGui::IsKeyDown(key))
+            continue;
+        ImGui::SameLine(); ImGui::Text((key < ImGuiKey_NamedKey_BEGIN) ? "\"%s\"" : "\"%s\" %d", ImGui::GetKeyName(key), key);
+        if (key == 513) { // Left Arrow
+            env.scene.move_camera_y(-15);
+            env.render();
+        }
+        else if (key == 514) { // Right Arrow
+            env.scene.move_camera_y(15);
+            env.render();
+        }
+        else if (key == 515) { // Up Arrow
+            env.scene.camera.update_cam(env.scene.camera.center + Point3(0,1,0));
+            env.render();
+        }
+        else if (key == 516) { // Down Arrow
+            env.scene.camera.update_cam(env.scene.camera.center - Point3(0,1,0));
+            env.render();
+        }
+        else if (key == 655) { // Left Click
+            env.scene.select_mesh(region_x, region_y);
+            env.render();
+        }
+        else if (key == 569) {
+            env.scene.delete_mesh();
+            env.render();
+        }
+        else if (key == 546) {
+            ImGui::OpenPopup("add_mesh");
+        }
+        Add_Mesh();
+    }
+}
