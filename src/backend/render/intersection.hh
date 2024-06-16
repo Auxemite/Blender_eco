@@ -1,9 +1,8 @@
 #pragma once
 
-#define PI 3.14159265
-
 #include "../scene/scene.hh"
 #include <climits>
+Point3 null_point = Point3(FLT_MAX, FLT_MAX, FLT_MAX);
 
 class Intersection
 {

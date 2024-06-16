@@ -9,7 +9,6 @@
 
 #include "../backend/render/intersection.hh"
 #include "../backend/image/image.hh"
-#include "action.hh"
 
 class Env {
     public:

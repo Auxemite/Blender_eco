@@ -1,7 +1,7 @@
 #pragma once
 
+#define PI 3.14159265f
 #include <vector>
-
 #include "object.hh"
 
 struct Edge

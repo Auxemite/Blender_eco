@@ -60,7 +60,7 @@ void App::MainOptions() {
         ImGui::SameLine();
         if (ImGui::RadioButton("Face", &env.selected_mode, 1)) { env.update_selection_mode(); }
 //        ImGui::SameLine();
-//        if (ImGui::RadioButton("Edge", &env.selected_mode, 2)) {};
+//        if (ImGui::RadioButton("Edge", &env.selected_mode, 2)) { env.update_selection_mode(); }
     }
     ImGui::SameLine();
     ImGui::Text("|");

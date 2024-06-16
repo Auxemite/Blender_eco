@@ -3,13 +3,13 @@
 void Intersection::update(const Point3& origin_, const Vector3& dir_) {
     origin = origin_;
     dir = dir_;
-    inter_loc = Point3(INT_MAX, INT_MAX, INT_MAX);
+    inter_loc = null_point;
 };
 
 Intersection::Intersection(const Point3& origin_, const Vector3& dir_) {
     origin = origin_;
     dir = dir_;
-    inter_loc = Point3(INT_MAX, INT_MAX, INT_MAX);
+    inter_loc = null_point;
     object = nullptr;
 }
 
@@ -19,7 +19,7 @@ inline void Intersection::fast_throw_ray(Shape *shape)
     if (inter_scal > 0)
     {
         Point3 new_inter_loc = origin + dir * inter_scal;
-        if (inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX)
+        if (inter_loc == null_point
             || (new_inter_loc - origin).length() < (inter_loc - origin).length())
         {
             object = shape;
@@ -34,7 +34,7 @@ inline void Intersection::throw_ray(Shape *shape)
     if (inter_scal > 0)
     {
         Point3 new_inter_loc = origin + dir * inter_scal;
-        if (inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX)
+        if (inter_loc == null_point
             || (new_inter_loc - origin).length() < (inter_loc - origin).length())
         {
             object = shape;

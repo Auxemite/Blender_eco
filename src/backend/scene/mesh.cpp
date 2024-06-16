@@ -452,10 +452,9 @@ void Mesh::rotate_all_axis(float angle_x, float angle_y, float angle_z, const st
     Point3 mid = get_mid(point_list);
 
     //// Modulo to simplify calculus
-    float pi = 3.14159;
-    angle_x -= static_cast<int>(angle_x / (2 * pi)) * (2 * pi);
-    angle_y -= static_cast<int>(angle_y / (2 * pi)) * (2 * pi);
-    angle_z -= static_cast<int>(angle_z / (2 * pi)) * (2 * pi);
+    angle_x -= static_cast<int>(angle_x / (2.0f * PI)) * (2.0f * PI);
+    angle_y -= static_cast<int>(angle_y / (2.0f * PI)) * (2.0f * PI);
+    angle_z -= static_cast<int>(angle_z / (2.0f * PI)) * (2.0f * PI);
 
     for (auto point : point_list)
         rotate_point_all_axis(angle_x, angle_y, angle_z, point, mid);

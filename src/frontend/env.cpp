@@ -1,10 +1,8 @@
-#include <utility>
-
 #include "env.hh"
 
 inline float aspect_ratio = 16.0f / 9.0f;
 inline int default_width = 1280;
-inline int default_height = static_cast<int>(default_width / aspect_ratio);
+inline int default_height = static_cast<int>(static_cast<float>(default_width) / aspect_ratio);
 Image *bg = load_image("../data/sunset.ppm");
 
 Env::Env() {
@@ -220,7 +218,7 @@ void Env::select_mesh(float x, float y) {
                 if (inter_scal > 0)
                 {
                     Point3 new_inter_loc = c.center + dir * inter_scal;
-                    if (inter.inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX)
+                    if (inter.inter_loc == null_point
                         || (new_inter_loc - scene.camera.center).length() < (inter.inter_loc - c.center).length()) {
                         inter.inter_loc = new_inter_loc;
                         selected_mesh = mesh;
@@ -230,7 +228,7 @@ void Env::select_mesh(float x, float y) {
             }
         }
     }
-    if (inter.inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX) || selected_mesh == nullptr)
+    if (inter.inter_loc == null_point || selected_mesh == nullptr)
         return;
     if (selected_mode == 0)
         change_focus(selected_mesh);

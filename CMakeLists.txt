@@ -25,8 +25,6 @@ add_executable(blender_eco main.cpp
         src/frontend/app.hh
         src/frontend/env.hh
         src/frontend/env.cpp
-        src/frontend/action.hh
-        src/frontend/action.cpp
 
         src/backend/utils/vector3.hh
         src/backend/utils/vector3.cpp

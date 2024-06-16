@@ -40,7 +40,7 @@ Color Image::bg_color(Image *bg, Vector3 dir)
 Color Image::fast_ray_color(const Scene& scene, const Intersection& inter)
 {
     Point3 inter_loc = inter.inter_loc;
-    if (inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX))
+    if (inter_loc == null_point)
         return basic::color::background_blue;
 
     Vector3 normal = inter.object->normal(inter_loc);
@@ -68,7 +68,7 @@ Color Image::ray_color(const Scene& scene, Image *bg, Intersection inter, int re
         return basic::color::black;
 
     Point3 inter_loc = inter.inter_loc;
-    if (inter_loc == Point3(INT_MAX, INT_MAX, INT_MAX))
+    if (inter_loc == null_point)
         return bg_color(bg, inter.dir);
 
     Color diff_color = basic::color::black;
