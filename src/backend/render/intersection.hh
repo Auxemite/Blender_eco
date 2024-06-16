@@ -2,7 +2,7 @@
 
 #include "../scene/scene.hh"
 #include <climits>
-Point3 null_point = Point3(FLT_MAX, FLT_MAX, FLT_MAX);
+static Point3 null_point = Point3(INT_MAX, INT_MAX, INT_MAX);
 
 class Intersection
 {

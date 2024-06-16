@@ -208,6 +208,7 @@ void Env::select_mesh(float x, float y) {
     auto inter = Intersection(c.center, dir);
     Mesh *selected_mesh = nullptr;
     Triangle *selected_face = nullptr;
+    Point3 *selected_edge = nullptr;
     for (auto mesh : scene.meshes)
     {
         for (auto face : mesh->faces)
