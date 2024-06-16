@@ -120,7 +120,7 @@ void App::Windows()
     }
 
     ImGui::SameLine();
-    const char* names[] = { "Cube", "Plane", "Cone", "Sphere", "Icosphere", "Cylinder", "Donut", "Monkey"};
+    const char* names[] = { "Cube", "Plane", "Triangle", "Cone", "Sphere", "Icosphere", "Cylinder", "Donut", "Monkey"};
 
     if (ImGui::Button("Add Mesh"))
         ImGui::OpenPopup("add_mesh");
