@@ -325,26 +325,29 @@ void App::MeshOptions() {
     ImGui::SliderFloat("Value", &scale, 0.1f, 3);
 
     static float a1 = 0;
-    if (ImGui::Button("Rotate X")) { env.scene.rotate_x(a1); env.render(); }
-    ImGui::SameLine();
     ImGui::SliderAngle("RX", &a1, -90, 90);
-
     static float a2 = 0;
-    if (ImGui::Button("Rotate Y")) { env.scene.rotate_y(a2); env.render(); }
-    ImGui::SameLine();
     ImGui::SliderAngle("RY", &a2, -90, 90);
-
     static float a3 = 0;
-    if (ImGui::Button("Rotate Z")) { env.scene.rotate_z(a3); env.render(); }
-    ImGui::SameLine();
     ImGui::SliderAngle("RZ", &a3, -90, 90);
+    if (ImGui::Button("Rotate Y")) { env.scene.rotate_xyz(a1, a2, a3); env.render(); }
 
     ImGui::Text("Special Mesh Actions : ");
-    if (env.scene.editmode) {
-        static int move[3] = { 0, 0, 0};
-        ImGui::SliderInt3("X Y Z", move, -3, 3);
+    if (env.scene.editmode && env.scene.selected_mode == 1) {
+        static float move[3] = { 0, 0, 0};
+        ImGui::SliderFloat3("X Y Z", move, -2, 2);
         if (ImGui::Button("Extrude")) {
             env.scene.extrude(move[0], move[1], move[2]);
+            env.render();
+        }
+        static float thickness = 0;
+        ImGui::SliderFloat("Thickness", &thickness, -2, 2);
+        if (ImGui::Button("Extrude Along Normal")) {
+            env.scene.extrude_along_normal(thickness);
+            env.render();
+        }
+        if (ImGui::Button("Extrude Along Point")) {
+            env.scene.extrude_along_points_normalized(thickness);
             env.render();
         }
     }
@@ -369,11 +372,26 @@ void App::Inputs(const ImGuiIO& io, ImVec2 pos) {
     float region_sz = 32.0f;
     float region_x = io.MousePos.x - pos.x - region_sz * 0.5f;
     float region_y = io.MousePos.y - pos.y - region_sz * 0.5f;
-    if (region_x < 0.0f) { region_x = 0.0f; }
-    else if (region_x > 1280 - region_sz) { region_x = 1280 - region_sz; }
-    if (region_y < 0.0f) { region_y = 0.0f; }
-    else if (region_y > 720 - region_sz) { region_y = 720 - region_sz; }
+    if (region_x < 0.0f) { return; }
+    else if (region_x > 1280 - region_sz) { return; }
+    if (region_y < 0.0f) { return; }
+    else if (region_y > 720 - region_sz) { return; }
     ImGui::Text("Min: (%.2f, %.2f)", region_x, region_y);
+    ImGui::SameLine();
+    ImGui::Text("Mouse down:");
+    for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++) {
+        if (io.MouseDownDuration[i] > 0.1)
+            return;
+        if (ImGui::IsMouseDown(i)) {
+            ImGui::SameLine();
+            ImGui::Text("b%d (%.02f secs)", i, io.MouseDownDuration[i]);
+            if (env.scene.selected_mode == 3)
+                env.scene.select_summit(region_x, region_y);
+            else
+                env.scene.select_mesh(region_x, region_y);
+            env.render();
+        }
+    }
     ImGui::SameLine();
     ImGui::Text("Keys down:");
     struct funcs {
@@ -401,14 +419,6 @@ void App::Inputs(const ImGuiIO& io, ImVec2 pos) {
         }
         else if (key == 516) { // Down Arrow
             env.scene.camera.update_cam(env.scene.camera.center - Point3(0,1,0));
-            env.render();
-        }
-        else if (key == 655) { // Left Click
-            if (env.scene.selected_mode == 3)
-                env.scene.select_summit(region_x, region_y);
-            else
-                env.scene.select_mesh(region_x, region_y);
-
             env.render();
         }
         else if (key == 569) { // X
