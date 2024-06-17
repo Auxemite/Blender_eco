@@ -14,7 +14,7 @@ class Scene
         std::vector<Light*> lights;
         Camera camera;
         Mesh *focus_mesh = nullptr;
-        Triangle *focus_face = nullptr;
+        std::vector<Triangle *> focus_faces;
 //        Point3 *focus_edge[2];
         Point3 *focus_summit = nullptr;
 
@@ -44,11 +44,11 @@ class Scene
         void move_x(float value);
         void move_y(float value);
         void move_z(float value);
-        void rotate_x(float angle);
-        void rotate_y(float angle);
-        void rotate_z(float angle);
+        void rotate_xyz(float anglex, float angley, float anglez);
         void scale(float value);
         void extrude(float x_, float y_, float z_);
+        void extrude_along_normal(float thickness);
+        void extrude_along_points_normalized(float thickness);
 
         void add_mesh(Mesh *mesh);
         void select(int x, int y) const;

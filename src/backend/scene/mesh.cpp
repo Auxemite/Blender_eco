@@ -222,6 +222,29 @@ bool Mesh::move_face(Triangle *face, const Point3& new_pos)
     }
 }
 
+bool Mesh::move_face(std::vector<Triangle *> face_list, const Point3& new_pos)
+{
+    try
+    {
+        for (auto face : face_list) {
+            *face->a += new_pos;
+            *face->b += new_pos;
+            *face->c += new_pos;
+            update_hit_box(*face->a);
+            update_hit_box(*face->b);
+            update_hit_box(*face->c);
+            std::cout << "Face translated by " << new_pos << std::endl;
+        }
+
+        return true;
+    }
+    catch (std::out_of_range const& exc)
+    {
+        std::cout << "Point out of range\n";
+        return false;
+    }
+}
+
 bool Mesh::move_mesh(const Point3& new_pos)
 {
     try
@@ -380,6 +403,18 @@ void Mesh::scale_face(float size, Triangle *face)
     point_list.push_back(face->c);
     scale_selected(size, get_mid(point_list), point_list);
     update_hit_box();
+}
+
+void Mesh::scale_face(float size, std::vector<Triangle *> face_list)
+{
+    for (auto face : face_list) {
+        std::vector<Point3 *> point_list;
+        point_list.push_back(face->a);
+        point_list.push_back(face->b);
+        point_list.push_back(face->c);
+        scale_selected(size, get_mid(point_list), point_list);
+        update_hit_box();
+    }
 }
 
 void Mesh::scale_mesh(float size)

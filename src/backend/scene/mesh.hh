@@ -52,7 +52,9 @@ public:
     bool create_face(const Triangle& new_triangle);
     bool create_face(Point3 *a, Point3 *b, Point3 *c, bool add_points);
     bool move_face(Triangle *face, const Point3& new_pos);
+    bool move_face(std::vector<Triangle *> face_list, const Point3& new_pos);
     void scale_face(float size, Triangle *face);
+    void scale_face(float size, std::vector<Triangle *> face_list);
 
     // Usefull
     std::vector<Point3 *> get_points_from_indexes(const std::vector<int>&) const;

@@ -60,7 +60,7 @@ void Scene::delete_mesh() {
             meshes.erase(meshes.begin()+i);
     }
     focus_mesh = nullptr;
-    focus_face = nullptr;
+    focus_faces.clear();
     std::cout << "Deleted Mesh\n";
 }
 
@@ -110,7 +110,7 @@ void Scene::move_x(float value) {
         focus_mesh->move_mesh(new_location);
     }
     else if (selected_mode == 1)
-        focus_mesh->move_face(focus_face, Point3(value, 0, 0));
+        focus_mesh->move_face(focus_faces, Point3(value, 0, 0));
     else if (selected_mode == 3)
         *focus_summit += Point3(value, 0, 0);
 }
@@ -121,7 +121,7 @@ void Scene::move_y(float value) {
         focus_mesh->move_mesh(new_location);
     }
     else if (selected_mode == 1)
-        focus_mesh->move_face(focus_face, Point3(0, value, 0));
+        focus_mesh->move_face(focus_faces, Point3(0, value, 0));
     else if (selected_mode == 3)
         *focus_summit += Point3(0, value, 0);
 }
@@ -132,7 +132,7 @@ void Scene::move_z(float value) {
         focus_mesh->move_mesh(new_location);
     }
     else if (selected_mode == 1)
-        focus_mesh->move_face(focus_face, Point3(0, 0, value));
+        focus_mesh->move_face(focus_faces, Point3(0, 0, value));
     else if (selected_mode == 3)
         *focus_summit += Point3(0, 0, value);
 }
@@ -141,54 +141,44 @@ void Scene::scale(float value) {
     if (selected_mode == 0)
         focus_mesh->scale_mesh(value);
     else if (selected_mode == 1)
-        focus_mesh->scale_face(value, focus_face);
+        focus_mesh->scale_face(value, focus_faces);
 }
 
-void Scene::rotate_x(float angle) {
+void Scene::rotate_xyz(float anglex, float angley, float anglez) {
     if (selected_mode == 0)
-        focus_mesh->rotate_axis_x(angle);
+        focus_mesh->rotate_all_axis(anglex, angley, anglez);
     else if (selected_mode == 1) {
-        std::vector<Point3 *> point_list;
-        point_list.push_back(focus_face->a);
-        point_list.push_back(focus_face->b);
-        point_list.push_back(focus_face->c);
-        focus_mesh->rotate_all_axis(angle, 0, 0, point_list);
+        for (auto face : focus_faces) {
+            std::vector<Point3 *> point_list;
+            point_list.push_back(face->a);
+            point_list.push_back(face->b);
+            point_list.push_back(face->c);
+            focus_mesh->rotate_all_axis(anglex, angley, anglez, point_list);
+        }
     }
 }
-
-void Scene::rotate_y(float angle) {
-    if (selected_mode == 0)
-        focus_mesh->rotate_all_axis(0, angle, 0);
-    else if (selected_mode == 1) {
-        std::vector<Point3 *> point_list;
-        point_list.push_back(focus_face->a);
-        point_list.push_back(focus_face->b);
-        point_list.push_back(focus_face->c);
-        focus_mesh->rotate_all_axis(0, angle, 0, point_list);
-    }
-}
-
-void Scene::rotate_z(float angle) {
-    if (selected_mode == 0)
-        focus_mesh->rotate_all_axis(0, 0, angle);
-    else if (selected_mode == 1) {
-        std::vector<Point3 *> point_list;
-        point_list.push_back(focus_face->a);
-        point_list.push_back(focus_face->b);
-        point_list.push_back(focus_face->c);
-        focus_mesh->rotate_all_axis(0, 0, angle, point_list);
-    }
-}
-
 
 void Scene::extrude(float x_, float y_, float z_) {
-    if (selected_mode == 0 || focus_face == nullptr)
+    if (selected_mode == 0 || focus_faces.empty())
         return;
-    auto *a_ = new Point3(*focus_face->a + Point3(x_, y_, z_));
-    auto *b_ = new Point3(*focus_face->b + Point3(x_, y_, z_));
-    auto *c_ = new Point3(*focus_face->c + Point3(x_, y_, z_));
-    focus_mesh->extrude_face(focus_face, a_, b_, c_);
+    for (auto face : focus_faces) {
+        auto *a_ = new Point3(*face->a + Point3(x_, y_, z_));
+        auto *b_ = new Point3(*face->b + Point3(x_, y_, z_));
+        auto *c_ = new Point3(*face->c + Point3(x_, y_, z_));
+        focus_mesh->extrude_face(face, a_, b_, c_);
+    }
 }
+
+void Scene::extrude_along_normal(float thickness) {
+    if (!focus_faces.empty())
+        focus_mesh->extrude_along_normal(thickness, focus_faces);
+}
+
+void Scene::extrude_along_points_normalized(float thickness) {
+    if (!focus_faces.empty())
+        focus_mesh->extrude_along_points_normalized(thickness, focus_faces);
+}
+
 
 void Scene::select_mesh(float x, float y) {
     auto c = camera;
@@ -270,16 +260,18 @@ void Scene::change_focus(Mesh *mesh) {
 void Scene::change_focus(Mesh *mesh, Triangle *face) {
     if (mesh == nullptr || selected_mode != 1)
         return;
-
-    if (focus_face != nullptr)
-        focus_face->selected = false;
-    if (focus_face == nullptr || focus_face != face) {
-        focus_face = face;
-        focus_face->selected = true;
-        focus_mesh = mesh;
+    if (mesh != focus_mesh) {
+        std::cerr << "Scene Change Focus ERROR : mesh and focus_mesh are different\n";
+        return;
     }
-    else
-        focus_face = nullptr;
+
+    if (!face->selected)
+        focus_faces.push_back(face);
+    else {
+        auto it = find(focus_faces.begin(), focus_faces.end(), face);
+        focus_faces.erase(it);
+    }
+    face->selected = !face->selected;
 }
 
 void Scene::change_focus(Mesh *mesh, Point3 *summit) {
@@ -292,9 +284,6 @@ void Scene::update_selection_mode() {
         for (auto &face: focus_mesh->faces)
             face->selected = false;
     }
-    if (focus_face != nullptr)
-        focus_face->selected = false;
-    focus_face = nullptr;
-    focus_summit = nullptr;
+    focus_faces.clear();
     std::cout << "Changed Selection Mode " << selected_mode << "\n";
 };
