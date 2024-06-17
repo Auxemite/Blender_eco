@@ -67,7 +67,9 @@ void App::MainOptions() {
         ImGui::SameLine();
         if (ImGui::RadioButton("Face", &env.scene.selected_mode, 1)) { env.scene.update_selection_mode(); env.render(); }
 //        ImGui::SameLine();
-//        if (ImGui::RadioButton("Edge", &env.selected_mode, 2)) { env.update_selection_mode(); }
+//        if (ImGui::RadioButton("Summit", &env.scene.selected_mode, 2)) { env.scene.update_selection_mode(); env.render(); }
+        ImGui::SameLine();
+        if (ImGui::RadioButton("Summit", &env.scene.selected_mode, 3)) { env.scene.update_selection_mode(); env.render(); }
     }
     ImGui::SameLine();
     ImGui::Text("|");
@@ -401,14 +403,18 @@ void App::Inputs(const ImGuiIO& io, ImVec2 pos) {
             env.render();
         }
         else if (key == 655) { // Left Click
-            env.scene.select_mesh(region_x, region_y);
+            if (env.scene.selected_mode == 3)
+                env.scene.select_summit(region_x, region_y);
+            else
+                env.scene.select_mesh(region_x, region_y);
+
             env.render();
         }
-        else if (key == 569) {
+        else if (key == 569) { // X
             env.scene.delete_mesh();
             env.render();
         }
-        else if (key == 546) {
+        else if (key == 546) { // A
             ImGui::OpenPopup("add_mesh");
         }
         Add_Mesh();

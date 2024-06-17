@@ -111,6 +111,8 @@ void Scene::move_x(float value) {
     }
     else if (selected_mode == 1)
         focus_mesh->move_face(focus_face, Point3(value, 0, 0));
+    else if (selected_mode == 3)
+        *focus_summit += Point3(value, 0, 0);
 }
 
 void Scene::move_y(float value) {
@@ -120,6 +122,8 @@ void Scene::move_y(float value) {
     }
     else if (selected_mode == 1)
         focus_mesh->move_face(focus_face, Point3(0, value, 0));
+    else if (selected_mode == 3)
+        *focus_summit += Point3(0, value, 0);
 }
 
 void Scene::move_z(float value) {
@@ -129,6 +133,8 @@ void Scene::move_z(float value) {
     }
     else if (selected_mode == 1)
         focus_mesh->move_face(focus_face, Point3(0, 0, value));
+    else if (selected_mode == 3)
+        *focus_summit += Point3(0, 0, value);
 }
 
 void Scene::scale(float value) {
@@ -191,7 +197,6 @@ void Scene::select_mesh(float x, float y) {
     auto inter = Intersection(c.center, dir);
     Mesh *selected_mesh = nullptr;
     Triangle *selected_face = nullptr;
-    Point3 *selected_edge = nullptr;
     for (auto mesh : meshes)
     {
         for (auto face : mesh->faces)
@@ -218,6 +223,26 @@ void Scene::select_mesh(float x, float y) {
         change_focus(selected_mesh);
     else if (selected_mode == 1)
         change_focus(selected_mesh, selected_face);
+}
+
+void Scene::select_summit(float x, float y) {
+    auto c = camera;
+    auto pixel_center = c.pixel_loc + (static_cast<float>(x) * c.pixel_u) + (static_cast<float>(y) * c.pixel_v);
+    auto dir = (pixel_center - c.center).norm();
+    focus_summit = nullptr;
+    for (auto mesh : meshes) {
+        for (auto summit : mesh->points) {
+            float tx = (summit->x - c.center.x) / dir.x;
+            float ty = (summit->y - c.center.y) / dir.y;
+            float tz = (summit->z - c.center.z) / dir.z;
+            float diff = 1e-6;
+            if (tx - ty < diff && tx - tz < diff && (focus_summit == nullptr
+                || (*summit - camera.center).length() < (*focus_summit - c.center).length())) {
+                focus_summit = summit;
+                std::cout << "focus summit is " << *summit << " at x = " << x << " and y = " << y << "\n";
+            }
+        }
+    }
 }
 
 void Scene::change_focus(Mesh *mesh) {
@@ -254,7 +279,7 @@ void Scene::change_focus(Mesh *mesh, Triangle *face) {
     }
 }
 
-void Scene::change_focus(Mesh *mesh, Point3 *edge) {
+void Scene::change_focus(Mesh *mesh, Point3 *summit) {
     if (mesh == nullptr || selected_mode != 2)
         return;
 }
@@ -266,7 +291,7 @@ void Scene::update_selection_mode() {
     }
     if (focus_face != nullptr)
         focus_face->selected = false;
-    focus_mesh = nullptr;
     focus_face = nullptr;
+    focus_summit = nullptr;
     std::cout << "Changed Selection Mode " << selected_mode << "\n";
 };

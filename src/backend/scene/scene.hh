@@ -15,7 +15,8 @@ class Scene
         Camera camera;
         Mesh *focus_mesh = nullptr;
         Triangle *focus_face = nullptr;
-        Point3 *focus_edge = nullptr;
+//        Point3 *focus_edge[2];
+        Point3 *focus_summit = nullptr;
 
         // Flags
         int selected_mode = 0;
@@ -34,9 +35,10 @@ class Scene
         void add_mesh(const std::string& name);
         void delete_mesh();
         void select_mesh(float x, float y);
+        void select_summit(float x, float y);
         void change_focus(Mesh *mesh);
         void change_focus(Mesh *mesh, Triangle *face);
-        void change_focus(Mesh *mesh, Point3 *edge);
+        void change_focus(Mesh *mesh, Point3 *summit);
         void update_selection_mode();
 
         void move_x(float value);
