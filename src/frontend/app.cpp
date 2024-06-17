@@ -54,6 +54,7 @@ void App::MainOptions() {
     else {
         if (ImGui::Button("Normal Mode")) {
             env.scene.editmode = false;
+            env.scene.selected_mode = 0;
             Mesh *mesh = env.scene.focus_mesh;
             env.scene.update_selection_mode();
             env.scene.change_focus(mesh);

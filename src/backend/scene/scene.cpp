@@ -248,6 +248,11 @@ void Scene::select_summit(float x, float y) {
 void Scene::change_focus(Mesh *mesh) {
     if (mesh == nullptr || selected_mode != 0)
         return;
+    if (editmode) {
+        for (auto &face: focus_mesh->faces)
+            face->selected = !face->selected;
+        return;
+    }
 
     if (focus_mesh != nullptr) {
         for (auto &face: focus_mesh->faces)
@@ -273,10 +278,8 @@ void Scene::change_focus(Mesh *mesh, Triangle *face) {
         focus_face->selected = true;
         focus_mesh = mesh;
     }
-    else {
+    else
         focus_face = nullptr;
-        focus_mesh = nullptr;
-    }
 }
 
 void Scene::change_focus(Mesh *mesh, Point3 *summit) {

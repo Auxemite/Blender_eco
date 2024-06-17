@@ -50,6 +50,8 @@ void Intersection::fast_throw_ray(const Scene& scene)
             fast_throw_ray(obj);
 
     if (scene.editmode) {
+        if (scene.focus_mesh == nullptr)
+            return;
         for (auto face: scene.focus_mesh->faces) {
             // Check backface culling
             if (dot(dir, face->normal_) < 0)
