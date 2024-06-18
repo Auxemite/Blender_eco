@@ -219,7 +219,8 @@ void Scene::select_summit(float x, float y) {
     auto c = camera;
     auto pixel_center = c.pixel_loc + (static_cast<float>(x) * c.pixel_u) + (static_cast<float>(y) * c.pixel_v);
     auto dir = (pixel_center - c.center).norm();
-    focus_summit = nullptr;
+    Mesh *selected_mesh = nullptr;
+    Point3 *selected_summit = nullptr;
     for (auto mesh : meshes) {
         for (auto summit : mesh->points) {
             float tx = (summit->x - c.center.x) / dir.x;
@@ -228,11 +229,14 @@ void Scene::select_summit(float x, float y) {
             float diff = 1e-6;
             if (tx - ty < diff && tx - tz < diff && (focus_summit == nullptr
                 || (*summit - camera.center).length() < (*focus_summit - c.center).length())) {
-                focus_summit = summit;
+                selected_mesh = mesh;
+                selected_summit = summit;
                 std::cout << "focus summit is " << *summit << " at x = " << x << " and y = " << y << "\n";
             }
         }
     }
+    if (selected_mode == 3)
+        change_focus(selected_mesh, selected_summit);
 }
 
 void Scene::change_focus(Mesh *mesh) {
@@ -275,8 +279,10 @@ void Scene::change_focus(Mesh *mesh, Triangle *face) {
 }
 
 void Scene::change_focus(Mesh *mesh, Point3 *summit) {
-    if (mesh == nullptr || selected_mode != 2)
+    if (mesh == nullptr || selected_mode != 3)
         return;
+
+    focus_summit = summit;
 }
 
 void Scene::update_selection_mode() {

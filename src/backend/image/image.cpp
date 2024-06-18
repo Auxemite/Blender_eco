@@ -42,6 +42,12 @@ Color Image::fast_ray_color(const Scene& scene, const Intersection& inter)
     Point3 inter_loc = inter.inter_loc;
     if (inter_loc == null_point)
         return basic::color::background_blue;
+    const float delta = 0.1f;
+    if (scene.editmode && scene.selected_mode == 3 && scene.focus_summit != nullptr
+        && abs_(inter_loc.x - scene.focus_summit->x) < delta
+        && abs_(inter_loc.y - scene.focus_summit->y) < delta
+        && abs_(inter_loc.z - scene.focus_summit->z) < delta)
+        return Color(1, 1, 0);
 
     Vector3 normal = inter.object->normal(inter_loc);
     float dot_angle = dot((scene.camera.lookat - scene.camera.center).norm(), normal);
@@ -108,6 +114,13 @@ void Image::update_char_data(unsigned int i, unsigned int j) {
     char_data[k] = static_cast<unsigned char>(data[i][j].r * 255);
     char_data[k+1] = static_cast<unsigned char>(data[i][j].g * 255);
     char_data[k+2] = static_cast<unsigned char>(data[i][j].b * 255);
+}
+
+void Image::update_char_data(unsigned int i, unsigned int j, Color c) {
+    unsigned int k = (j * width + i) * 3;
+    char_data[k] = static_cast<unsigned char>(c.r * 255);
+    char_data[k+1] = static_cast<unsigned char>(c.g * 255);
+    char_data[k+2] = static_cast<unsigned char>(c.b * 255);
 }
 
 void Image::render_thread(const Scene& scene, Image *bg, const bool& photorealist, int start, int end)
@@ -199,9 +212,9 @@ void Image::postprocess(const bool& fast_selection) {
     int mid_w = width / 2;
     int mid_h = height / 2;
     for (int i = 0; i < 11; ++i)
-        update_char_data(mid_h, mid_w - 5 + i);
+        update_char_data(mid_w, mid_h - 5 + i, basic::color::white);
     for (int i = 0; i < 11; ++i)
-        update_char_data(mid_h - 5 + i, mid_w);
+        update_char_data(mid_w - 5 + i, mid_h, basic::color::white);
 }
 
 void Image::save_as_ppm(const std::string& pathname)

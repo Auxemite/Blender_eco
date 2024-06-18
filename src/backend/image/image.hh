@@ -21,6 +21,7 @@ class Image {
         static Color bg_color(Image *bg, Vector3 dir);
         static Color fast_ray_color(const Scene& scene, const Intersection& inter);
         void update_char_data(unsigned int i, unsigned int j);
+        void update_char_data(unsigned int i, unsigned int j, Color c);
         Color ray_color(const Scene& scene, Image *bg, Intersection intersection, int recursive);
         void render(const Scene& scene, Image *bg, const bool& photorealist=false, const bool& fast_selection=true);
         void render_debug(const Scene& scene, Image *bg, const bool& photorealist=false, const bool& fast_selection=true);
