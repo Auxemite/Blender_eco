@@ -45,9 +45,9 @@ Material Sphere::get_material(const Point3& point) const
     return texture.get_texture(point);
 }
 
-std::string Sphere::get_obj_type() const
+Shape_type Sphere::get_obj_type() const
 {
-    return "Sphere";
+    return Shape_type::SPHERE;
 }
 
 /////////////////// Plane /////////////////////////////////
@@ -109,9 +109,9 @@ float Plane::ray_intersection(const Point3& cam_position, const Vector3& directi
 
 Vector3 Plane::normal(const Point3& point) const { return this->normal_; }
 Material Plane::get_material(const Point3& point) const { return texture.get_texture(point); }
-std::string Plane::get_obj_type() const
+Shape_type Plane::get_obj_type() const
 {
-    return "Plane";
+    return Shape_type::PLANE;
 }
 
 /////////////////// Triangle ///////////////////////////////
@@ -173,9 +173,9 @@ float Triangle::ray_intersection(const Point3& cam_position, const Vector3& dire
 
 Vector3 Triangle::normal(const Point3& point) const { return this->normal_; }
 Material Triangle::get_material(const Point3& point) const { return texture.get_texture(point); }
-std::string Triangle::get_obj_type() const
+Shape_type Triangle::get_obj_type() const
 {
-    return "Triangle";
+    return Shape_type::TRIANGLE;
 }
 
 void Triangle::scale(float size) const

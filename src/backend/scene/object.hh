@@ -5,6 +5,14 @@
 #include "../utils/texture_material.hh"
 #include "../utils/vector3.hh"
 
+enum Shape_type
+{
+    SPHERE,
+    PLANE,
+    TRIANGLE,
+    NONE
+};
+
 class Shape
 {
     public:
@@ -14,7 +22,7 @@ class Shape
     virtual float ray_intersection(const Point3& p, const Vector3& v) = 0;
     virtual Vector3 normal(const Point3& point) const = 0;
     virtual Material get_material(const Point3& point) const = 0;
-    virtual std::string get_obj_type() const = 0;
+    virtual Shape_type get_obj_type() const = 0;
 };
 
 class Sphere : public Shape {
@@ -29,7 +37,7 @@ class Sphere : public Shape {
     float ray_intersection(const Point3& cam_center, const Vector3& dir) override;
     Vector3 normal(const Point3& point) const override;
     Material get_material(const Point3& point) const override;
-    std::string get_obj_type() const override;
+    Shape_type get_obj_type() const override;
 };
 
 class Plane : public Shape {
@@ -43,7 +51,7 @@ class Plane : public Shape {
     float ray_intersection(const Point3& cam_position, const Vector3& direction) override;
     Vector3 normal(const Point3& point) const override;
     Material get_material(const Point3& point) const override;
-    std::string get_obj_type() const override;
+    Shape_type get_obj_type() const override;
 };
 
 class Triangle : public Shape
@@ -57,7 +65,7 @@ class Triangle : public Shape
     float ray_intersection(const Point3& cam_position, const Vector3& direction) override;
     Vector3 normal(const Point3& point) const override;
     Material get_material(const Point3& point) const override;
-    std::string get_obj_type() const override;
+    Shape_type get_obj_type() const override;
 
     // Usefull for mesh transformation
     void scale(float size) const;

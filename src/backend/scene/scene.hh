@@ -29,6 +29,7 @@ class Scene
 
         void move_camera_x(float angle);
         void move_camera_y(float angle);
+        void zoom_camera(float value);
         void change_material(Color color, Texture texture);
 
         void move_camera_z(float angle);

@@ -97,6 +97,10 @@ void Scene::move_camera_z(float angle) {
     camera.update_cam(Point3(x_, y_, z_) + Point3(0, 0, p.z));
 }
 
+void Scene::zoom_camera(float value) {
+    camera.update_cam(camera.center * value);
+}
+
 void Scene::change_material(Color color, Texture texture) {
     Uniform_Texture uni_text = Uniform_Texture(color, texture);
     focus_mesh->texture = uni_text;
@@ -112,7 +116,7 @@ void Scene::move_x(float value) {
     else if (selected_mode == 1)
         focus_mesh->move_face(focus_faces, Point3(value, 0, 0));
     else if (selected_mode == 3)
-        *focus_summit += Point3(value, 0, 0);
+        focus_mesh->translate_point(focus_summit, Point3(value, 0, 0));
 }
 
 void Scene::move_y(float value) {
@@ -123,7 +127,7 @@ void Scene::move_y(float value) {
     else if (selected_mode == 1)
         focus_mesh->move_face(focus_faces, Point3(0, value, 0));
     else if (selected_mode == 3)
-        *focus_summit += Point3(0, value, 0);
+        focus_mesh->translate_point(focus_summit, Point3(0, value, 0));
 }
 
 void Scene::move_z(float value) {
@@ -134,7 +138,7 @@ void Scene::move_z(float value) {
     else if (selected_mode == 1)
         focus_mesh->move_face(focus_faces, Point3(0, 0, value));
     else if (selected_mode == 3)
-        *focus_summit += Point3(0, 0, value);
+        focus_mesh->translate_point(focus_summit, Point3(0, 0, value));
 }
 
 void Scene::scale(float value) {
@@ -176,7 +180,7 @@ void Scene::extrude_along_normal(float thickness) {
 
 void Scene::extrude_along_points_normalized(float thickness) {
     if (!focus_faces.empty())
-        focus_mesh->extrude_along_points_normalized(thickness, focus_faces);
+        focus_mesh->extrude_along_points(thickness, focus_faces);
 }
 
 
@@ -221,18 +225,15 @@ void Scene::select_summit(float x, float y) {
     auto dir = (pixel_center - c.center).norm();
     Mesh *selected_mesh = nullptr;
     Point3 *selected_summit = nullptr;
-    for (auto mesh : meshes) {
-        for (auto summit : mesh->points) {
-            float tx = (summit->x - c.center.x) / dir.x;
-            float ty = (summit->y - c.center.y) / dir.y;
-            float tz = (summit->z - c.center.z) / dir.z;
-            float diff = 1e-6;
-            if (tx - ty < diff && tx - tz < diff && (focus_summit == nullptr
-                || (*summit - camera.center).length() < (*focus_summit - c.center).length())) {
-                selected_mesh = mesh;
-                selected_summit = summit;
-                std::cout << "focus summit is " << *summit << " at x = " << x << " and y = " << y << "\n";
-            }
+    for (auto summit : focus_mesh->points) {
+        auto point_dir = (*summit - c.center).norm();
+        float diff = 0.999;
+        std::cout << "dot " << dot(point_dir, dir) << "\n";
+        if (dot(point_dir, dir) > diff && (selected_summit == nullptr
+            || (*summit - camera.center).length() < (*selected_summit - c.center).length())) {
+            selected_mesh = focus_mesh;
+            selected_summit = summit;
+            std::cout << "focus summit is " << *summit << " at x = " << x << " and y = " << y << "\n";
         }
     }
     if (selected_mode == 3)

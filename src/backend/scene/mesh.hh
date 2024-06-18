@@ -36,8 +36,8 @@ public:
 
     // Displacement
     //// Point
-    bool move_point(int index, const Point3& new_pos);
-    bool translate_point(int index, const Point3& new_pos);
+    bool move_point(Point3 *point, const Point3& new_pos);
+    bool translate_point(Point3 *point, const Point3& new_pos);
     //// Mesh
     bool move_mesh(const Point3& new_pos);
     bool translate_mesh(const Point3& new_pos);

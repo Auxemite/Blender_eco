@@ -55,7 +55,7 @@ Color Image::fast_ray_color(const Scene& scene, const Intersection& inter)
     if (inter.object->selected)
         return Color(2, 2, 0) * dot_angle;
 
-    if (scene.activate_grid && inter.object->get_obj_type() == "Plane") {
+    if (scene.activate_grid && inter.object->get_obj_type() == Shape_type::PLANE) {
         float diff_1 = abs_(round(inter_loc.x) - inter_loc.x);
         float diff_2 = abs_(round(inter_loc.z) - inter_loc.z);
         if (diff_1 <= 0.015 && round(inter_loc.x) == 0 && (round(inter_loc.z) != 0 || inter_loc.z < 0.5))
@@ -183,9 +183,9 @@ void Image::render_debug(const Scene& scene, Image *bg, const bool& photorealist
 
 void Image::postprocess(const bool& fast_selection) {
     if (!fast_selection) {
-        for (unsigned int j = 1; j < height - 1; j++)
-            for (unsigned int i = 1; i < width - 1; i++)
-                if (shapes[i][j] != nullptr &&
+        for (unsigned int j = 1; j < height - 1; j++) {
+            for (unsigned int i = 1; i < width - 1; i++) {
+                if (shapes[i][j] != nullptr && //shapes[i][j]->get_obj_type() == Shape_type::TRIANGLE &&
                     ((shapes[i - 1][j - 1] != shapes[i][j]) && (shapes[i - 1][j - 1] != nullptr) ||
                     (shapes[i + 1][j - 1] != shapes[i][j]) && (shapes[i + 1][j - 1] != nullptr) ||
                     (shapes[i - 1][j + 1] != shapes[i][j]) && (shapes[i - 1][j + 1] != nullptr) ||
@@ -194,21 +194,24 @@ void Image::postprocess(const bool& fast_selection) {
                     data[i][j] = Color(0.1, 0.1, 0.1);
                     update_char_data(i, j);
                 }
+            }
+        }
 
-        for (unsigned int j = 1; j < height - 1; j++)
-            for (unsigned int i = 1; i < width - 1; i++)
-                if (shapes[i][j] != nullptr && shapes[i][j]->selected)
-                    for (int x = 0; x < 3; x++)
-                        for (int y = 0; y < 3; y++)
-                            if (!shapes[i + x - 1][j + y -1] || !shapes[i + x - 1][j + y - 1]->selected) {
-                                data[i + x - 1][j + y - 1] = Color(basic::color::cyan);
-                                update_char_data(i, j);
-                            }
+//        for (unsigned int j = 1; j < height - 1; j++)
+//            for (unsigned int i = 1; i < width - 1; i++)
+//                if (shapes[i][j] != nullptr && shapes[i][j]->selected)
+//                    for (int x = 0; x < 3; x++)
+//                        for (int y = 0; y < 3; y++)
+//                            if (!shapes[i + x - 1][j + y -1] || !shapes[i + x - 1][j + y - 1]->selected) {
+//                                data[i + x - 1][j + y - 1] = Color(basic::color::cyan);
+//                                update_char_data(i, j);
+//                            }
 
-        shapes = std::vector<std::vector<Shape*>>(width,
-                                                  std::vector<Shape*>(height,
-                                                                      nullptr));
+
     }
+    shapes = std::vector<std::vector<Shape*>>(width,
+                                              std::vector<Shape*>(height,
+                                                                  nullptr));
     int mid_w = width / 2;
     int mid_h = height / 2;
     for (int i = 0; i < 11; ++i)

@@ -161,44 +161,32 @@ void Mesh::update_hit_box(const Point3& point)
 }
 
 // Displacement
-bool Mesh::move_point(int index, const Point3& new_pos)
+bool Mesh::move_point(Point3 *point, const Point3& new_pos)
 {
-    try
-    {
-        Point3 *point = points.at(index);
-        point->x = new_pos.x;
-        point->y = new_pos.y;
-        point->z = new_pos.z;
-        
-        std::cout << "Point moved to " << new_pos << std::endl;
-        update_hit_box();
+    point->x = new_pos.x;
+    point->y = new_pos.y;
+    point->z = new_pos.z;
 
-        return true;
-    }
-    catch (std::out_of_range const& exc)
-    {
-        std::cout << "Point out of range\n";
-        return false;
-    }
+    std::cout << "Point moved to " << new_pos << std::endl;
+    update_hit_box();
+    auto linked_faces = get_faces(point);
+    for (auto face : linked_faces)
+        face->update_normal();
+
+    return true;
 }
 
-bool Mesh::translate_point(int index, const Point3& new_pos)
+bool Mesh::translate_point(Point3 *point, const Point3& new_pos)
 {
-    try
-    {
-        Point3 *point = points.at(index);
-        *point += new_pos;
-        
-        std::cout << "Point translated by " << new_pos << std::endl;
-        update_hit_box(*point);
+    *point += new_pos;
 
-        return true;
-    }
-    catch (std::out_of_range const& exc)
-    {
-        std::cout << "Point out of range\n";
-        return false;
-    }
+    std::cout << "Point translated by " << new_pos << std::endl;
+    update_hit_box(*point);
+    auto linked_faces = get_faces(point);
+    for (auto face : linked_faces)
+        face->update_normal();
+
+    return true;
 }
 
 bool Mesh::move_face(Triangle *face, const Point3& new_pos)

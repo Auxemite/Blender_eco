@@ -77,7 +77,7 @@ void App::MainOptions() {
     ImGui::SameLine();
     if (ImGui::RadioButton("Fast Selection", &env.fast_selection, 1)) { env.render(); }
     ImGui::SameLine();
-    if (ImGui::RadioButton("Normal Selection", &env.fast_selection, 0)) { env.render(); }
+    if (ImGui::RadioButton("Classic Selection", &env.fast_selection, 0)) { env.render(); }
 
     ImGui::SameLine();
     ImGui::Text("|");
@@ -319,18 +319,26 @@ void App::MeshOptions() {
     ImGui::SameLine();
     ImGui::SliderFloat("Z", &v3, -5, 5);
 
-    static float scale = 1.00f;
-    if (ImGui::Button("Scale")) { env.scene.scale(scale); env.render(); }
-    ImGui::SameLine();
-    ImGui::SliderFloat("Value", &scale, 0.1f, 3);
+    if (env.scene.editmode && env.scene.selected_mode != 3) {
+        static float scale = 1.00f;
+        if (ImGui::Button("Scale")) {
+            env.scene.scale(scale);
+            env.render();
+        }
+        ImGui::SameLine();
+        ImGui::SliderFloat("Value", &scale, 0.1f, 3);
 
-    static float a1 = 0;
-    ImGui::SliderAngle("RX", &a1, -90, 90);
-    static float a2 = 0;
-    ImGui::SliderAngle("RY", &a2, -90, 90);
-    static float a3 = 0;
-    ImGui::SliderAngle("RZ", &a3, -90, 90);
-    if (ImGui::Button("Rotate Y")) { env.scene.rotate_xyz(a1, a2, a3); env.render(); }
+        static float a1 = 0;
+        ImGui::SliderAngle("RX", &a1, -90, 90);
+        static float a2 = 0;
+        ImGui::SliderAngle("RY", &a2, -90, 90);
+        static float a3 = 0;
+        ImGui::SliderAngle("RZ", &a3, -90, 90);
+        if (ImGui::Button("Rotate Y")) {
+            env.scene.rotate_xyz(a1, a2, a3);
+            env.render();
+        }
+    }
 
     ImGui::Text("Special Mesh Actions : ");
     if (env.scene.editmode && env.scene.selected_mode == 1) {
@@ -369,13 +377,13 @@ void App::PrintObjInfo() const {
 }
 
 void App::Inputs(const ImGuiIO& io, ImVec2 pos) {
-    float region_sz = 32.0f;
-    float region_x = io.MousePos.x - pos.x - region_sz * 0.5f;
-    float region_y = io.MousePos.y - pos.y - region_sz * 0.5f;
+//    float region_sz = 16.0f;
+    float region_x = io.MousePos.x - pos.x;// - region_sz * 0.5f;
+    float region_y = io.MousePos.y - pos.y;// - region_sz * 0.5f;
     if (region_x < 0.0f) { return; }
-    else if (region_x > 1280 - region_sz) { return; }
+    else if (region_x > 1280) { return; }
     if (region_y < 0.0f) { return; }
-    else if (region_y > 720 - region_sz) { return; }
+    else if (region_y > 720) { return; }
     ImGui::Text("Min: (%.2f, %.2f)", region_x, region_y);
     ImGui::SameLine();
     ImGui::Text("Mouse down:");
@@ -427,6 +435,14 @@ void App::Inputs(const ImGuiIO& io, ImVec2 pos) {
         }
         else if (key == 546) { // A
             ImGui::OpenPopup("add_mesh");
+        }
+        else if (key == 571) { // Z
+            env.scene.zoom_camera(0.9);
+            env.render();
+        }
+        else if (key == 549) { // D
+            env.scene.zoom_camera(1.1);
+            env.render();
         }
         Add_Mesh();
     }
