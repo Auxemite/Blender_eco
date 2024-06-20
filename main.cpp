@@ -1,12 +1,3 @@
-// Dear ImGui: standalone example application for GLFW + OpenGL 3, using programmable pipeline
-// (GLFW is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
-
-// Learn about Dear ImGui:
-// - FAQ                  https://dearimgui.com/faq
-// - Getting Started      https://dearimgui.com/getting-started
-// - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
-// - Introduction, links and more at the top of imgui.cpp
-
 #include "src/frontend/imgui/imgui.h"
 #include "src/frontend/imgui/imgui_impl_glfw.h"
 #include "src/frontend/imgui/imgui_impl_opengl3.h"
@@ -126,10 +117,9 @@ int main(int, char**)
     bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    //TODO CODE HERE
+    //TODO CODE HERE START
     auto app = App();
-    IM_ASSERT(app.env.image.width != 0);
-    //TODO CODE HERE
+    //TODO CODE HERE END
 
     // Main loop
 #ifdef __EMSCRIPTEN__
