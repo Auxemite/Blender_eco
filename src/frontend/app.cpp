@@ -3,6 +3,7 @@
 using namespace std;
 
 const char* names[] = { "Cube", "Plane", "Triangle", "Cone", "Sphere", "Icosphere", "Cylinder", "Donut", "Monkey"};
+const char* name_bgs[] = { "Sky", "Sunset", "Forest", "Synthwave", "Space", "Mars", "Earth"};
 
 App::App(){
     env = Env();
@@ -20,14 +21,12 @@ void App::MainOptions() {
             env.render();
         }
         ImGui::SameLine();
-
-        const char* names[] = { "Sky", "Sky2", "Sunset", "Sunset2", "Synthwave", "Space", "Tree"};
         if (ImGui::Button("Change background"))
             ImGui::OpenPopup("change_bg");
         if (ImGui::BeginPopup("change_bg"))
         {
             ImGui::SeparatorText("Background Images");
-            for (auto & i : names)
+            for (auto & i : name_bgs)
                 if (ImGui::Selectable(i)) {
                     std::string name = i;
                     name[0] = tolower(name[0]);
@@ -210,6 +209,16 @@ void App::Material() {
         env.scene.change_material(material_color, texture);
         env.render();
     }
+
+    ImGui::Text("Light Options");
+    static float power = 20;
+    ImGui::SliderFloat("power", &power, 1, 150);
+
+    if (ImGui::Button("Update Light")) {
+        env.scene.lights[0]->power = power;
+        env.scene.lights[0]->color = Color(color.x, color.y, color.z);
+        env.render();
+    }
 }
 
 void App::CameraOption() {
@@ -319,7 +328,7 @@ void App::MeshOptions() {
     ImGui::SameLine();
     ImGui::SliderFloat("Z", &v3, -5, 5);
 
-    if (env.scene.editmode && env.scene.selected_mode != 3) {
+    if (env.scene.selected_mode != 3) {
         static float scale = 1.00f;
         if (ImGui::Button("Scale")) {
             env.scene.scale(scale);
@@ -380,16 +389,17 @@ void App::Inputs(const ImGuiIO& io, ImVec2 pos) {
 //    float region_sz = 16.0f;
     float region_x = io.MousePos.x - pos.x;// - region_sz * 0.5f;
     float region_y = io.MousePos.y - pos.y;// - region_sz * 0.5f;
-    if (region_x < 0.0f) { return; }
-    else if (region_x > 1280) { return; }
-    if (region_y < 0.0f) { return; }
-    else if (region_y > 720) { return; }
+//    if (region_x < 0.0f) { return; }
+//    else if (region_x > 1280) { return; }
+//    if (region_y < 0.0f) { return; }
+//    else if (region_y > 720) { return; }
     ImGui::Text("Min: (%.2f, %.2f)", region_x, region_y);
     ImGui::SameLine();
     ImGui::Text("Mouse down:");
     for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++) {
         if (io.MouseDownDuration[i] > 0.1)
             return;
+        if (region_x >= 0.0f && region_x <= 1280 && region_y >= 0.0f && region_y <= 720)
         if (ImGui::IsMouseDown(i)) {
             ImGui::SameLine();
             ImGui::Text("b%d (%.02f secs)", i, io.MouseDownDuration[i]);
