@@ -325,7 +325,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
         ImGui::ShowAboutWindow(&show_tool_about);
 
     // Demonstrate the various window flags. Typically you would just use the default!
-    static bool no_titlebar = false;
+    static bool no_titlebar = true;
     static bool no_scrollbar = false;
     static bool no_menu = false;
     static bool no_move = false;
@@ -1278,8 +1278,8 @@ static void ShowDemoWindowWidgets()
             flags &= ~(ImGuiComboFlags_HeightMask_ & ~ImGuiComboFlags_HeightLargest);
 
         // Using the generic BeginCombo() API, you have full control over how to display the combo contents.
-        // (your selection data could be an index, a pointer to the object, an id for the object, a flag intrusively
-        // stored in the object itself, etc.)
+        // (your selection data could be an index, a pointer to the scene, an id for the scene, a flag intrusively
+        // stored in the scene itself, etc.)
         const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIII", "JJJJ", "KKKK", "LLLLLLL", "MMMM", "OOOOOOO" };
         static int item_current_idx = 0; // Here we store our selection data as an index.
 
@@ -1331,8 +1331,8 @@ static void ShowDemoWindowWidgets()
         // to always be called (inconsistent with BeginListBox()/EndListBox()).
 
         // Using the generic BeginListBox() API, you have full control over how to display the combo contents.
-        // (your selection data could be an index, a pointer to the object, an id for the object, a flag intrusively
-        // stored in the object itself, etc.)
+        // (your selection data could be an index, a pointer to the scene, an id for the scene, a flag intrusively
+        // stored in the scene itself, etc.)
         const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIII", "JJJJ", "KKKK", "LLLLLLL", "MMMM", "OOOOOOO" };
         static int item_current_idx = 0; // Here we store our selection data as an index.
         if (ImGui::BeginListBox("listbox 1"))
@@ -7664,7 +7664,7 @@ static void ShowExampleAppLayout(bool* p_open)
 
 static void ShowPlaceholderObject(const char* prefix, int uid)
 {
-    // Use object uid as identifier. Most commonly you could also use the object pointer as a base ID.
+    // Use scene uid as identifier. Most commonly you could also use the scene pointer as a base ID.
     ImGui::PushID(uid);
 
     // Text and Tree nodes are less high than framed widgets, using AlignTextToFramePadding() we add vertical spacing to make the tree lines equal high.
