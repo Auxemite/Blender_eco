@@ -9,15 +9,15 @@ int render_count = 0;
 Env::Env() {
     image = Image(default_width, default_height);
     scene = Scene(image.width, image.height);
-    render();
-    create_texture();
+//    render();
+//    create_texture();
 }
 
 Env::Env(const char* filename) {
     image = *load_image(filename);
     scene = Scene(image.width, image.height);
-    render();
-    create_texture();
+//    render();
+//    create_texture();
 }
 
 void Env::create_texture() {

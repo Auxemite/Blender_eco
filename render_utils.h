@@ -13,6 +13,15 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
+    std::cout << "Viewport set to width: " << width << " height: " << height
+              << std::endl;
+}
+
+void checkOpenGLError(const std::string &message) {
+    GLenum err;
+    while ((err = glGetError()) != GL_NO_ERROR) {
+        std::cerr << "OpenGL error (" << message << "): " << err << std::endl;
+    }
 }
 
 std::string readShaderSource(const std::string& filepath) {

@@ -98,7 +98,7 @@ void App::Windows()
         MeshOptions();
     ImGui::End();
 
-    CameraOption();
+//    CameraOption();
 
     ImGui::Begin("Material");
     if (env.scene.focus_mesh != nullptr)
@@ -109,10 +109,11 @@ void App::Windows()
 
     App::Rendering();
 
-//    ImGui::Begin("Viewport");
+    ImGui::Begin("Main Options");
 
-//
-//    MainOptions();
+    MainOptions();
+
+    ImGui::End();
 
 //    ImGuiIO &io = ImGui::GetIO();
 //    ImVec2 pos = ImGui::GetCursorScreenPos();
@@ -133,31 +134,30 @@ void App::Windows()
 //
 //    ImGui::SameLine();
 //
-//    if (ImGui::Button("Save file as"))
-//        ImGui::OpenPopup("save_file");
-//    if (ImGui::BeginPopup("save_file"))
-//    {
-//        static char filename[128] = "";
-//        ImGui::InputText("File Name", filename, IM_ARRAYSIZE(filename));
-//        ImGui::SameLine();
-//        if (ImGui::Button("Save file"))
-//            env.save_mesh("../test/" + string(filename) + ".obj");
-//        ImGui::EndPopup();
-//    }
-//
-//    ImGui::SameLine();
-//
-//    if (ImGui::Button("Add Mesh"))
-//        ImGui::OpenPopup("add_mesh");
-//    Add_Mesh();
-//
-//    ImGui::SameLine();
-//    if (ImGui::Button("Delete Mesh")) { env.scene.delete_mesh(); env.render(); }
-//
-//    ImGui::SameLine();
-//    Inputs(io, pos);
-//
-//    ImGui::End();
+
+    ImGui::Begin("End options");
+    if (ImGui::Button("Save file as"))
+        ImGui::OpenPopup("save_file");
+    if (ImGui::BeginPopup("save_file"))
+    {
+        static char filename[128] = "";
+        ImGui::InputText("File Name", filename, IM_ARRAYSIZE(filename));
+        ImGui::SameLine();
+        if (ImGui::Button("Save file"))
+            env.save_mesh("../test/" + string(filename) + ".obj");
+        ImGui::EndPopup();
+    }
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("Add Mesh"))
+        ImGui::OpenPopup("add_mesh");
+    Add_Mesh();
+
+    ImGui::SameLine();
+    if (ImGui::Button("Delete Mesh")) { env.scene.delete_mesh(); env.render(); }
+
+    ImGui::End();
 
 //    ImGui::ShowDemoWindow();
 }

@@ -59,10 +59,12 @@ add_executable(blender_eco main.cpp
         inputs.hh
         render_utils.h
         submain.hh
+#        submain2.hh
+#        srce/Camera.h
+#        srce/Mesh.h
+#        srce/Model.h
+#        srce/Shader.h
 )
-
-#set(glfw3_DIR "${BLENDER_ECO_DEP}/GLFW/")
-#set(GLEW_DIR "${BLENDER_ECO_DEP}/GLEW/")
 
 target_link_libraries(blender_eco PRIVATE OpenGL::GL glfw GLEW::GLEW)
 target_include_directories(blender_eco PRIVATE ${GLM_INCLUDE_DIRS})

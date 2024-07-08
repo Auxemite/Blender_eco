@@ -66,7 +66,7 @@ int submain2() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(800, 600, "3D Cube", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(1920, 1080, "3D Cube", nullptr, nullptr);
     if (!window) {
         std::cerr << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -105,7 +105,7 @@ int submain2() {
 
         glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = glm::lookAt(cameraPos, glm::vec3(0.0f), cameraUp);
-        glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1920.0f / 1080.0f, 0.1f, 100.0f);
 
         unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
         unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
