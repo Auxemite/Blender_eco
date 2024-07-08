@@ -10,6 +10,7 @@ class App {
     explicit App(const char* filename);
 
     void Windows();
+    void Rendering();
     void MainOptions();
     void CameraOption();
     void Material();

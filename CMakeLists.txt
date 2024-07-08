@@ -58,6 +58,7 @@ add_executable(blender_eco main.cpp
 
         inputs.hh
         render_utils.h
+        submain.hh
 )
 
 #set(glfw3_DIR "${BLENDER_ECO_DEP}/GLFW/")

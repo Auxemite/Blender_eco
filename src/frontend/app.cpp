@@ -86,6 +86,11 @@ void App::MainOptions() {
     if (ImGui::RadioButton("No Grid", &env.scene.activate_grid, 0)) { env.render(); }
 }
 
+GLuint cubeVAO, cubeVBO;
+void App::Rendering() {
+
+}
+
 void App::Windows()
 {
     ImGui::Begin("Actions");
@@ -102,7 +107,10 @@ void App::Windows()
 
     App::TreeNode();
 
+    App::Rendering();
+
 //    ImGui::Begin("Viewport");
+
 //
 //    MainOptions();
 
