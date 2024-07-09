@@ -46,6 +46,33 @@ void Env::change_bg(const std::string& name) {
     render();
 }
 
+void Env::update_data() {
+    int point_nb = 0;
+    int indice_nb = 0;
+    std::vector<float> new_vertex(100,0.0f);
+    std::vector<int> new_indices(36,0);
+    for (auto mesh: scene.meshes)
+    {
+        for (auto point: mesh->points)
+        {
+            new_vertex.emplace_back(point->x);
+            new_vertex.emplace_back(point->y);
+            new_vertex.emplace_back(point->z);
+            new_vertex.emplace_back(r);
+            new_vertex.emplace_back(g);
+            new_vertex.emplace_back(b);
+            point_nb += 3;
+        }
+        for (auto triangle: mesh->faces)
+        {
+            new_indices.emplace_back(mesh->get_point_index(triangle->a));
+            new_indices.emplace_back(mesh->get_point_index(triangle->b));
+            new_indices.emplace_back(mesh->get_point_index(triangle->c));
+            indice_nb += 3;
+        }
+    }
+}
+
 void Env::render() {
     render_count++;
     std::cout  << "Rendering " << render_count << "\n";

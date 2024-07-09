@@ -20,37 +20,6 @@ static void glfw_error_callback(int error, const char* description)
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
 
-unsigned int VBO, VAO, EBO;
-float lastFrame = 0.0;
-glm::vec3 cameraPos;
-glm::vec3 cameraFront;
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-float vertices[] = {
-        // positions          // colors
-        -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
-        0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
-        0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 1.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f
-};
-unsigned int indices[] = {
-        0, 1, 3,
-        1, 2, 3,
-        1, 5, 2,
-        5, 6, 2,
-        5, 4, 6,
-        4, 7, 6,
-        4, 0, 7,
-        0, 3, 7,
-        3, 2, 7,
-        2, 6, 7,
-        4, 5, 0,
-        5, 1, 0
-};
-
 void cleanup() {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);

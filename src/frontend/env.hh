@@ -15,6 +15,55 @@
 #include "../backend/render/intersection.hh"
 #include "../backend/image/image.hh"
 
+
+inline unsigned int VBO, VAO, EBO;
+inline float lastFrame = 0.0;
+inline glm::vec3 cameraPos;
+inline glm::vec3 cameraFront;
+inline glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+inline std::vector<float> vertices = {
+        // positions          // colors
+        -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+//        -3.0f,  3.0f,  3.0f,  0.0f, 0.0f, 0.0f
+};
+static float r = 0.0f;
+static float g = 0.0f;
+static float b = 0.0f;
+//inline float vertices[] = {
+//        // positions          // colors
+//        -0.5f, -0.5f, -0.5f,  r, g, b,
+//        0.5f, -0.5f, -0.5f,  r, g, b,
+//        0.5f,  0.5f, -0.5f,  r, g, b,
+//        -0.5f,  0.5f, -0.5f,  r, g, b,
+//        -0.5f, -0.5f,  0.5f,  r, g, b,
+//        0.5f, -0.5f,  0.5f,  r, g, b,
+//        0.5f,  0.5f,  0.5f,  r, g, b,
+//        -0.5f,  0.5f,  0.5f,  r, g, b,
+////        -3.0f,  3.0f,  3.0f,  0.0f, 0.0f, 0.0f
+//};
+inline std::vector<int> indices = {
+        0, 1, 3,
+        1, 2, 3,
+        1, 5, 2,
+        5, 6, 2,
+        5, 4, 6,
+        4, 7, 6,
+        4, 0, 7,
+        0, 3, 7,
+        3, 2, 7,
+        2, 6, 7,
+        4, 5, 0,
+        5, 1, 0,
+//        0, 3, 8,
+};
+
 class Env {
     public:
     GLuint render_image{};
@@ -32,6 +81,7 @@ class Env {
 
     void save_mesh(const std::string& filename) const;
     void create_texture();
+    void update_data();
     void change_bg(const std::string& name);
     void render();
 };
