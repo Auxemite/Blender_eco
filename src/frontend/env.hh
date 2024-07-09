@@ -14,14 +14,17 @@
 
 #include "../backend/render/intersection.hh"
 #include "../backend/image/image.hh"
-
+#include "render_utils.h"
 
 inline unsigned int VBO, VAO, EBO;
 inline float lastFrame = 0.0;
 inline glm::vec3 cameraPos;
 inline glm::vec3 cameraFront;
 inline glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-inline std::vector<float> vertices = {
+inline float deltaTime = 0.0f;
+inline float radius = 3.0f;
+inline float yaw = -90.0f;
+inline float vertices[] = {
         // positions          // colors
         -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
         0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
@@ -48,7 +51,7 @@ static float b = 0.0f;
 //        -0.5f,  0.5f,  0.5f,  r, g, b,
 ////        -3.0f,  3.0f,  3.0f,  0.0f, 0.0f, 0.0f
 //};
-inline std::vector<int> indices = {
+inline int indices[] = {
         0, 1, 3,
         1, 2, 3,
         1, 5, 2,
@@ -79,9 +82,13 @@ class Env {
     Env();
     explicit Env(const char* filename);
 
+    void update_data();
+    void cleanup();
+    void load_data();
+    void draw_data(unsigned int shaderProgram);
+
     void save_mesh(const std::string& filename) const;
     void create_texture();
-    void update_data();
     void change_bg(const std::string& name);
     void render();
 };

@@ -1,6 +1,6 @@
 #pragma once
-#include "render_utils.h"
-#include "inputs.hh"
+#include "src/frontend/render_utils.h"
+#include "src/frontend/inputs.hh"
 
 glm::vec3 cameraPos;
 glm::vec3 cameraFront;

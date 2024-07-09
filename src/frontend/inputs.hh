@@ -1,10 +1,6 @@
 #pragma once
 
-#include "render_utils.h"
-
-float deltaTime = 0.0f;
-float radius = 3.0f;
-float yaw = -90.0f;
+#include "env.hh"
 
 void processInput(GLFWwindow* window) {
     float cameraSpeedz = 10.0f * deltaTime;

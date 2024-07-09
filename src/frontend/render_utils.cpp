@@ -1,20 +1,14 @@
-#pragma once
-
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
+#include "render_utils.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
     std::cout << "Viewport set to width: " << width << " height: " << height
               << std::endl;
+}
+
+void glfw_error_callback(int error, const char* description)
+{
+    fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
 
 void checkOpenGLError(const std::string &message) {

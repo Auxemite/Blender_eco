@@ -56,10 +56,11 @@ add_executable(blender_eco main.cpp
         src/backend/render/intersection.hh
         src/backend/render/intersection.cpp
 
-        inputs.hh
-        render_utils.h
+        src/frontend/inputs.hh
+        src/frontend/render_utils.h
         submain.hh
-#        submain2.hh
+        src/frontend/render_utils.cpp
+        #        submain2.hh
 #        srce/Camera.h
 #        srce/Mesh.h
 #        srce/Model.h
