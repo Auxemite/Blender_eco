@@ -96,13 +96,13 @@ int main(int argc, char** argv)
 
         ImGui::Begin("Test");
         if (ImGui::Button("Move Right")) {
-            vertices[2] += 0.3;
+            app.env.vertices[2] += 0.3;
             app.env.cleanup();
             app.env.load_data();
         }
 
         if (ImGui::Button("Move Left")) {
-            vertices[2] -= 0.3;
+            app.env.vertices[2] -= 0.3;
             app.env.cleanup();
             app.env.load_data();
         }

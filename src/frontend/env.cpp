@@ -9,6 +9,9 @@ int render_count = 0;
 Env::Env() {
     image = Image(default_width, default_height);
     scene = Scene(image.width, image.height);
+    vertices = nullptr;
+    indices = nullptr;
+    update_data();
 //    render();
 //    create_texture();
 }
@@ -16,6 +19,9 @@ Env::Env() {
 Env::Env(const char* filename) {
     image = *load_image(filename);
     scene = Scene(image.width, image.height);
+    vertices = nullptr;
+    indices = nullptr;
+    update_data();
 //    render();
 //    create_texture();
 }
@@ -47,30 +53,89 @@ void Env::change_bg(const std::string& name) {
 }
 
 void Env::update_data() {
-    int point_nb = 0;
-    int indice_nb = 0;
-    std::vector<float> new_vertex(100,0.0f);
-    std::vector<int> new_indices(36,0);
-    for (auto mesh: scene.meshes)
-    {
-        for (auto point: mesh->points)
-        {
-            new_vertex.emplace_back(point->x);
-            new_vertex.emplace_back(point->y);
-            new_vertex.emplace_back(point->z);
-            new_vertex.emplace_back(r);
-            new_vertex.emplace_back(g);
-            new_vertex.emplace_back(b);
-            point_nb += 3;
-        }
-        for (auto triangle: mesh->faces)
-        {
-            new_indices.emplace_back(mesh->get_point_index(triangle->a));
-            new_indices.emplace_back(mesh->get_point_index(triangle->b));
-            new_indices.emplace_back(mesh->get_point_index(triangle->c));
-            indice_nb += 3;
-        }
-    }
+    if (vertices != nullptr)
+        free(vertices);
+    if (indices != nullptr)
+        free(indices);
+    float svertices[] = {
+            // positions          // colors
+            -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
+            0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+            0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f,
+            -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
+            -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
+            0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 1.0f,
+            0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+    //        -3.0f,  3.0f,  3.0f,  0.0f, 0.0f, 0.0f
+    };
+    int sindices[] = {
+            0, 1, 3,
+            1, 2, 3,
+            1, 5, 2,
+            5, 6, 2,
+            5, 4, 6,
+            4, 7, 6,
+            4, 0, 7,
+            0, 3, 7,
+            3, 2, 7,
+            2, 6, 7,
+            4, 5, 0,
+            5, 1, 0,
+//        0, 3, 8,
+    };
+    
+//    vertices = (float *) calloc(48, sizeof(float));
+//    for (int i = 0; i < 48; ++i) {
+//        vertices[i] = svertices[i];
+//    }
+//    indices = (int *) calloc(36, sizeof(int));
+//    for (int i = 0; i < 36; ++i) {
+//        indices[i] = sindices[i];
+//    }
+
+//    for (auto mesh: scene.meshes)
+//    {
+//        int point_nb = mesh->points.size() * 6;
+//        std::cout << "POINT NB = " << point_nb << "\n";
+//        vertices = (float *) calloc(point_nb, sizeof(float));
+//        for (int i = 0; i < mesh->points.size(); ++i)
+//        {
+//            int k = i * 6;
+//            if (k >= point_nb)
+//                break;
+//
+//            vertices[k] = mesh->points[i]->x;
+//            std::cout << mesh->points[i]->x << " ";
+//            vertices[k+1] = mesh->points[i]->y;
+//            std::cout << mesh->points[i]->y << " ";
+//            vertices[k+2] = mesh->points[i]->z;
+//            std::cout << mesh->points[i]->z << " ";
+//
+//            vertices[k+3] = r;
+//            std::cout << r << " ";
+//            vertices[k+4] = g;
+//            std::cout << g << " ";
+//            vertices[k+5] = b;
+//            std::cout << b << "\n";
+//        }
+//        int indice_nb = mesh->faces.size() * 3;
+//        std::cout << "INDICE NB = " << indice_nb << "\n";
+//        indices = (int *) calloc(indice_nb, sizeof(int));
+//        for (int i = 0; i < mesh->faces.size(); ++i)
+//        {
+//            int k = i * 3;
+//            if (k >= indice_nb)
+//                break;
+//
+//            indices[k] = mesh->get_point_index(mesh->faces[i]->a);
+//            std::cout << mesh->get_point_index(mesh->faces[i]->a) << " ";
+//            indices[k+1] = mesh->get_point_index(mesh->faces[i]->b);
+//            std::cout << mesh->get_point_index(mesh->faces[i]->b) << " ";
+//            indices[k+2] = mesh->get_point_index(mesh->faces[i]->c);
+//            std::cout << mesh->get_point_index(mesh->faces[i]->c) << "\n";
+//        }
+//    }
 }
 
 void Env::render() {
@@ -94,6 +159,11 @@ void Env::cleanup() {
 }
 
 void Env::load_data() {
+    if (vertices == nullptr || indices == nullptr) {
+        std::cerr << "Load Data Error : vertices or indices is empty\n";
+        return;
+    }
+
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);

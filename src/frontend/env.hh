@@ -22,50 +22,11 @@ inline glm::vec3 cameraPos;
 inline glm::vec3 cameraFront;
 inline glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 inline float deltaTime = 0.0f;
-inline float radius = 3.0f;
+inline float radius = 6.0f;
 inline float yaw = -90.0f;
-inline float vertices[] = {
-        // positions          // colors
-        -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
-        0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
-        0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 1.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
-//        -3.0f,  3.0f,  3.0f,  0.0f, 0.0f, 0.0f
-};
 static float r = 0.0f;
 static float g = 0.0f;
 static float b = 0.0f;
-//inline float vertices[] = {
-//        // positions          // colors
-//        -0.5f, -0.5f, -0.5f,  r, g, b,
-//        0.5f, -0.5f, -0.5f,  r, g, b,
-//        0.5f,  0.5f, -0.5f,  r, g, b,
-//        -0.5f,  0.5f, -0.5f,  r, g, b,
-//        -0.5f, -0.5f,  0.5f,  r, g, b,
-//        0.5f, -0.5f,  0.5f,  r, g, b,
-//        0.5f,  0.5f,  0.5f,  r, g, b,
-//        -0.5f,  0.5f,  0.5f,  r, g, b,
-////        -3.0f,  3.0f,  3.0f,  0.0f, 0.0f, 0.0f
-//};
-inline int indices[] = {
-        0, 1, 3,
-        1, 2, 3,
-        1, 5, 2,
-        5, 6, 2,
-        5, 4, 6,
-        4, 7, 6,
-        4, 0, 7,
-        0, 3, 7,
-        3, 2, 7,
-        2, 6, 7,
-        4, 5, 0,
-        5, 1, 0,
-//        0, 3, 8,
-};
 
 class Env {
     public:
@@ -78,6 +39,9 @@ class Env {
     int fast_selection = 1;
     int action_mode = 0; // 0 = Camera; 1 = Move; 2 = Rotate; 3 = Scale
     int focus_axe = 0; // 0 = x; 1 = y; 2 = z
+
+    float vertices[48];
+    int indices[36];
 
     Env();
     explicit Env(const char* filename);
@@ -92,3 +56,44 @@ class Env {
     void change_bg(const std::string& name);
     void render();
 };
+
+//inline float vertices[] = {
+//        // positions          // colors
+//        -0.5f, -0.5f, -0.5f,  r, g, b,
+//        0.5f, -0.5f, -0.5f,  r, g, b,
+//        0.5f,  0.5f, -0.5f,  r, g, b,
+//        -0.5f,  0.5f, -0.5f,  r, g, b,
+//        -0.5f, -0.5f,  0.5f,  r, g, b,
+//        0.5f, -0.5f,  0.5f,  r, g, b,
+//        0.5f,  0.5f,  0.5f,  r, g, b,
+//        -0.5f,  0.5f,  0.5f,  r, g, b,
+////        -3.0f,  3.0f,  3.0f,  0.0f, 0.0f, 0.0f
+//};
+//inline int indices[] = {
+//        0, 1, 3,
+//        1, 2, 3,
+//        1, 5, 2,
+//        5, 6, 2,
+//        5, 4, 6,
+//        4, 7, 6,
+//        4, 0, 7,
+//        0, 3, 7,
+//        3, 2, 7,
+//        2, 6, 7,
+//        4, 5, 0,
+//        5, 1, 0,
+////        0, 3, 8,
+//};
+//
+//inline float vertices[] = {
+//        // positions          // colors
+//        -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
+//        0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+//        0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f,
+//        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
+//        -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
+//        0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 1.0f,
+//        0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,
+//        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+////        -3.0f,  3.0f,  3.0f,  0.0f, 0.0f, 0.0f
+//};
