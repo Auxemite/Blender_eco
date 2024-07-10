@@ -6,6 +6,7 @@
 //MY INCLUDES
 #include "src/frontend/app.hh"
 #include "src/frontend/inputs.hh"
+#include "submain.hh"
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1900) && !defined(IMGUI_DISABLE_WIN32_FUNCTIONS)
 #pragma comment(lib, "legacy_stdio_definitions")
@@ -13,6 +14,8 @@
 
 int main(int argc, char** argv)
 {
+//    submain2();
+//}
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW" << std::endl;
@@ -74,6 +77,7 @@ int main(int argc, char** argv)
     // unsigned int shaderProgram = createShaderProgram("../src/shaders/vrtx_gray.glsl", "../src/shaders/frag_gray.glsl");
     checkOpenGLError("Post shader compilation");
     app.env.load_data();
+    app.env.load_grid();
     //TODO CODE HERE
 
     // Main loop
@@ -103,6 +107,7 @@ int main(int argc, char** argv)
 //        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
 //        glClear(GL_COLOR_BUFFER_BIT);
 
+        app.env.draw_grid(shaderProgram);
         app.env.draw_data(shaderProgram);
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

@@ -20,6 +20,7 @@
 #define HEIGHT 1080
 
 inline unsigned int VBO, VAO, EBO;
+inline unsigned int gridVBO, gridVAO;
 inline float lastFrame = 0.0;
 inline glm::vec3 cameraDec; //decalage
 inline glm::vec3 cameraPos;
@@ -28,9 +29,7 @@ inline glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 inline float deltaTime = 0.0f;
 inline float radius = 6.0f;
 inline float yaw = -90.0f;
-static float r = 0.0f;
-static float g = 0.0f;
-static float b = 0.0f;
+static float r, g, b;
 
 class Env {
     public:
@@ -46,6 +45,7 @@ class Env {
 
     std::vector<float> vertices;
     std::vector<int> indices;
+    std::vector<float> gridVertices;
 
     Env();
     explicit Env(const char* filename);
@@ -53,7 +53,9 @@ class Env {
     void update_data();
     void cleanup();
     void load_data();
+    void load_grid();
     void draw_data(unsigned int shaderProgram);
+    void draw_grid(unsigned int shaderProgram);
 
     void save_mesh(const std::string& filename) const;
     void create_texture();

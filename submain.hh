@@ -2,12 +2,6 @@
 #include "src/frontend/render_utils.h"
 #include "src/frontend/inputs.hh"
 
-glm::vec3 cameraPos;
-glm::vec3 cameraFront;
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-float lastFrame = 0.0;
-unsigned int VBO, VAO, EBO;
-
 void load_data() {
     float vertices[] = {
             // positions          // colors

@@ -389,8 +389,8 @@ void App::PrintObjInfo() const {
 
 void App::Inputs(const ImGuiIO& io, ImVec2 pos) {
 //    float region_sz = 16.0f;
-    float region_x = io.MousePos.x - pos.x;// - region_sz * 0.5f;
-    float region_y = io.MousePos.y - pos.y;// - region_sz * 0.5f;
+    float region_x = io.MousePos.x;// - pos.x;// - region_sz * 0.5f;
+    float region_y = io.MousePos.y;// - pos.y;// - region_sz * 0.5f;
 //    if (region_x < 0.0f) { return; }
 //    else if (region_x > 1280) { return; }
 //    if (region_y < 0.0f) { return; }
@@ -399,17 +399,18 @@ void App::Inputs(const ImGuiIO& io, ImVec2 pos) {
     ImGui::SameLine();
     ImGui::Text("Mouse down:");
     for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++) {
-        if (io.MouseDownDuration[i] > 0.1)
+        if (io.MouseDownDuration[i] > 0.001)
             return;
-        if (region_x >= 0.0f && region_x <= WIDTH && region_y >= 0.0f && region_y <= HEIGHT)
-        if (ImGui::IsMouseDown(i)) {
-            ImGui::SameLine();
-            ImGui::Text("b%d (%.02f secs)", i, io.MouseDownDuration[i]);
-            if (env.scene.selected_mode == 3)
-                env.scene.select_summit(region_x, region_y);
-            else
-                env.scene.select_mesh(region_x, region_y);
-            env.render();
+        if (region_x >= 0.0f && region_x <= WIDTH && region_y >= 0.0f && region_y <= HEIGHT) {
+            if (ImGui::IsMouseDown(i)) {
+                ImGui::SameLine();
+                ImGui::Text("b%d (%.02f secs)", i, io.MouseDownDuration[i]);
+                if (env.scene.selected_mode == 3)
+                    env.scene.select_summit(region_x, region_y);
+                else
+                    env.scene.select_mesh(region_x, region_y);
+                env.render();
+            }
         }
     }
     ImGui::SameLine();
