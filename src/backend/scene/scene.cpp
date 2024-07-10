@@ -10,7 +10,7 @@ Scene::Scene(int width, int height)
                                 Uniform_Texture(basic::texture::basic, basic::color::dark_gray),
                                 true));
 
-    Mesh *cube = new Mesh("../data/cube.obj", Uniform_Texture(basic::texture::simple, basic::color::red));
+    Mesh *cube = new Mesh("../data/monkey.obj", Uniform_Texture(basic::texture::simple, basic::color::red));
     add_mesh(cube);
 
     lights.push_back(new Point_Light({3,5,3}, 20,

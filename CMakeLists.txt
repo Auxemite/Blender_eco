@@ -3,9 +3,38 @@ project(blender_eco)
 
 set(CMAKE_CXX_STANDARD 17)
 
+set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
+
+set(BLENDER_ECO_DEP C:/Users/ernes/Desktop/Travail/S8/Isim/Blender_eco/dep/)
+
 find_package(OpenGL REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(glm CONFIG REQUIRED)
 
 add_executable(blender_eco main.cpp
+        src/frontend/imgui/imconfig.h
+        src/frontend/imgui/imgui.cpp
+        src/frontend/imgui/imgui.h
+        src/frontend/imgui/imgui_demo.cpp
+        src/frontend/imgui/imgui_draw.cpp
+        src/frontend/imgui/imgui_internal.h
+        src/frontend/imgui/imgui_tables.cpp
+        src/frontend/imgui/imgui_widgets.cpp
+        src/frontend/imgui/imstb_rectpack.h
+        src/frontend/imgui/imstb_textedit.h
+        src/frontend/imgui/imstb_truetype.h
+        src/frontend/imgui/imgui_impl_glfw.cpp
+        src/frontend/imgui/imgui_impl_opengl3.cpp
+        src/frontend/imgui/imgui_impl_glfw.h
+        src/frontend/imgui/imgui_impl_opengl3.h
+        src/frontend/imgui/imgui_impl_opengl3_loader.h
+
+        src/frontend/app.cpp
+        src/frontend/app.hh
+        src/frontend/env.hh
+        src/frontend/env.cpp
+
         src/backend/utils/vector3.hh
         src/backend/utils/vector3.cpp
         src/backend/utils/color.hh
@@ -26,4 +55,17 @@ add_executable(blender_eco main.cpp
         src/backend/utils/utils.hh
         src/backend/render/intersection.hh
         src/backend/render/intersection.cpp
+
+        src/frontend/inputs.hh
+        src/frontend/render_utils.h
+        submain.hh
+        src/frontend/render_utils.cpp
+        #        submain2.hh
+#        srce/Camera.h
+#        srce/Mesh.h
+#        srce/Model.h
+#        srce/Shader.h
 )
+
+target_link_libraries(blender_eco PRIVATE OpenGL::GL glfw GLEW::GLEW)
+target_include_directories(blender_eco PRIVATE ${GLM_INCLUDE_DIRS})

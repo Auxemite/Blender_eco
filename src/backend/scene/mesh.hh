@@ -25,6 +25,7 @@ public:
     Mesh(const std::string& filename, const Uniform_Texture& uniformMaterial_); //From .obj
 
     int get_point_index(const Point3* point) const;
+    int get_real_point_index(const Point3* point) const;
     std::vector<int> get_face_index(const Triangle& face) const;
     void to_dot_obj(const std::string& filename); //To .obj
 
