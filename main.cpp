@@ -7,9 +7,6 @@
 #include "src/frontend/app.hh"
 #include "src/frontend/inputs.hh"
 
-#define WIDTH 1920
-#define HEIGHT 1080
-
 #if defined(_MSC_VER) && (_MSC_VER >= 1900) && !defined(IMGUI_DISABLE_WIN32_FUNCTIONS)
 #pragma comment(lib, "legacy_stdio_definitions")
 #endif
@@ -74,6 +71,7 @@ int main(int argc, char** argv)
     IM_ASSERT(app.env.image.width != 0);
 
     unsigned int shaderProgram = createShaderProgram("../src/shaders/vertex_shader.glsl", "../src/shaders/fragment_shader.glsl");
+    // unsigned int shaderProgram = createShaderProgram("../src/shaders/vrtx_gray.glsl", "../src/shaders/frag_gray.glsl");
     checkOpenGLError("Post shader compilation");
     app.env.load_data();
     //TODO CODE HERE
@@ -93,20 +91,6 @@ int main(int argc, char** argv)
 
         //TODO MAIN CODE START
         app.Windows();
-
-        ImGui::Begin("Test");
-        if (ImGui::Button("Move Right")) {
-            app.env.vertices[2] += 0.3;
-            app.env.cleanup();
-            app.env.load_data();
-        }
-
-        if (ImGui::Button("Move Left")) {
-            app.env.vertices[2] -= 0.3;
-            app.env.cleanup();
-            app.env.load_data();
-        }
-        ImGui::End();
         //TODO MAIN CODE END
 
         // Rendering

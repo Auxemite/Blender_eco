@@ -13,8 +13,77 @@ App::App(const char* filename) {
     env = Env(filename);
 }
 
-void App::MainOptions() {
+void App::Windows()
+{
+    if (env.scene.focus_mesh != nullptr) {
+        ImGui::Begin("Actions");
+        MeshOptions();
+        ImGui::End();
+        App::Rendering();
+        ImGui::Begin("Material");
+        Material();
+        ImGui::End();
+    }
+
+//    CameraOption();
+
+    App::TreeNode();
+
+    App::MainOptions();
+
+//    if (ImGui::Button("Save Render"))
+//        ImGui::OpenPopup("save_render");
+//    if (ImGui::BeginPopup("save_render"))
+//    {
+//        static char filename[128] = "";
+//        ImGui::InputText("File Name", filename, IM_ARRAYSIZE(filename));
+//        ImGui::SameLine();
+//        if (ImGui::Button("Save file"))
+//            env.image.save_as_ppm("../test/" + string(filename) + ".ppm");
+//        ImGui::EndPopup();
+//    }
+//
+//    ImGui::SameLine();
+
+    ImGui::Begin("End options");
+    if (ImGui::Button("Save file as"))
+        ImGui::OpenPopup("save_file");
+    if (ImGui::BeginPopup("save_file"))
+    {
+        static char filename[128] = "";
+        ImGui::InputText("File Name", filename, IM_ARRAYSIZE(filename));
+        ImGui::SameLine();
+        if (ImGui::Button("Save file"))
+            env.save_mesh("../test/" + string(filename) + ".obj");
+        ImGui::EndPopup();
+    }
+
     ImGui::SameLine();
+
+    if (ImGui::Button("Add Mesh"))
+        ImGui::OpenPopup("add_mesh");
+    App::Add_Mesh();
+
+    ImGui::SameLine();
+    if (ImGui::Button("Delete Mesh")) { env.scene.delete_mesh(); env.render(); }
+
+    ImGuiIO &io = ImGui::GetIO();
+    ImVec2 pos = ImGui::GetCursorScreenPos();
+    ImGui::SameLine();
+    App::Inputs(io, pos);
+
+    ImGui::End();
+
+//    ImGui::ShowDemoWindow();
+}
+
+void App::Rendering() {
+    ImGui::Begin("Rendering");
+    ImGui::End();
+}
+
+void App::MainOptions() {
+    ImGui::Begin("Main Options");
     if (env.photorealist) {
         if (ImGui::Button("Desactivate Render")) {
             env.photorealist = false;
@@ -84,82 +153,7 @@ void App::MainOptions() {
     if (ImGui::RadioButton("Grid", &env.scene.activate_grid, 1)) { env.render(); }
     ImGui::SameLine();
     if (ImGui::RadioButton("No Grid", &env.scene.activate_grid, 0)) { env.render(); }
-}
-
-GLuint cubeVAO, cubeVBO;
-void App::Rendering() {
-
-}
-
-void App::Windows()
-{
-    ImGui::Begin("Actions");
-    if (env.scene.focus_mesh != nullptr)
-        MeshOptions();
     ImGui::End();
-
-//    CameraOption();
-
-    ImGui::Begin("Material");
-    if (env.scene.focus_mesh != nullptr)
-        Material();
-    ImGui::End();
-
-    App::TreeNode();
-
-    App::Rendering();
-
-    ImGui::Begin("Main Options");
-
-    MainOptions();
-
-    ImGui::End();
-
-//    ImGuiIO &io = ImGui::GetIO();
-//    ImVec2 pos = ImGui::GetCursorScreenPos();
-//    ImGui::Image((void*)(intptr_t)env.render_image,
-//                 ImVec2(static_cast<float>(env.image.width), static_cast<float>(env.image.height)));
-//
-//    if (ImGui::Button("Save Render"))
-//        ImGui::OpenPopup("save_render");
-//    if (ImGui::BeginPopup("save_render"))
-//    {
-//        static char filename[128] = "";
-//        ImGui::InputText("File Name", filename, IM_ARRAYSIZE(filename));
-//        ImGui::SameLine();
-//        if (ImGui::Button("Save file"))
-//            env.image.save_as_ppm("../test/" + string(filename) + ".ppm");
-//        ImGui::EndPopup();
-//    }
-//
-//    ImGui::SameLine();
-//
-
-    ImGui::Begin("End options");
-    if (ImGui::Button("Save file as"))
-        ImGui::OpenPopup("save_file");
-    if (ImGui::BeginPopup("save_file"))
-    {
-        static char filename[128] = "";
-        ImGui::InputText("File Name", filename, IM_ARRAYSIZE(filename));
-        ImGui::SameLine();
-        if (ImGui::Button("Save file"))
-            env.save_mesh("../test/" + string(filename) + ".obj");
-        ImGui::EndPopup();
-    }
-
-    ImGui::SameLine();
-
-    if (ImGui::Button("Add Mesh"))
-        ImGui::OpenPopup("add_mesh");
-    Add_Mesh();
-
-    ImGui::SameLine();
-    if (ImGui::Button("Delete Mesh")) { env.scene.delete_mesh(); env.render(); }
-
-    ImGui::End();
-
-//    ImGui::ShowDemoWindow();
 }
 
 void App::Add_Mesh() {
@@ -407,7 +401,7 @@ void App::Inputs(const ImGuiIO& io, ImVec2 pos) {
     for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++) {
         if (io.MouseDownDuration[i] > 0.1)
             return;
-        if (region_x >= 0.0f && region_x <= 1280 && region_y >= 0.0f && region_y <= 720)
+        if (region_x >= 0.0f && region_x <= WIDTH && region_y >= 0.0f && region_y <= HEIGHT)
         if (ImGui::IsMouseDown(i)) {
             ImGui::SameLine();
             ImGui::Text("b%d (%.02f secs)", i, io.MouseDownDuration[i]);
@@ -431,37 +425,36 @@ void App::Inputs(const ImGuiIO& io, ImVec2 pos) {
         if (funcs::IsLegacyNativeDupe(key) || !ImGui::IsKeyDown(key))
             continue;
         ImGui::SameLine(); ImGui::Text((key < ImGuiKey_NamedKey_BEGIN) ? "\"%s\"" : "\"%s\" %d", ImGui::GetKeyName(key), key);
-        if (key == 513) { // Left Arrow
-            env.scene.move_camera_y(-15);
-            env.render();
-        }
-        else if (key == 514) { // Right Arrow
-            env.scene.move_camera_y(15);
-            env.render();
-        }
-        else if (key == 515) { // Up Arrow
-            env.scene.camera.update_cam(env.scene.camera.center + Point3(0,1,0));
-            env.render();
-        }
-        else if (key == 516) { // Down Arrow
-            env.scene.camera.update_cam(env.scene.camera.center - Point3(0,1,0));
-            env.render();
-        }
-        else if (key == 569) { // X
-            env.scene.delete_mesh();
-            env.render();
-        }
-        else if (key == 546) { // A
-            ImGui::OpenPopup("add_mesh");
-        }
-        else if (key == 571) { // Z
-            env.scene.zoom_camera(0.9);
-            env.render();
-        }
-        else if (key == 549) { // D
-            env.scene.zoom_camera(1.1);
-            env.render();
-        }
-        Add_Mesh();
+//        if (key == 513) { // Left Arrow
+//            env.scene.move_camera_y(-15);
+//            env.render();
+//        }
+//        else if (key == 514) { // Right Arrow
+//            env.scene.move_camera_y(15);
+//            env.render();
+//        }
+//        else if (key == 515) { // Up Arrow
+//            env.scene.camera.update_cam(env.scene.camera.center + Point3(0,1,0));
+//            env.render();
+//        }
+//        else if (key == 516) { // Down Arrow
+//            env.scene.camera.update_cam(env.scene.camera.center - Point3(0,1,0));
+//            env.render();
+//        }
+//        else if (key == 569) { // X
+//            env.scene.delete_mesh();
+//            env.render();
+//        }
+//        else if (key == 546) { // A
+//            ImGui::OpenPopup("add_mesh");
+//        }
+//        else if (key == 571) { // Z
+//            env.scene.zoom_camera(0.9);
+//            env.render();
+//        }
+//        else if (key == 549) { // D
+//            env.scene.zoom_camera(1.1);
+//            env.render();
+//        }
     }
 }

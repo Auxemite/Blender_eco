@@ -16,6 +16,9 @@
 #include "../backend/image/image.hh"
 #include "render_utils.h"
 
+#define WIDTH 1920
+#define HEIGHT 1080
+
 inline unsigned int VBO, VAO, EBO;
 inline float lastFrame = 0.0;
 inline glm::vec3 cameraDec; //decalage
@@ -58,18 +61,6 @@ class Env {
     void render();
 };
 
-//inline float vertices[] = {
-//        // positions          // colors
-//        -0.5f, -0.5f, -0.5f,  r, g, b,
-//        0.5f, -0.5f, -0.5f,  r, g, b,
-//        0.5f,  0.5f, -0.5f,  r, g, b,
-//        -0.5f,  0.5f, -0.5f,  r, g, b,
-//        -0.5f, -0.5f,  0.5f,  r, g, b,
-//        0.5f, -0.5f,  0.5f,  r, g, b,
-//        0.5f,  0.5f,  0.5f,  r, g, b,
-//        -0.5f,  0.5f,  0.5f,  r, g, b,
-////        -3.0f,  3.0f,  3.0f,  0.0f, 0.0f, 0.0f
-//};
 //inline int indices[] = {
 //        0, 1, 3,
 //        1, 2, 3,

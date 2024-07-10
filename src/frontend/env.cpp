@@ -1,13 +1,10 @@
 #include "env.hh"
 
-inline float aspect_ratio = 16.0f / 9.0f;
-inline int default_width = 1280;
-inline int default_height = static_cast<int>(static_cast<float>(default_width) / aspect_ratio);
 Image *bg = load_image("../data/sunset.ppm");
 int render_count = 0;
 
 Env::Env() {
-    image = Image(default_width, default_height);
+    image = Image(WIDTH, HEIGHT);
     scene = Scene(image.width, image.height);
     vertices = std::vector<float>(100, 0.0);
     indices = std::vector<int>(100, 0);
@@ -53,34 +50,6 @@ void Env::change_bg(const std::string& name) {
 }
 
 void Env::update_data() {
-    float svertices[] = {
-            // positions          // colors
-            -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
-            0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
-            0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f,
-            -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
-            -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
-            0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 1.0f,
-            0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,
-            -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
-    //        -3.0f,  3.0f,  3.0f,  0.0f, 0.0f, 0.0f
-    };
-    int sindices[] = {
-            0, 1, 3,
-            1, 2, 3,
-            1, 5, 2,
-            5, 6, 2,
-            5, 4, 6,
-            4, 7, 6,
-            4, 0, 7,
-            0, 3, 7,
-            3, 2, 7,
-            2, 6, 7,
-            4, 5, 0,
-            5, 1, 0,
-//        0, 3, 8,
-    };
-
     for (auto mesh: scene.meshes)
     {
         int point_nb = mesh->points.size() * 6;
@@ -96,18 +65,12 @@ void Env::update_data() {
             inter_indices[j] = i;
 
             vertices[k] = mesh->points[i]->x;
-            std::cout << vertices[k] << " ";
             vertices[k+1] = mesh->points[i]->y;
-            std::cout << vertices[k+1] << " ";
             vertices[k+2] = mesh->points[i]->z;
-            std::cout << vertices[k+2] << " ";
 
             vertices[k+3] = static_cast<float>(i)/mesh->points.size();
-            std::cout << vertices[k+3] << " ";
             vertices[k+4] = static_cast<float>(i)/mesh->points.size();
-            std::cout << vertices[k+3] << " ";
             vertices[k+5] = static_cast<float>(i)/mesh->points.size();
-            std::cout << vertices[k+3] << "\n";
         }
         int indice_nb = mesh->faces.size() * 3;
         std::cout << "INDICE NB = " << indice_nb << "\n";
@@ -120,15 +83,10 @@ void Env::update_data() {
 
             int j = mesh->get_real_point_index(mesh->faces[i]->a);
             indices[k] = inter_indices[j];
-            std::cout << mesh->get_point_index(mesh->faces[i]->a) << " ";
-
             j = mesh->get_real_point_index(mesh->faces[i]->b);
             indices[k+1] =  inter_indices[j];
-            std::cout << mesh->get_point_index(mesh->faces[i]->b) << " ";
-
             j = mesh->get_real_point_index(mesh->faces[i]->c);
             indices[k+2] =  inter_indices[j];
-            std::cout << mesh->get_point_index(mesh->faces[i]->c) << "\n";
         }
     }
 }
@@ -136,8 +94,10 @@ void Env::update_data() {
 void Env::render() {
     render_count++;
     std::cout  << "Rendering " << render_count << "\n";
-    image.render(scene, bg, photorealist, fast_selection);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, image.width, image.height, GL_RGB, GL_UNSIGNED_BYTE, image.char_data);
+//    image.render(scene, bg, photorealist, fast_selection);
+    update_data();
+    cleanup();
+    load_data();
 }
 
 void Env::save_mesh(const std::string& filename) const {
