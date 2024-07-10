@@ -9,8 +9,8 @@ int render_count = 0;
 Env::Env() {
     image = Image(default_width, default_height);
     scene = Scene(image.width, image.height);
-    vertices = nullptr;
-    indices = nullptr;
+    vertices = std::vector<float>(100, 0.0);
+    indices = std::vector<int>(100, 0);
     update_data();
 //    render();
 //    create_texture();
@@ -19,8 +19,8 @@ Env::Env() {
 Env::Env(const char* filename) {
     image = *load_image(filename);
     scene = Scene(image.width, image.height);
-    vertices = nullptr;
-    indices = nullptr;
+    vertices = std::vector<float>(1, 0.0);
+    indices = std::vector<int>(1, 0);
     update_data();
 //    render();
 //    create_texture();
@@ -53,10 +53,6 @@ void Env::change_bg(const std::string& name) {
 }
 
 void Env::update_data() {
-    if (vertices != nullptr)
-        free(vertices);
-    if (indices != nullptr)
-        free(indices);
     float svertices[] = {
             // positions          // colors
             -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
@@ -84,58 +80,57 @@ void Env::update_data() {
             5, 1, 0,
 //        0, 3, 8,
     };
-    
-//    vertices = (float *) calloc(48, sizeof(float));
-//    for (int i = 0; i < 48; ++i) {
-//        vertices[i] = svertices[i];
-//    }
-//    indices = (int *) calloc(36, sizeof(int));
-//    for (int i = 0; i < 36; ++i) {
-//        indices[i] = sindices[i];
-//    }
 
-//    for (auto mesh: scene.meshes)
-//    {
-//        int point_nb = mesh->points.size() * 6;
-//        std::cout << "POINT NB = " << point_nb << "\n";
-//        vertices = (float *) calloc(point_nb, sizeof(float));
-//        for (int i = 0; i < mesh->points.size(); ++i)
-//        {
-//            int k = i * 6;
-//            if (k >= point_nb)
-//                break;
-//
-//            vertices[k] = mesh->points[i]->x;
-//            std::cout << mesh->points[i]->x << " ";
-//            vertices[k+1] = mesh->points[i]->y;
-//            std::cout << mesh->points[i]->y << " ";
-//            vertices[k+2] = mesh->points[i]->z;
-//            std::cout << mesh->points[i]->z << " ";
-//
-//            vertices[k+3] = r;
-//            std::cout << r << " ";
-//            vertices[k+4] = g;
-//            std::cout << g << " ";
-//            vertices[k+5] = b;
-//            std::cout << b << "\n";
-//        }
-//        int indice_nb = mesh->faces.size() * 3;
-//        std::cout << "INDICE NB = " << indice_nb << "\n";
-//        indices = (int *) calloc(indice_nb, sizeof(int));
-//        for (int i = 0; i < mesh->faces.size(); ++i)
-//        {
-//            int k = i * 3;
-//            if (k >= indice_nb)
-//                break;
-//
-//            indices[k] = mesh->get_point_index(mesh->faces[i]->a);
-//            std::cout << mesh->get_point_index(mesh->faces[i]->a) << " ";
-//            indices[k+1] = mesh->get_point_index(mesh->faces[i]->b);
-//            std::cout << mesh->get_point_index(mesh->faces[i]->b) << " ";
-//            indices[k+2] = mesh->get_point_index(mesh->faces[i]->c);
-//            std::cout << mesh->get_point_index(mesh->faces[i]->c) << "\n";
-//        }
-//    }
+    for (auto mesh: scene.meshes)
+    {
+        int point_nb = mesh->points.size() * 6;
+        vertices = std::vector<float>(point_nb, 0.0f);
+        std::vector<int> inter_indices(mesh->points.size(), 0);
+        std::cout << "POINT NB = " << point_nb << "\n";
+        for (int i = 0; i < mesh->points.size(); ++i)
+        {
+            int k = i * 6;
+            if (k >= point_nb)
+                break;
+            int j = mesh->get_real_point_index(mesh->points[i]);
+            inter_indices[j] = i;
+
+            vertices[k] = mesh->points[i]->x;
+            std::cout << vertices[k] << " ";
+            vertices[k+1] = mesh->points[i]->y;
+            std::cout << vertices[k+1] << " ";
+            vertices[k+2] = mesh->points[i]->z;
+            std::cout << vertices[k+2] << " ";
+
+            vertices[k+3] = static_cast<float>(i)/mesh->points.size();
+            std::cout << vertices[k+3] << " ";
+            vertices[k+4] = static_cast<float>(i)/mesh->points.size();
+            std::cout << vertices[k+3] << " ";
+            vertices[k+5] = static_cast<float>(i)/mesh->points.size();
+            std::cout << vertices[k+3] << "\n";
+        }
+        int indice_nb = mesh->faces.size() * 3;
+        std::cout << "INDICE NB = " << indice_nb << "\n";
+        indices = std::vector<int>(indice_nb, 0.0f);
+        for (int i = 0; i < mesh->faces.size(); ++i)
+        {
+            int k = i * 3;
+            if (k >= indice_nb)
+                break;
+
+            int j = mesh->get_real_point_index(mesh->faces[i]->a);
+            indices[k] = inter_indices[j];
+            std::cout << mesh->get_point_index(mesh->faces[i]->a) << " ";
+
+            j = mesh->get_real_point_index(mesh->faces[i]->b);
+            indices[k+1] =  inter_indices[j];
+            std::cout << mesh->get_point_index(mesh->faces[i]->b) << " ";
+
+            j = mesh->get_real_point_index(mesh->faces[i]->c);
+            indices[k+2] =  inter_indices[j];
+            std::cout << mesh->get_point_index(mesh->faces[i]->c) << "\n";
+        }
+    }
 }
 
 void Env::render() {
@@ -159,11 +154,6 @@ void Env::cleanup() {
 }
 
 void Env::load_data() {
-    if (vertices == nullptr || indices == nullptr) {
-        std::cerr << "Load Data Error : vertices or indices is empty\n";
-        return;
-    }
-
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
@@ -171,10 +161,10 @@ void Env::load_data() {
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * indices.size(), indices.data(), GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -192,6 +182,7 @@ void Env::draw_data(unsigned int shaderProgram) {
 
     cameraPos.x = radius * cos(glm::radians(yaw));
     cameraPos.z = radius * sin(glm::radians(yaw));
+    cameraPos.y = cameraDec.y;
     cameraFront = glm::normalize(-cameraPos);
 
     glm::mat4 model = glm::mat4(1.0f);
@@ -207,5 +198,5 @@ void Env::draw_data(unsigned int shaderProgram) {
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 }

@@ -18,6 +18,7 @@
 
 inline unsigned int VBO, VAO, EBO;
 inline float lastFrame = 0.0;
+inline glm::vec3 cameraDec; //decalage
 inline glm::vec3 cameraPos;
 inline glm::vec3 cameraFront;
 inline glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -40,8 +41,8 @@ class Env {
     int action_mode = 0; // 0 = Camera; 1 = Move; 2 = Rotate; 3 = Scale
     int focus_axe = 0; // 0 = x; 1 = y; 2 = z
 
-    float vertices[48];
-    int indices[36];
+    std::vector<float> vertices;
+    std::vector<int> indices;
 
     Env();
     explicit Env(const char* filename);

@@ -87,6 +87,20 @@ Mesh::Mesh(const std::string& filename, const Uniform_Texture& uniformMaterial_)
     update_hit_box();
 }
 
+int Mesh::get_real_point_index(const Point3* point) const
+{
+    int i = 0;
+    for (auto pt : points)
+    {
+        if (pt == point)
+            return i;
+        i++;
+    }
+
+    std::cerr << "Cannot find point index" << std::endl;
+    return -1;
+}
+
 int Mesh::get_point_index(const Point3* point) const
 {
     int i = 1;
