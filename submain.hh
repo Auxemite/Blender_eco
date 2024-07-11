@@ -2,6 +2,8 @@
 #include "src/frontend/render_utils.h"
 #include "src/frontend/inputs.hh"
 
+inline glm::vec3 cameraPos;
+
 void load_data() {
     float vertices[] = {
             // positions          // colors

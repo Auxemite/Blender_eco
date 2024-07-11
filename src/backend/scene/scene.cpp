@@ -183,7 +183,6 @@ void Scene::extrude_along_points_normalized(float thickness) {
         focus_mesh->extrude_along_points(thickness, focus_faces);
 }
 
-
 void Scene::select_mesh(float x, float y) {
     auto c = camera;
     auto pixel_center = c.pixel_loc + (static_cast<float>(x) * c.pixel_u) + (static_cast<float>(y) * c.pixel_v);

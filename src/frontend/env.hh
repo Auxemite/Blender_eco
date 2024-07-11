@@ -22,13 +22,12 @@
 inline unsigned int VBO, VAO, EBO;
 inline unsigned int gridVBO, gridVAO;
 inline float lastFrame = 0.0;
-inline glm::vec3 cameraDec; //decalage
-inline glm::vec3 cameraPos;
+inline glm::vec3 cameraDec = glm::vec3(0.0f, 5.0f, 0.0f); //decalage
 inline glm::vec3 cameraFront;
 inline glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 inline float deltaTime = 0.0f;
-inline float radius = 6.0f;
-inline float yaw = -90.0f;
+inline float radius = 10.0f;
+inline float yaw = -45.0f;
 static float r, g, b;
 
 class Env {
@@ -36,6 +35,8 @@ class Env {
     GLuint render_image{};
     Scene scene;
     Image image;
+
+    glm::vec3 cameraPos;
 
     // Flags
     bool photorealist = false;
@@ -50,6 +51,7 @@ class Env {
     Env();
     explicit Env(const char* filename);
 
+    void update_camera();
     void update_data();
     void cleanup();
     void load_data();
@@ -63,31 +65,4 @@ class Env {
     void render();
 };
 
-//inline int indices[] = {
-//        0, 1, 3,
-//        1, 2, 3,
-//        1, 5, 2,
-//        5, 6, 2,
-//        5, 4, 6,
-//        4, 7, 6,
-//        4, 0, 7,
-//        0, 3, 7,
-//        3, 2, 7,
-//        2, 6, 7,
-//        4, 5, 0,
-//        5, 1, 0,
-////        0, 3, 8,
-//};
-//
-//inline float vertices[] = {
-//        // positions          // colors
-//        -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
-//        0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
-//        0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f,
-//        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
-//        -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
-//        0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 1.0f,
-//        0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,
-//        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
-////        -3.0f,  3.0f,  3.0f,  0.0f, 0.0f, 0.0f
-//};
+std::vector<float> generateGrid(int gridSize);

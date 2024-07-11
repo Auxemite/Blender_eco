@@ -5,9 +5,9 @@
 void processInput(GLFWwindow* window) {
     float cameraSpeedz = 10.0f * deltaTime;
     float cameraSpeedr = 300.0f * deltaTime;
-    if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
         radius -= cameraSpeedz;
-    if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
         radius += cameraSpeedz;
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         yaw -= cameraSpeedr;
