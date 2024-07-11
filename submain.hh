@@ -3,6 +3,7 @@
 #include "src/frontend/inputs.hh"
 
 inline glm::vec3 cameraPos;
+inline unsigned int VBO, VAO, EBO;
 
 void load_data() {
     float vertices[] = {

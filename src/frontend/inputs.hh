@@ -9,9 +9,9 @@ void processInput(GLFWwindow* window) {
         radius -= cameraSpeedz;
     if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
         radius += cameraSpeedz;
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        yaw -= cameraSpeedr;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        yaw -= cameraSpeedr;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         yaw += cameraSpeedr;
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)

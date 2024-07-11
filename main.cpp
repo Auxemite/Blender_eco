@@ -6,7 +6,7 @@
 //MY INCLUDES
 #include "src/frontend/app.hh"
 #include "src/frontend/inputs.hh"
-#include "submain.hh"
+//#include "submain.hh"
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1900) && !defined(IMGUI_DISABLE_WIN32_FUNCTIONS)
 #pragma comment(lib, "legacy_stdio_definitions")
@@ -76,7 +76,7 @@ int main(int argc, char** argv)
     unsigned int shaderProgram = createShaderProgram("../src/shaders/vertex_shader.glsl", "../src/shaders/fragment_shader.glsl");
     // unsigned int shaderProgram = createShaderProgram("../src/shaders/vrtx_gray.glsl", "../src/shaders/frag_gray.glsl");
     checkOpenGLError("Post shader compilation");
-    app.env.load_data();
+    app.env.update_data(0);
     app.env.load_grid();
     //TODO CODE HERE
 
@@ -108,7 +108,10 @@ int main(int argc, char** argv)
 //        glClear(GL_COLOR_BUFFER_BIT);
 
         app.env.draw_grid(shaderProgram);
-        app.env.draw_data(shaderProgram);
+        for (int i = 0; i < app.env.scene.meshes.size(); ++i) {
+            if (app.env.scene.meshes[i]->watch)
+                app.env.draw_data(shaderProgram, i);
+        }
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -125,7 +128,9 @@ int main(int argc, char** argv)
     }
 
     // Cleanup
-    app.env.cleanup();
+    for (int i = 0; i < app.env.scene.meshes.size(); ++i)
+        app.env.cleanup(i);
+
     glDeleteProgram(shaderProgram);
 
     ImGui_ImplOpenGL3_Shutdown();

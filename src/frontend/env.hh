@@ -19,8 +19,6 @@
 #define WIDTH 1920
 #define HEIGHT 1080
 
-inline unsigned int VBO, VAO, EBO;
-inline unsigned int gridVBO, gridVAO;
 inline float lastFrame = 0.0;
 inline glm::vec3 cameraDec = glm::vec3(0.0f, 5.0f, 0.0f); //decalage
 inline glm::vec3 cameraFront;
@@ -28,7 +26,7 @@ inline glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 inline float deltaTime = 0.0f;
 inline float radius = 10.0f;
 inline float yaw = -45.0f;
-static float r, g, b;
+//static float r, g, b;
 
 class Env {
     public:
@@ -44,25 +42,32 @@ class Env {
     int action_mode = 0; // 0 = Camera; 1 = Move; 2 = Rotate; 3 = Scale
     int focus_axe = 0; // 0 = x; 1 = y; 2 = z
 
-    std::vector<float> vertices;
-    std::vector<int> indices;
+    // Opengl
+//    std::vector<float> vertices;
+//    std::vector<int> indices;
     std::vector<float> gridVertices;
+//    unsigned int VBO, VAO, EBO;
+    std::vector<unsigned int> VBOs;
+    std::vector<unsigned int> VAOs;
+    std::vector<unsigned int> EBOs;
+
+    unsigned int gridVBO, gridVAO;
 
     Env();
     explicit Env(const char* filename);
 
     void update_camera();
-    void update_data();
-    void cleanup();
-    void load_data();
+    void update_data(int mesh_index);
+    void cleanup(int mesh_index);
+    void load_data(int mesh_index, std::vector<float> vertices, std::vector<int> indices);
     void load_grid();
-    void draw_data(unsigned int shaderProgram);
+    void draw_data(unsigned int shaderProgram, int mesh_index);
     void draw_grid(unsigned int shaderProgram);
 
     void save_mesh(const std::string& filename) const;
     void create_texture();
     void change_bg(const std::string& name);
-    void render();
+    void render(int mesh_index=-1);
 };
 
 std::vector<float> generateGrid(int gridSize);

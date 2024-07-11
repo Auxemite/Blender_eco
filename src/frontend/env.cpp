@@ -6,9 +6,10 @@ int render_count = 0;
 Env::Env() {
     image = Image(WIDTH, HEIGHT);
     scene = Scene(image.width, image.height);
-    vertices = std::vector<float>(100, 0.0);
-    indices = std::vector<int>(100, 0);
-    update_data();
+    VBOs = std::vector<unsigned int>(1, 0);
+    VAOs = std::vector<unsigned int>(1, 0);
+    EBOs = std::vector<unsigned int>(1, 0);
+    update_data(0);
 //    render();
 //    create_texture();
 }
@@ -16,9 +17,10 @@ Env::Env() {
 Env::Env(const char* filename) {
     image = *load_image(filename);
     scene = Scene(image.width, image.height);
-    vertices = std::vector<float>(1, 0.0);
-    indices = std::vector<int>(1, 0);
-    update_data();
+    VBOs = std::vector<unsigned int>(1, 0);
+    VAOs = std::vector<unsigned int>(1, 0);
+    EBOs = std::vector<unsigned int>(1, 0);
+    update_data(0);
 //    render();
 //    create_texture();
 }
@@ -46,60 +48,66 @@ void Env::change_bg(const std::string& name) {
     delete bg;
     bg = img;
     std::cout << "Changed Background Image";
-    render();
+//    render();
 }
 
-void Env::update_data() {
-    for (auto mesh: scene.meshes)
-    {
-        if (!mesh->watch)
-            continue;
-        int point_nb = mesh->points.size() * 6;
-        vertices = std::vector<float>(point_nb, 0.0f);
-        std::vector<int> inter_indices(mesh->points.size(), 0);
+void Env::update_data(int mesh_index) {
+    Mesh *mesh = scene.meshes[mesh_index];
+    int point_nb = mesh->points.size() * 6;
+    std::vector<float> vertices(point_nb, 0.0f);
+    std::vector<int> inter_indices(mesh->points.size(), 0);
 //        std::cout << "POINT NB = " << point_nb << "\n";
-        for (int i = 0; i < mesh->points.size(); ++i)
-        {
-            int k = i * 6;
-            if (k >= point_nb)
-                break;
-            int j = mesh->get_real_point_index(mesh->points[i]);
-            inter_indices[j] = i;
+    for (int i = 0; i < mesh->points.size(); ++i)
+    {
+        int k = i * 6;
+        if (k >= point_nb)
+            break;
+        int j = mesh->get_real_point_index(mesh->points[i]);
+        inter_indices[j] = i;
 
-            vertices[k] = mesh->points[i]->x;
-            vertices[k+1] = mesh->points[i]->y;
-            vertices[k+2] = mesh->points[i]->z;
+        vertices[k] = mesh->points[i]->x;
+        vertices[k+1] = mesh->points[i]->y;
+        vertices[k+2] = mesh->points[i]->z;
 
-            vertices[k+3] = static_cast<float>(i)/mesh->points.size();
-            vertices[k+4] = static_cast<float>(i)/mesh->points.size();
-            vertices[k+5] = static_cast<float>(i)/mesh->points.size();
-        }
-        int indice_nb = mesh->faces.size() * 3;
-//        std::cout << "INDICE NB = " << indice_nb << "\n";
-        indices = std::vector<int>(indice_nb, 0);
-        for (int i = 0; i < mesh->faces.size(); ++i)
-        {
-            int k = i * 3;
-            if (k >= indice_nb)
-                break;
-
-            int j = mesh->get_real_point_index(mesh->faces[i]->a);
-            indices[k] = inter_indices[j];
-            j = mesh->get_real_point_index(mesh->faces[i]->b);
-            indices[k+1] =  inter_indices[j];
-            j = mesh->get_real_point_index(mesh->faces[i]->c);
-            indices[k+2] =  inter_indices[j];
-        }
+        vertices[k+3] = mesh->texture.material.color.r;
+        vertices[k+4] =  mesh->texture.material.color.g;
+        vertices[k+5] =  mesh->texture.material.color.b;
     }
+    int indice_nb = mesh->faces.size() * 3;
+//        std::cout << "INDICE NB = " << indice_nb << "\n";
+    std::vector<int> indices(indice_nb, 0);
+    for (int i = 0; i < mesh->faces.size(); ++i)
+    {
+        int k = i * 3;
+        if (k >= indice_nb)
+            break;
+
+        int j = mesh->get_real_point_index(mesh->faces[i]->a);
+        indices[k] = inter_indices[j];
+        j = mesh->get_real_point_index(mesh->faces[i]->b);
+        indices[k+1] =  inter_indices[j];
+        j = mesh->get_real_point_index(mesh->faces[i]->c);
+        indices[k+2] =  inter_indices[j];
+    }
+    cleanup(mesh_index);
+    load_data(mesh_index, vertices, indices);
 }
 
-void Env::render() {
+void Env::render(int mesh_index) {
+
     render_count++;
     std::cout  << "Rendering " << render_count << "\n";
 //    image.render(scene, bg, photorealist, fast_selection);
-    update_data();
-    cleanup();
-    load_data();
+    if (mesh_index != -1)
+        update_data(mesh_index);
+    else if (scene.focus_mesh != nullptr) {
+        for (int i = 0; i < scene.meshes.size(); ++i) {
+            if (scene.meshes[i] == scene.focus_mesh) {
+                update_data(i);
+                break;
+            }
+        }
+    }
 }
 
 void Env::save_mesh(const std::string& filename) const {
@@ -114,23 +122,23 @@ void Env::update_camera() {
     std::cout << "Camera Center : " << scene.camera.center << "\n";
 }
 
-void Env::cleanup() {
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+void Env::cleanup(int mesh_index) {
+    glDeleteVertexArrays(1, &(VAOs[mesh_index]));
+    glDeleteBuffers(1, &(VBOs[mesh_index]));
+    glDeleteBuffers(1, &(EBOs[mesh_index]));
 }
 
-void Env::load_data() {
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
+void Env::load_data(int mesh_index, std::vector<float> vertices, std::vector<int> indices) {
+    glGenVertexArrays(1, &(VAOs[mesh_index]));
+    glGenBuffers(1, &(VBOs[mesh_index]));
+    glGenBuffers(1, &(EBOs[mesh_index]));
 
-    glBindVertexArray(VAO);
+    glBindVertexArray(VAOs[mesh_index]);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBOs[mesh_index]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[mesh_index]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * indices.size(), indices.data(), GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
@@ -163,7 +171,7 @@ void Env::load_grid() {
     glBindVertexArray(0);
 }
 
-void Env::draw_data(unsigned int shaderProgram) {
+void Env::draw_data(unsigned int shaderProgram, int mesh_index) {
     glUseProgram(shaderProgram);
 
     cameraPos.x = radius * cos(glm::radians(yaw));
@@ -184,8 +192,8 @@ void Env::draw_data(unsigned int shaderProgram) {
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(VAOs[mesh_index]);
+    glDrawElements(GL_TRIANGLES, scene.meshes[mesh_index]->faces.size() * 3, GL_UNSIGNED_INT, 0);
 }
 
 void Env::draw_grid(unsigned int shaderProgram) {

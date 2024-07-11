@@ -39,7 +39,6 @@ class Scene
         void move_camera_z(float angle);
         void add_mesh(const std::string& name);
         void delete_mesh();
-        void select_mesh2(float x, float y, glm::vec3 cameraPos);
         void select_mesh(float x, float y);
         void select_summit(float x, float y);
         void change_focus(Mesh *mesh);

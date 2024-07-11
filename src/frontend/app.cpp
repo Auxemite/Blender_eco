@@ -62,8 +62,8 @@ void App::Windows()
         ImGui::OpenPopup("add_mesh");
     App::Add_Mesh();
 
-    ImGui::SameLine();
-    if (ImGui::Button("Delete Mesh")) { env.scene.delete_mesh(); env.render(); }
+//    ImGui::SameLine();
+//    if (ImGui::Button("Delete Mesh")) { env.scene.delete_mesh(); env.render(); }
 
     ImGuiIO &io = ImGui::GetIO();
     ImVec2 pos = ImGui::GetCursorScreenPos();
@@ -155,7 +155,11 @@ void App::Add_Mesh() {
                 std::string name = i;
                 name[0] = tolower(name[0]);
                 env.scene.add_mesh(name);
-                env.render();
+                unsigned int VBO, VAO, EBO;
+                env.VBOs.push_back(VBO);
+                env.VAOs.push_back(VAO);
+                env.EBOs.push_back(EBO);
+                env.render(env.scene.meshes.size()-1);
             }
         ImGui::EndPopup();
     }
