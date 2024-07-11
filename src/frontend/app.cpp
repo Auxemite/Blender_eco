@@ -58,8 +58,6 @@ void App::Windows()
         ImGui::EndPopup();
     }
 
-    ImGui::SameLine();
-
     if (ImGui::Button("Add Mesh"))
         ImGui::OpenPopup("add_mesh");
     App::Add_Mesh();
@@ -69,7 +67,6 @@ void App::Windows()
 
     ImGuiIO &io = ImGui::GetIO();
     ImVec2 pos = ImGui::GetCursorScreenPos();
-    ImGui::SameLine();
     App::Inputs(io, pos);
 
     ImGui::End();
@@ -128,7 +125,6 @@ void App::MainOptions() {
             env.scene.change_focus(mesh);
             env.render();
         }
-        ImGui::SameLine();
 
         ImGui::Text("| Selection Mode : ");
         ImGui::SameLine();
@@ -140,16 +136,10 @@ void App::MainOptions() {
         ImGui::SameLine();
         if (ImGui::RadioButton("Summit", &env.scene.selected_mode, 3)) { env.scene.update_selection_mode(); env.render(); }
     }
-    ImGui::SameLine();
-    ImGui::Text("|");
-    ImGui::SameLine();
     if (ImGui::RadioButton("Fast Selection", &env.fast_selection, 1)) { env.render(); }
     ImGui::SameLine();
     if (ImGui::RadioButton("Classic Selection", &env.fast_selection, 0)) { env.render(); }
 
-    ImGui::SameLine();
-    ImGui::Text("|");
-    ImGui::SameLine();
     if (ImGui::RadioButton("Grid", &env.scene.activate_grid, 1)) { env.render(); }
     ImGui::SameLine();
     if (ImGui::RadioButton("No Grid", &env.scene.activate_grid, 0)) { env.render(); }
@@ -396,7 +386,6 @@ void App::Inputs(const ImGuiIO& io, ImVec2 pos) {
 //    if (region_y < 0.0f) { return; }
 //    else if (region_y > 720) { return; }
     ImGui::Text("Min: (%.2f, %.2f)", region_x, region_y);
-    ImGui::SameLine();
     ImGui::Text("Mouse down:");
     for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++) {
         if (io.MouseDownDuration[i] > 0.001)
