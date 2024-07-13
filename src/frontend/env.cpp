@@ -60,32 +60,35 @@ void Env::update_data(int mesh_index) {
     std::vector<int> indices(0, 0);
     for (int i = 0; i < mesh->faces.size(); ++i)
     {
-        Point3 *a = mesh->faces[i]->a;
-        Point3 *b = mesh->faces[i]->b;
-        Point3 *c = mesh->faces[i]->c;
+        Point3 *p_a = mesh->faces[i]->a;
+        Point3 *p_b = mesh->faces[i]->b;
+        Point3 *p_c = mesh->faces[i]->c;
+        Color color(1.0f, 1.0f, 1.0f);
+        if (mesh->faces[i]->selected)
+            color = Color(0.0f, 2.0f, 2.0f);
 
-        vertices.push_back(a->x);
-        vertices.push_back(a->y);
-        vertices.push_back(a->z);
-        vertices.push_back(mesh->texture.material.color.r);
-        vertices.push_back(mesh->texture.material.color.g);
-        vertices.push_back(mesh->texture.material.color.b);
+        vertices.push_back(p_a->x);
+        vertices.push_back(p_a->y);
+        vertices.push_back(p_a->z);
+        vertices.push_back(color.r);
+        vertices.push_back(color.g);
+        vertices.push_back(color.b);
         indices.push_back(i * 3);
 
-        vertices.push_back(b->x);
-        vertices.push_back(b->y);
-        vertices.push_back(b->z);
-        vertices.push_back(mesh->texture.material.color.r);
-        vertices.push_back(mesh->texture.material.color.g);
-        vertices.push_back(mesh->texture.material.color.b);
+        vertices.push_back(p_b->x);
+        vertices.push_back(p_b->y);
+        vertices.push_back(p_b->z);
+        vertices.push_back(color.r);
+        vertices.push_back(color.g);
+        vertices.push_back(color.b);
         indices.push_back(i * 3 + 1);
 
-        vertices.push_back(c->x);
-        vertices.push_back(c->y);
-        vertices.push_back(c->z);
-        vertices.push_back(mesh->texture.material.color.r);
-        vertices.push_back(mesh->texture.material.color.g);
-        vertices.push_back(mesh->texture.material.color.b);
+        vertices.push_back(p_c->x);
+        vertices.push_back(p_c->y);
+        vertices.push_back(p_c->z);
+        vertices.push_back(color.r);
+        vertices.push_back(color.g);
+        vertices.push_back(color.b);
         indices.push_back(i * 3 + 2);
     }
     std::cout << "POINT NB = " << vertices.size() << "\n";

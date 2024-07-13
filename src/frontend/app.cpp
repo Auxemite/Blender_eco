@@ -399,11 +399,12 @@ void App::Inputs(const ImGuiIO& io, ImVec2 pos) {
                 ImGui::SameLine();
                 ImGui::Text("b%d (%.02f secs)", i, io.MouseDownDuration[i]);
                 env.update_camera();
-                if (env.scene.selected_mode == 3)
+                if (env.scene.selected_mode == 3) {
                     env.scene.select_summit(region_x, region_y);
+                    env.render();
+                }
                 else
-                    env.scene.select_mesh(region_x, region_y);
-                env.render();
+                    env.render(env.scene.select_mesh(region_x, region_y));
             }
         }
     }

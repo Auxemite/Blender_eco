@@ -15,7 +15,7 @@ void main() {
     vec3 normal = normalize(cross(v1, v2));
 
     for(int i = 0; i < 3; i++) {
-        fragColor = vec3(1.0f, 1.0f, 1.0f);
+        fragColor = vertexColor[0];
         fragPos = vertexPos[i];
         fragNormal = normal;
         gl_Position = gl_in[i].gl_Position;

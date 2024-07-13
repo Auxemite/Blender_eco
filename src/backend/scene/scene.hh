@@ -39,7 +39,7 @@ class Scene
         void move_camera_z(float angle);
         void add_mesh(const std::string& name);
         void delete_mesh();
-        void select_mesh(float x, float y);
+        int select_mesh(float x, float y);
         void select_summit(float x, float y);
         void change_focus(Mesh *mesh);
         void change_focus(Mesh *mesh, Triangle *face);

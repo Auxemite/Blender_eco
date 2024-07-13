@@ -183,15 +183,17 @@ void Scene::extrude_along_points_normalized(float thickness) {
         focus_mesh->extrude_along_points(thickness, focus_faces);
 }
 
-void Scene::select_mesh(float x, float y) {
+int Scene::select_mesh(float x, float y) {
     auto c = camera;
     auto pixel_center = c.pixel_loc + (static_cast<float>(x) * c.pixel_u) + (static_cast<float>(y) * c.pixel_v);
     auto dir = (pixel_center - c.center).norm();
     auto inter = Intersection(c.center, dir);
     Mesh *selected_mesh = nullptr;
+    int mesh_index = 0;
     Triangle *selected_face = nullptr;
-    for (auto mesh : meshes)
+    for (int i = 0; i < meshes.size(); ++i)
     {
+        Mesh *mesh = meshes[i];
         if (!mesh->watch)
             continue;
 
@@ -207,6 +209,7 @@ void Scene::select_mesh(float x, float y) {
                         || (new_inter_loc - camera.center).length() < (inter.inter_loc - c.center).length()) {
                         inter.inter_loc = new_inter_loc;
                         selected_mesh = mesh;
+                        mesh_index = i;
                         selected_face = face;
                     }
                 }
@@ -214,11 +217,13 @@ void Scene::select_mesh(float x, float y) {
         }
     }
     if (inter.inter_loc == null_point || selected_mesh == nullptr)
-        return;
+        return -1;
     if (selected_mode == 0)
         change_focus(selected_mesh);
     else if (selected_mode == 1)
         change_focus(selected_mesh, selected_face);
+
+    return mesh_index;
 }
 
 void Scene::select_summit(float x, float y) {
