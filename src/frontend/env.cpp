@@ -54,41 +54,42 @@ void Env::change_bg(const std::string& name) {
 void Env::update_data(int mesh_index) {
     Mesh *mesh = scene.meshes[mesh_index];
     int point_nb = mesh->points.size() * 6;
-    std::vector<float> vertices(point_nb, 0.0f);
-    std::vector<int> inter_indices(mesh->points.size(), 0);
-//        std::cout << "POINT NB = " << point_nb << "\n";
-    for (int i = 0; i < mesh->points.size(); ++i)
-    {
-        int k = i * 6;
-        if (k >= point_nb)
-            break;
-        int j = mesh->get_real_point_index(mesh->points[i]);
-        inter_indices[j] = i;
+    std::vector<float> vertices(0, 0.0f);
 
-        vertices[k] = mesh->points[i]->x;
-        vertices[k+1] = mesh->points[i]->y;
-        vertices[k+2] = mesh->points[i]->z;
-
-        vertices[k+3] = mesh->texture.material.color.r;
-        vertices[k+4] =  mesh->texture.material.color.g;
-        vertices[k+5] =  mesh->texture.material.color.b;
-    }
     int indice_nb = mesh->faces.size() * 3;
-//        std::cout << "INDICE NB = " << indice_nb << "\n";
-    std::vector<int> indices(indice_nb, 0);
+    std::vector<int> indices(0, 0);
     for (int i = 0; i < mesh->faces.size(); ++i)
     {
-        int k = i * 3;
-        if (k >= indice_nb)
-            break;
+        Point3 *a = mesh->faces[i]->a;
+        Point3 *b = mesh->faces[i]->b;
+        Point3 *c = mesh->faces[i]->c;
 
-        int j = mesh->get_real_point_index(mesh->faces[i]->a);
-        indices[k] = inter_indices[j];
-        j = mesh->get_real_point_index(mesh->faces[i]->b);
-        indices[k+1] =  inter_indices[j];
-        j = mesh->get_real_point_index(mesh->faces[i]->c);
-        indices[k+2] =  inter_indices[j];
+        vertices.push_back(a->x);
+        vertices.push_back(a->y);
+        vertices.push_back(a->z);
+        vertices.push_back(mesh->texture.material.color.r);
+        vertices.push_back(mesh->texture.material.color.g);
+        vertices.push_back(mesh->texture.material.color.b);
+        indices.push_back(i * 3);
+
+        vertices.push_back(b->x);
+        vertices.push_back(b->y);
+        vertices.push_back(b->z);
+        vertices.push_back(mesh->texture.material.color.r);
+        vertices.push_back(mesh->texture.material.color.g);
+        vertices.push_back(mesh->texture.material.color.b);
+        indices.push_back(i * 3 + 1);
+
+        vertices.push_back(c->x);
+        vertices.push_back(c->y);
+        vertices.push_back(c->z);
+        vertices.push_back(mesh->texture.material.color.r);
+        vertices.push_back(mesh->texture.material.color.g);
+        vertices.push_back(mesh->texture.material.color.b);
+        indices.push_back(i * 3 + 2);
     }
+    std::cout << "POINT NB = " << vertices.size() << "\n";
+    std::cout << "INDICE NB = " << indices.size() << "\n";
     cleanup(mesh_index);
     load_data(mesh_index, vertices, indices);
 }
@@ -171,18 +172,8 @@ void Env::load_grid() {
     glBindVertexArray(0);
 }
 
-void Env::draw_data(unsigned int shaderProgram, int mesh_index) {
+void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection, int mesh_index) {
     glUseProgram(shaderProgram);
-
-    cameraPos.x = radius * cos(glm::radians(yaw));
-    cameraPos.z = radius * sin(glm::radians(yaw));
-    cameraPos.y = cameraDec.y;
-    cameraFront = glm::normalize(-cameraPos);
-    glm::vec3 center = glm::vec3(0.0f);
-
-    glm::mat4 model = glm::mat4(1.0f);
-    glm::mat4 view = glm::lookAt(cameraPos, center, cameraUp);
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1920.0f / 1080.0f, 0.1f, 100.0f);
 
     unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
     unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
@@ -192,16 +183,15 @@ void Env::draw_data(unsigned int shaderProgram, int mesh_index) {
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
+    unsigned int cameraPosLoc = glGetUniformLocation(shaderProgram, "cameraPos");
+    glUniform3f(cameraPosLoc, cameraPos.x, cameraPos.y, cameraPos.z);
+
     glBindVertexArray(VAOs[mesh_index]);
     glDrawElements(GL_TRIANGLES, scene.meshes[mesh_index]->faces.size() * 3, GL_UNSIGNED_INT, 0);
 }
 
-void Env::draw_grid(unsigned int shaderProgram) {
+void Env::draw_grid(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection) {
     glUseProgram(shaderProgram);
-
-    glm::mat4 model = glm::mat4(1.0f);
-    glm::mat4 view = glm::lookAt(cameraPos, glm::vec3(0.0f), cameraUp);
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
     unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
     unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");

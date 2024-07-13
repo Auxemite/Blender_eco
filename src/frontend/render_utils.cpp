@@ -43,7 +43,9 @@ unsigned int compileShader(const std::string& source, GLenum type) {
     return shader;
 }
 
-unsigned int createShaderProgram(const std::string& vertexPath, const std::string& fragmentPath) {
+unsigned int createShaderProgram(const std::string& vertexPath,
+                                 const std::string& fragmentPath,
+                                 const std::string& geometryPath) {
     std::string vertexCode = readShaderSource(vertexPath);
     std::string fragmentCode = readShaderSource(fragmentPath);
 
@@ -52,6 +54,12 @@ unsigned int createShaderProgram(const std::string& vertexPath, const std::strin
 
     unsigned int shaderProgram = glCreateProgram();
     glAttachShader(shaderProgram, vertexShader);
+    if (!geometryPath.empty()) {
+        std::string geometryCode = readShaderSource(geometryPath);
+        unsigned int geometryShader = compileShader(geometryCode, GL_GEOMETRY_SHADER);
+        glAttachShader(shaderProgram, geometryShader);
+        glDeleteShader(geometryShader);
+    }
     glAttachShader(shaderProgram, fragmentShader);
     glLinkProgram(shaderProgram);
 

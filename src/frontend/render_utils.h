@@ -16,4 +16,6 @@ void glfw_error_callback(int error, const char* description);
 void checkOpenGLError(const std::string &message);
 std::string readShaderSource(const std::string& filepath);
 unsigned int compileShader(const std::string& source, GLenum type);
-unsigned int createShaderProgram(const std::string& vertexPath, const std::string& fragmentPath);
+unsigned int createShaderProgram(const std::string& vertexPath,
+                                 const std::string& fragmentPath,
+                                 const std::string& geometryPath = "");

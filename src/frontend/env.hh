@@ -61,8 +61,8 @@ class Env {
     void cleanup(int mesh_index);
     void load_data(int mesh_index, std::vector<float> vertices, std::vector<int> indices);
     void load_grid();
-    void draw_data(unsigned int shaderProgram, int mesh_index);
-    void draw_grid(unsigned int shaderProgram);
+    void draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection, int mesh_index);
+    void draw_grid(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
 
     void save_mesh(const std::string& filename) const;
     void create_texture();

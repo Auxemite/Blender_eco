@@ -73,11 +73,14 @@ int main(int argc, char** argv)
     auto app = App();
     IM_ASSERT(app.env.image.width != 0);
 
-    unsigned int shaderProgram = createShaderProgram("../src/shaders/vertex_shader.glsl", "../src/shaders/fragment_shader.glsl");
-    // unsigned int shaderProgram = createShaderProgram("../src/shaders/vrtx_gray.glsl", "../src/shaders/frag_gray.glsl");
+    unsigned int baseShaderProgram = createShaderProgram("../src/shaders/vrtx_base.glsl", "../src/shaders/frag_base.glsl");
+    unsigned int shaderProgram = createShaderProgram("../src/shaders/vrtx_gray.glsl",
+                                                     "../src/shaders/frag_gray.glsl",
+                                                     "../src/shaders/geo_gray.glsl");
     checkOpenGLError("Post shader compilation");
-    app.env.update_data(0);
+//    app.env.update_data(0);
     app.env.load_grid();
+    checkOpenGLError("Post Loading Data");
     //TODO CODE HERE
 
     // Main loop
@@ -107,10 +110,21 @@ int main(int argc, char** argv)
 //        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
 //        glClear(GL_COLOR_BUFFER_BIT);
 
-        app.env.draw_grid(shaderProgram);
+        app.env.cameraPos.x = radius * cos(glm::radians(yaw));
+        app.env.cameraPos.z = radius * sin(glm::radians(yaw));
+        app.env.cameraPos.y = cameraDec.y;
+        cameraFront = glm::normalize(-app.env.cameraPos);
+        glm::vec3 center = glm::vec3(0.0f);
+
+        glm::mat4 model = glm::mat4(1.0f);
+        glm::mat4 view = glm::lookAt(app.env.cameraPos, center, cameraUp);
+        glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1920.0f / 1080.0f, 0.1f, 100.0f);
+
+        if (app.env.scene.activate_grid)
+            app.env.draw_grid(baseShaderProgram, model, view, projection);
         for (int i = 0; i < app.env.scene.meshes.size(); ++i) {
             if (app.env.scene.meshes[i]->watch)
-                app.env.draw_data(shaderProgram, i);
+                app.env.draw_data(shaderProgram, model, view, projection, i);
         }
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -131,7 +145,8 @@ int main(int argc, char** argv)
     for (int i = 0; i < app.env.scene.meshes.size(); ++i)
         app.env.cleanup(i);
 
-    glDeleteProgram(shaderProgram);
+//    glDeleteProgram(shaderProgram);
+    glDeleteProgram(baseShaderProgram);
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();

@@ -192,6 +192,9 @@ void Scene::select_mesh(float x, float y) {
     Triangle *selected_face = nullptr;
     for (auto mesh : meshes)
     {
+        if (!mesh->watch)
+            continue;
+
         for (auto face : mesh->faces)
         {
             // Check backface culling
