@@ -9,10 +9,6 @@ App::App(){
     env = Env();
 }
 
-App::App(const char* filename) {
-    env = Env(filename);
-}
-
 void App::Windows()
 {
     if (env.scene.focus_mesh != nullptr) {
@@ -120,29 +116,20 @@ void App::MainOptions() {
     }
     ImGui::SameLine();
     if (!env.scene.editmode) {
-        if (ImGui::Button("Edit Mode")) {
-            if (env.scene.focus_mesh != nullptr) {
-                env.scene.editmode = true;
-                env.render();
-            }
-        }
+        if (ImGui::Button("Edit Mode"))
+            env.edit_mode();
     }
     else {
-        if (ImGui::Button("Normal Mode")) {
-            env.scene.editmode = false;
-            env.scene.selected_mode = 0;
-            env.scene.update_selection_mode();
-            env.scene.change_focus(env.scene.focus_mesh, env.scene.focus_index);
-            env.render(env.scene.focus_index);
-        }
+        if (ImGui::Button("Normal Mode"))
+            env.normal_mode();
 
-        ImGui::Text("| Selection Mode : ");
+        ImGui::Text("Selection Mode : ");
         ImGui::SameLine();
         if (ImGui::RadioButton("Mesh", &env.scene.selected_mode, 0)) { env.scene.update_selection_mode(); env.render(); }
         ImGui::SameLine();
         if (ImGui::RadioButton("Face", &env.scene.selected_mode, 1)) { env.scene.update_selection_mode(); env.render(); }
 //        ImGui::SameLine();
-//        if (ImGui::RadioButton("Summit", &env.scene.selected_mode, 2)) { env.scene.update_selection_mode(); env.render(); }
+//        if (ImGui::RadioButton("Edge", &env.scene.selected_mode, 2)) { env.scene.update_selection_mode(); env.render(); }
         ImGui::SameLine();
         if (ImGui::RadioButton("Summit", &env.scene.selected_mode, 3)) { env.scene.update_selection_mode(); env.render(); }
     }
@@ -379,10 +366,10 @@ void App::Inputs(const ImGuiIO& io, ImVec2 pos) {
 //    float region_sz = 16.0f;
     float region_x = io.MousePos.x;// - pos.x;// - region_sz * 0.5f;
     float region_y = io.MousePos.y;// - pos.y;// - region_sz * 0.5f;
-//    if (region_x < 0.0f) { return; }
-//    else if (region_x > 1280) { return; }
-//    if (region_y < 0.0f) { return; }
-//    else if (region_y > 720) { return; }
+    if (region_x < 0.0f) { return; }
+    else if (region_x > WIDTH) { return; }
+    if (region_y < 0.0f) { return; }
+    else if (region_y > HEIGHT) { return; }
     ImGui::Text("Min: (%.2f, %.2f)", region_x, region_y);
     ImGui::Text("Mouse down:");
     for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++) {

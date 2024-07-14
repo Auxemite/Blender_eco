@@ -18,9 +18,17 @@
 
 #define WIDTH 1920
 #define HEIGHT 1080
+#define TEMP_WIDTH 1920
+#define TEMP_HEIGHT 1080
 
-static bool alpha_feature = 0;
+// Main Flags
+inline bool alpha_feature = 0;
+inline bool isFullscreen = true;
+inline GLFWwindow* window = nullptr;
+inline GLFWmonitor* monitor = nullptr;
+inline const GLFWvidmode* mode = nullptr;
 
+// Camera Flags
 inline float lastFrame = 0.0;
 inline glm::vec3 cameraDec = glm::vec3(0.0f, 5.0f, 0.0f); //decalage
 inline glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -32,6 +40,8 @@ inline float yaw = -45.0f;
 inline float pitch =  0.0f;
 inline float lastX =  400.0f;
 inline float lastY =  300.0f;
+
+// Mouse Flags
 inline bool firstMouse = true;
 inline bool mousePressed = false;
 inline float sensitivity = 0.35f;
@@ -62,12 +72,14 @@ class Env {
     unsigned int gridVBO, gridVAO;
 
     Env();
-    explicit Env(const char* filename);
 
     void save_mesh(const std::string& filename) const;
     void create_texture();
     void change_bg(const std::string& name);
     void render(int mesh_index=-1);
+
+    void edit_mode();
+    void normal_mode();
     void add_mesh(const std::string& name);
     void delete_mesh();
 

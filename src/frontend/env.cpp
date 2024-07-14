@@ -4,18 +4,7 @@ Image *bg = load_image("../data/sunset.ppm");
 int render_count = 0;
 
 Env::Env() {
-    image = Image(WIDTH, HEIGHT);
-    scene = Scene(image.width, image.height);
-    VBOs = std::vector<unsigned int>(1, 0);
-    VAOs = std::vector<unsigned int>(1, 0);
-    EBOs = std::vector<unsigned int>(1, 0);
-    update_data(0);
-//    render();
-//    create_texture();
-}
-
-Env::Env(const char* filename) {
-    image = *load_image(filename);
+    image = Image(TEMP_WIDTH, TEMP_HEIGHT);
     scene = Scene(image.width, image.height);
     VBOs = std::vector<unsigned int>(1, 0);
     VAOs = std::vector<unsigned int>(1, 0);
@@ -93,8 +82,8 @@ void Env::update_data(int mesh_index) {
         vertices.push_back(color.b);
         indices.push_back(i * 3 + 2);
     }
-    std::cout << "POINT NB = " << vertices.size() << "\n";
-    std::cout << "INDICE NB = " << indices.size() << "\n";
+//    std::cout << "POINT NB = " << vertices.size() << "\n";
+//    std::cout << "INDICE NB = " << indices.size() << "\n";
     cleanup(mesh_index);
     load_data(mesh_index, vertices, indices);
 }
@@ -108,6 +97,22 @@ void Env::render(int mesh_index) {
         update_data(mesh_index);
     else if (scene.focus_mesh != nullptr)
         update_data(scene.focus_index);
+}
+
+void Env::edit_mode() {
+    if (scene.focus_mesh != nullptr) {
+        scene.editmode = true;
+        render();
+    }
+}
+
+void Env::normal_mode() {
+    scene.editmode = false;
+    scene.selected_mode = 0;
+    scene.update_selection_mode();
+    int index = scene.focus_index;
+    scene.change_focus(scene.focus_mesh, scene.focus_index);
+    render(index);
 }
 
 void Env::add_mesh(const std::string& name) {

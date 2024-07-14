@@ -200,6 +200,7 @@ void Scene::extrude_along_points_normalized(float thickness) {
 }
 
 int Scene::select_mesh(float x, float y) {
+    std::cout << "Selecting on x = " << x << " and y = " << y << "\n";
     auto c = camera;
     auto pixel_center = c.pixel_loc + (static_cast<float>(x) * c.pixel_u) + (static_cast<float>(y) * c.pixel_v);
     auto dir = (pixel_center - c.center).norm();
@@ -211,6 +212,8 @@ int Scene::select_mesh(float x, float y) {
     {
         Mesh *mesh = meshes[i];
         if (!mesh->watch)
+            continue;
+        if (editmode && mesh != focus_mesh)
             continue;
 
         for (auto face : mesh->faces)

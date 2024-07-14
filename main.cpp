@@ -12,6 +12,20 @@
 #pragma comment(lib, "legacy_stdio_definitions")
 #endif
 
+void ToggleFullscreen(GLFWwindow* window)
+{
+    if (isFullscreen)
+        glfwSetWindowMonitor(window, nullptr, 0, 0, WIDTH, HEIGHT, 0);
+    else
+    {
+        monitor = glfwGetPrimaryMonitor();
+        mode = glfwGetVideoMode(monitor);
+        glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+    }
+
+    isFullscreen = !isFullscreen;
+}
+
 int main(int argc, char** argv)
 {
 //    submain2();
@@ -22,12 +36,20 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    if (!monitor)
+    {
+        glfwTerminate();
+        return 1;
+    }
+    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
     const char* glsl_version = "#version 330";
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Blender Eco ++", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, "Blender Eco ++", monitor, nullptr);
     if (window == nullptr) {
         std::cerr << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -58,10 +80,7 @@ int main(int argc, char** argv)
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
-    //io.ConfigViewportsNoAutoMerge = true;
-    //io.ConfigViewportsNoTaskBarIcon = true;
 
-    // Setup Dear ImGui style
     ImGui::StyleColorsCustom();
     //ImGui::StyleColorsLight();
 
@@ -89,13 +108,18 @@ int main(int argc, char** argv)
     checkOpenGLError("Post Loading Data");
     //TODO CODE HERE
 
-    // Main loop
     while (!glfwWindowShouldClose(window))
     {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
+        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        {
+            ToggleFullscreen(window);
+            while (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+                glfwPollEvents();
+        }
         processInput(window);
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -133,9 +157,14 @@ int main(int argc, char** argv)
 
         if (app.env.scene.activate_grid)
             app.env.draw_grid(baseShaderProgram, model, view, projection);
-        for (int i = 0; i < app.env.scene.meshes.size(); ++i) {
-            if (app.env.scene.meshes[i]->watch)
-                app.env.draw_data(shaderProgram, model, view, projection, i);
+
+        if (app.env.scene.editmode)
+            app.env.draw_data(shaderProgram, model, view, projection, app.env.scene.focus_index);
+        else {
+            for (int i = 0; i < app.env.scene.meshes.size(); ++i) {
+                if (app.env.scene.meshes[i]->watch)
+                    app.env.draw_data(shaderProgram, model, view, projection, i);
+            }
         }
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -152,7 +181,6 @@ int main(int argc, char** argv)
         glfwPollEvents();
     }
 
-    // Cleanup
     for (int i = 0; i < app.env.scene.meshes.size(); ++i)
         app.env.cleanup(i);
 
