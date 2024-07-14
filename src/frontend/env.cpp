@@ -63,9 +63,8 @@ void Env::update_data(int mesh_index) {
         Point3 *p_a = mesh->faces[i]->a;
         Point3 *p_b = mesh->faces[i]->b;
         Point3 *p_c = mesh->faces[i]->c;
-        Color color(1.0f, 1.0f, 1.0f);
-        if (mesh->faces[i]->selected)
-            color = Color(0.0f, 2.0f, 2.0f);
+        //if (mesh->faces[i]->selected)
+        auto color = Color(mesh->faces[0]->texture.material.color);
 
         vertices.push_back(p_a->x);
         vertices.push_back(p_a->y);
@@ -188,6 +187,14 @@ void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view,
 
     unsigned int cameraPosLoc = glGetUniformLocation(shaderProgram, "cameraPos");
     glUniform3f(cameraPosLoc, cameraPos.x, cameraPos.y, cameraPos.z);
+
+    unsigned int lightPosLoc = glGetUniformLocation(shaderProgram, "lightPos");
+    auto lp = scene.lights[0]->center;
+    glUniform3f(lightPosLoc, lp.x, lp.y, lp.z);
+
+    unsigned int lightColorLoc = glGetUniformLocation(shaderProgram, "lightColor");
+    auto lc = scene.lights[0]->color;
+    glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);
 
     glBindVertexArray(VAOs[mesh_index]);
     glDrawElements(GL_TRIANGLES, scene.meshes[mesh_index]->faces.size() * 3, GL_UNSIGNED_INT, 0);

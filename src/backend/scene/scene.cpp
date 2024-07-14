@@ -1,4 +1,5 @@
 #include <utility>
+#include <algorithm>
 
 #include "scene.hh"
 #include "../render/intersection.hh"
