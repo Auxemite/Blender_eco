@@ -18,8 +18,8 @@ class Scene
         std::vector<Light*> lights;
         Camera camera;
         Mesh *focus_mesh = nullptr;
+        int focus_index = -1;
         std::vector<Triangle *> focus_faces;
-//        Point3 *focus_edge[2];
         Point3 *focus_summit = nullptr;
 
         // Flags
@@ -41,7 +41,7 @@ class Scene
         void delete_mesh();
         int select_mesh(float x, float y);
         void select_summit(float x, float y);
-        void change_focus(Mesh *mesh);
+        void change_focus(Mesh *mesh, int mesh_index);
         void change_focus(Mesh *mesh, Triangle *face);
         void change_focus(Mesh *mesh, Point3 *summit);
         void update_selection_mode();

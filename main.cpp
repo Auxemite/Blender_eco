@@ -12,8 +12,6 @@
 #pragma comment(lib, "legacy_stdio_definitions")
 #endif
 
-static bool alpha_feature = 0;
-
 int main(int argc, char** argv)
 {
 //    submain2();
@@ -86,7 +84,7 @@ int main(int argc, char** argv)
                                                      "../src/shaders/frag_gray.glsl",
                                                      "../src/shaders/geo_gray.glsl");
     checkOpenGLError("Post shader compilation");
-//    app.env.update_data(0);
+    app.env.update_data(0);
     app.env.load_grid();
     checkOpenGLError("Post Loading Data");
     //TODO CODE HERE
@@ -158,7 +156,7 @@ int main(int argc, char** argv)
     for (int i = 0; i < app.env.scene.meshes.size(); ++i)
         app.env.cleanup(i);
 
-//    glDeleteProgram(shaderProgram);
+    glDeleteProgram(shaderProgram);
     glDeleteProgram(baseShaderProgram);
 
     ImGui_ImplOpenGL3_Shutdown();

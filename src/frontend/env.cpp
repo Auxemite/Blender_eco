@@ -52,6 +52,8 @@ void Env::change_bg(const std::string& name) {
 }
 
 void Env::update_data(int mesh_index) {
+    if (mesh_index == -1)
+        return;
     Mesh *mesh = scene.meshes[mesh_index];
     int point_nb = mesh->points.size() * 6;
     std::vector<float> vertices(0, 0.0f);
@@ -104,14 +106,26 @@ void Env::render(int mesh_index) {
 //    image.render(scene, bg, photorealist, fast_selection);
     if (mesh_index != -1)
         update_data(mesh_index);
-    else if (scene.focus_mesh != nullptr) {
-        for (int i = 0; i < scene.meshes.size(); ++i) {
-            if (scene.meshes[i] == scene.focus_mesh) {
-                update_data(i);
-                break;
-            }
-        }
-    }
+    else if (scene.focus_mesh != nullptr)
+        update_data(scene.focus_index);
+}
+
+void Env::add_mesh(const std::string& name) {
+    unsigned int VBO, VAO, EBO;
+    VBOs.push_back(VBO);
+    VAOs.push_back(VAO);
+    EBOs.push_back(EBO);
+    scene.add_mesh(name);
+    render(scene.meshes.size()-1);
+}
+
+void Env::delete_mesh() {
+    VBOs.erase(VBOs.begin()+scene.focus_index);
+    VAOs.erase(VAOs.begin()+scene.focus_index);
+    EBOs.erase(EBOs.begin()+scene.focus_index);
+    scene.delete_mesh();
+    for (int i = 0; i < scene.meshes.size(); ++i)
+        update_data(i);
 }
 
 void Env::save_mesh(const std::string& filename) const {

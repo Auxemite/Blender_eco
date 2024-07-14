@@ -55,11 +55,9 @@ void Scene::add_mesh(const std::string& name) {
 void Scene::delete_mesh() {
     if (focus_mesh == nullptr)
         return;
-    for (int i = 0; i < meshes.size(); ++i) {
-        if (meshes[i] == focus_mesh)
-            meshes.erase(meshes.begin()+i);
-    }
+    meshes.erase(meshes.begin()+focus_index);
     focus_mesh = nullptr;
+    focus_index = -1;
     focus_faces.clear();
     std::cout << "Deleted Mesh\n";
 }
@@ -102,6 +100,8 @@ void Scene::zoom_camera(float value) {
 }
 
 void Scene::change_material(Color color, Texture texture) {
+    if (focus_mesh == nullptr)
+        return;
     Uniform_Texture uni_text = Uniform_Texture(color, texture);
     focus_mesh->texture = uni_text;
     for (auto & face : focus_mesh->faces)
@@ -109,6 +109,8 @@ void Scene::change_material(Color color, Texture texture) {
 }
 
 void Scene::move_x(float value) {
+    if (focus_mesh == nullptr)
+        return;
     if (selected_mode == 0) {
         Point3 new_location = *focus_mesh->points[0] + Point3(value, 0, 0);
         focus_mesh->move_mesh(new_location);
@@ -120,6 +122,8 @@ void Scene::move_x(float value) {
 }
 
 void Scene::move_y(float value) {
+    if (focus_mesh == nullptr)
+        return;
     if (selected_mode == 0) {
         Point3 new_location = *focus_mesh->points[0] + Point3(0, value, 0);
         focus_mesh->move_mesh(new_location);
@@ -131,6 +135,8 @@ void Scene::move_y(float value) {
 }
 
 void Scene::move_z(float value) {
+    if (focus_mesh == nullptr)
+        return;
     if (selected_mode == 0) {
         Point3 new_location = *focus_mesh->points[0] + Point3(0, 0, value);
         focus_mesh->move_mesh(new_location);
@@ -142,6 +148,8 @@ void Scene::move_z(float value) {
 }
 
 void Scene::scale(float value) {
+    if (focus_mesh == nullptr)
+        return;
     if (selected_mode == 0)
         focus_mesh->scale_mesh(value);
     else if (selected_mode == 1)
@@ -149,6 +157,8 @@ void Scene::scale(float value) {
 }
 
 void Scene::rotate_xyz(float anglex, float angley, float anglez) {
+    if (focus_mesh == nullptr)
+        return;
     if (selected_mode == 0)
         focus_mesh->rotate_all_axis(anglex, angley, anglez);
     else if (selected_mode == 1) {
@@ -163,6 +173,8 @@ void Scene::rotate_xyz(float anglex, float angley, float anglez) {
 }
 
 void Scene::extrude(float x_, float y_, float z_) {
+    if (focus_mesh == nullptr)
+        return;
     if (selected_mode == 0 || focus_faces.empty())
         return;
     for (auto face : focus_faces) {
@@ -174,11 +186,15 @@ void Scene::extrude(float x_, float y_, float z_) {
 }
 
 void Scene::extrude_along_normal(float thickness) {
+    if (focus_mesh == nullptr)
+        return;
     if (!focus_faces.empty())
         focus_mesh->extrude_along_normal(thickness, focus_faces);
 }
 
 void Scene::extrude_along_points_normalized(float thickness) {
+    if (focus_mesh == nullptr)
+        return;
     if (!focus_faces.empty())
         focus_mesh->extrude_along_points(thickness, focus_faces);
 }
@@ -189,7 +205,7 @@ int Scene::select_mesh(float x, float y) {
     auto dir = (pixel_center - c.center).norm();
     auto inter = Intersection(c.center, dir);
     Mesh *selected_mesh = nullptr;
-    int mesh_index = 0;
+    int mesh_index = -1;
     Triangle *selected_face = nullptr;
     for (int i = 0; i < meshes.size(); ++i)
     {
@@ -219,7 +235,7 @@ int Scene::select_mesh(float x, float y) {
     if (inter.inter_loc == null_point || selected_mesh == nullptr)
         return -1;
     if (selected_mode == 0)
-        change_focus(selected_mesh);
+        change_focus(selected_mesh, mesh_index);
     else if (selected_mode == 1)
         change_focus(selected_mesh, selected_face);
 
@@ -227,6 +243,8 @@ int Scene::select_mesh(float x, float y) {
 }
 
 void Scene::select_summit(float x, float y) {
+    if (focus_mesh == nullptr)
+        return;
     auto c = camera;
     auto pixel_center = c.pixel_loc + (static_cast<float>(x) * c.pixel_u) + (static_cast<float>(y) * c.pixel_v);
     auto dir = (pixel_center - c.center).norm();
@@ -247,8 +265,8 @@ void Scene::select_summit(float x, float y) {
         change_focus(selected_mesh, selected_summit);
 }
 
-void Scene::change_focus(Mesh *mesh) {
-    if (mesh == nullptr || selected_mode != 0)
+void Scene::change_focus(Mesh *mesh, int mesh_index) {
+    if (mesh == nullptr || mesh_index == -1 || selected_mode != 0)
         return;
     if (editmode) {
         for (auto &face: focus_mesh->faces)
@@ -262,17 +280,20 @@ void Scene::change_focus(Mesh *mesh) {
     }
     if (focus_mesh == nullptr || focus_mesh != mesh) {
         focus_mesh = mesh;
+        focus_index = mesh_index;
         for (auto &face: mesh->faces)
             face->selected = true;
     }
-    else
+    else {
         focus_mesh = nullptr;
+        focus_index = -1;
+    }
 }
 
 void Scene::change_focus(Mesh *mesh, Triangle *face) {
     if (mesh == nullptr || selected_mode != 1)
         return;
-    if (mesh != focus_mesh) {
+    if (focus_mesh == nullptr || mesh != focus_mesh) {
         std::cerr << "Scene Change Focus ERROR : mesh and focus_mesh are different\n";
         return;
     }

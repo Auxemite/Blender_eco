@@ -60,10 +60,21 @@ void App::Windows()
 
     if (ImGui::Button("Add Mesh"))
         ImGui::OpenPopup("add_mesh");
-    App::Add_Mesh();
-
-//    ImGui::SameLine();
-//    if (ImGui::Button("Delete Mesh")) { env.scene.delete_mesh(); env.render(); }
+    if (ImGui::BeginPopup("add_mesh"))
+    {
+        ImGui::SeparatorText("Mesh Types");
+        for (auto & i : names)
+            if (ImGui::Selectable(i)) {
+                std::string name = i;
+                name[0] = tolower(name[0]);
+                env.add_mesh(name);
+            }
+        ImGui::EndPopup();
+    }
+    if (env.scene.focus_mesh != nullptr) {
+        ImGui::SameLine();
+        if (ImGui::Button("Delete Mesh")) { env.delete_mesh(); }
+    }
 
     ImGuiIO &io = ImGui::GetIO();
     ImVec2 pos = ImGui::GetCursorScreenPos();
@@ -120,10 +131,9 @@ void App::MainOptions() {
         if (ImGui::Button("Normal Mode")) {
             env.scene.editmode = false;
             env.scene.selected_mode = 0;
-            Mesh *mesh = env.scene.focus_mesh;
             env.scene.update_selection_mode();
-            env.scene.change_focus(mesh);
-            env.render();
+            env.scene.change_focus(env.scene.focus_mesh, env.scene.focus_index);
+            env.render(env.scene.focus_index);
         }
 
         ImGui::Text("| Selection Mode : ");
@@ -146,25 +156,6 @@ void App::MainOptions() {
     ImGui::End();
 }
 
-void App::Add_Mesh() {
-    if (ImGui::BeginPopup("add_mesh"))
-    {
-        ImGui::SeparatorText("Mesh Types");
-        for (auto & i : names)
-            if (ImGui::Selectable(i)) {
-                std::string name = i;
-                name[0] = tolower(name[0]);
-                env.scene.add_mesh(name);
-                unsigned int VBO, VAO, EBO;
-                env.VBOs.push_back(VBO);
-                env.VAOs.push_back(VAO);
-                env.EBOs.push_back(EBO);
-                env.render(env.scene.meshes.size()-1);
-            }
-        ImGui::EndPopup();
-    }
-}
-
 void App::Material() {
     static bool alpha_preview = true;
     static bool alpha_half_preview = false;
@@ -172,6 +163,9 @@ void App::Material() {
     static bool options_menu = true;
     static bool hdr = false;
     ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
+
+    if (env.scene.focus_mesh == nullptr)
+        return;
 
     Color cc = env.scene.focus_mesh->texture.material.color;
     Texture texture1 = env.scene.focus_mesh->texture.material.texture;
@@ -245,7 +239,7 @@ void App::TreeNode() {
     for (int i = 0; i < env.scene.meshes.size(); i++) {
         std::string name = "> Mesh " + to_string(i);
         if (ImGui::Button(name.c_str())) {
-            env.scene.change_focus(env.scene.meshes[i]);
+            env.scene.change_focus(env.scene.meshes[i], i);
             env.render(i);
         }
         ImGui::SameLine();

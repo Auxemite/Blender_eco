@@ -19,6 +19,8 @@
 #define WIDTH 1920
 #define HEIGHT 1080
 
+static bool alpha_feature = 0;
+
 inline float lastFrame = 0.0;
 inline glm::vec3 cameraDec = glm::vec3(0.0f, 5.0f, 0.0f); //decalage
 inline glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -53,7 +55,6 @@ class Env {
 //    std::vector<float> vertices;
 //    std::vector<int> indices;
     std::vector<float> gridVertices;
-//    unsigned int VBO, VAO, EBO;
     std::vector<unsigned int> VBOs;
     std::vector<unsigned int> VAOs;
     std::vector<unsigned int> EBOs;
@@ -63,18 +64,21 @@ class Env {
     Env();
     explicit Env(const char* filename);
 
+    void save_mesh(const std::string& filename) const;
+    void create_texture();
+    void change_bg(const std::string& name);
+    void render(int mesh_index=-1);
+    void add_mesh(const std::string& name);
+    void delete_mesh();
+
     void update_camera();
     void update_data(int mesh_index);
+
     void cleanup(int mesh_index);
     void load_data(int mesh_index, std::vector<float> vertices, std::vector<int> indices);
     void load_grid();
     void draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection, int mesh_index);
     void draw_grid(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
-
-    void save_mesh(const std::string& filename) const;
-    void create_texture();
-    void change_bg(const std::string& name);
-    void render(int mesh_index=-1);
 };
 
 std::vector<float> generateGrid(int gridSize);
