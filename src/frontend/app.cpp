@@ -246,7 +246,7 @@ void App::TreeNode() {
         std::string name = "> Mesh " + to_string(i);
         if (ImGui::Button(name.c_str())) {
             env.scene.change_focus(env.scene.meshes[i]);
-            env.render();
+            env.render(i);
         }
         ImGui::SameLine();
         if (!env.scene.meshes[i]->watch) {

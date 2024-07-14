@@ -12,6 +12,8 @@
 #pragma comment(lib, "legacy_stdio_definitions")
 #endif
 
+static bool alpha_feature = 0;
+
 int main(int argc, char** argv)
 {
 //    submain2();
@@ -35,6 +37,12 @@ int main(int argc, char** argv)
     }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+    if (alpha_feature) {
+        glfwSetMouseButtonCallback(window, mouse_button_callback);
+        glfwSetCursorPosCallback(window, cursor_position_callback);
+        glfwSetScrollCallback(window, scroll_callback);
+    }
 
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
@@ -110,14 +118,19 @@ int main(int argc, char** argv)
 //        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
 //        glClear(GL_COLOR_BUFFER_BIT);
 
-        app.env.cameraPos.x = radius * cos(glm::radians(yaw));
-        app.env.cameraPos.z = radius * sin(glm::radians(yaw));
-        app.env.cameraPos.y = cameraDec.y;
-        cameraFront = glm::normalize(-app.env.cameraPos);
         glm::vec3 center = glm::vec3(0.0f);
+        if (!alpha_feature) {
+            app.env.cameraPos.x = radius * cos(glm::radians(yaw));
+            app.env.cameraPos.z = radius * sin(glm::radians(yaw));
+            app.env.cameraPos.y = cameraDec.y;
+            cameraFront = glm::normalize(-app.env.cameraPos);
+        }
+
+        glm::mat4 view = glm::lookAt(app.env.cameraPos, center, cameraUp);
+        if (alpha_feature)
+            view = glm::lookAt(app.env.cameraPos - radius * cameraFront, center, cameraUp);
 
         glm::mat4 model = glm::mat4(1.0f);
-        glm::mat4 view = glm::lookAt(app.env.cameraPos, center, cameraUp);
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1920.0f / 1080.0f, 0.1f, 100.0f);
 
         if (app.env.scene.activate_grid)

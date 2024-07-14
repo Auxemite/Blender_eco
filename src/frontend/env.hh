@@ -21,12 +21,18 @@
 
 inline float lastFrame = 0.0;
 inline glm::vec3 cameraDec = glm::vec3(0.0f, 5.0f, 0.0f); //decalage
-inline glm::vec3 cameraFront;
+inline glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 inline glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+inline glm::vec3 cameraRight = glm::vec3(1.0f, 0.0f, 0.0f);
 inline float deltaTime = 0.0f;
 inline float radius = 10.0f;
 inline float yaw = -45.0f;
-//static float r, g, b;
+inline float pitch =  0.0f;
+inline float lastX =  400.0f;
+inline float lastY =  300.0f;
+inline bool firstMouse = true;
+inline bool mousePressed = false;
+inline float sensitivity = 0.35f;
 
 class Env {
     public:
@@ -34,7 +40,8 @@ class Env {
     Scene scene;
     Image image;
 
-    glm::vec3 cameraPos;
+//    glm::vec3 cameraPos;
+    glm::vec3 cameraPos = glm::vec3(0.0f, 5.0f, 3.0f);
 
     // Flags
     bool photorealist = false;
