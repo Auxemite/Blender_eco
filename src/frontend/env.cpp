@@ -44,10 +44,8 @@ void Env::update_data(int mesh_index) {
     if (mesh_index == -1)
         return;
     Mesh *mesh = scene.meshes[mesh_index];
-    int point_nb = mesh->points.size() * 6;
     std::vector<float> vertices(0, 0.0f);
 
-    int indice_nb = mesh->faces.size() * 3;
     std::vector<int> indices(0, 0);
     for (int i = 0; i < mesh->faces.size(); ++i)
     {
@@ -82,8 +80,17 @@ void Env::update_data(int mesh_index) {
         vertices.push_back(color.b);
         indices.push_back(i * 3 + 2);
     }
-//    std::cout << "POINT NB = " << vertices.size() << "\n";
-//    std::cout << "INDICE NB = " << indices.size() << "\n";
+    std::cout << "POINT NB = " << vertices.size() << "\n";
+    std::cout << "INDICE NB = " << indices.size() << "\n";
+//    std::cout << "{ ";
+//    for (int i = 0; i < vertices.size(); i+=6) {
+//        if (i != 0 && i%18 == 0)
+//            std::cout << "\n";
+//        std::cout << vertices[i] << " ";
+//        std::cout << vertices[i+1] << " ";
+//        std::cout << vertices[i+2] << ";  ";
+//    }
+//    std::cout << " }\n";
     cleanup(mesh_index);
     load_data(mesh_index, vertices, indices);
 }
@@ -229,7 +236,7 @@ void Env::draw_grid(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view,
 
 std::vector<float> generateGrid(int gridSize) {
     std::vector<float> gridVertices;
-    // Red Line for Z = 0
+    // Red Line for X
     gridVertices.push_back(-gridSize);
     gridVertices.push_back(0.0f);
     gridVertices.push_back(0.0f);
@@ -244,7 +251,7 @@ std::vector<float> generateGrid(int gridSize) {
     gridVertices.push_back(0.3f);
     gridVertices.push_back(0.3f);
 
-    // Green Line for X = 0
+    // Green Line for Z
     gridVertices.push_back(0.0f);
     gridVertices.push_back(0.0f);
     gridVertices.push_back(-gridSize);

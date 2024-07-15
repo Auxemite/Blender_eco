@@ -40,11 +40,14 @@ inline float yaw = -45.0f;
 inline float pitch =  0.0f;
 inline float lastX =  400.0f;
 inline float lastY =  300.0f;
+inline int speed_rotation = 30;
+inline int speed_zoom = 10;
 
 // Mouse Flags
 inline bool firstMouse = true;
 inline bool mousePressed = false;
 inline float sensitivity = 0.35f;
+inline float zoom_sensitivity = 0.5f;
 
 class Env {
     public:

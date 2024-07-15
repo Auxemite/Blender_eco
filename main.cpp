@@ -58,11 +58,9 @@ int main(int argc, char** argv)
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    if (alpha_feature) {
-        glfwSetMouseButtonCallback(window, mouse_button_callback);
-        glfwSetCursorPosCallback(window, cursor_position_callback);
-        glfwSetScrollCallback(window, scroll_callback);
-    }
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
+    glfwSetCursorPosCallback(window, cursor_position_callback);
+    glfwSetScrollCallback(window, scroll_callback);
 
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
@@ -103,7 +101,6 @@ int main(int argc, char** argv)
                                                      "../src/shaders/frag_gray.glsl",
                                                      "../src/shaders/geo_gray.glsl");
     checkOpenGLError("Post shader compilation");
-    app.env.update_data(0);
     app.env.load_grid();
     checkOpenGLError("Post Loading Data");
     //TODO CODE HERE
@@ -116,9 +113,10 @@ int main(int argc, char** argv)
 
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         {
-            ToggleFullscreen(window);
-            while (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-                glfwPollEvents();
+            break;
+//            ToggleFullscreen(window);
+//            while (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+//                glfwPollEvents();
         }
         processInput(window);
 

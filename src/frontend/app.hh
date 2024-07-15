@@ -1,6 +1,7 @@
 #pragma once
 
 #include "env.hh"
+#include "inputs.hh"
 
 class App {
     public:
@@ -10,7 +11,6 @@ class App {
     explicit App(const char* filename);
 
     void Windows();
-    void Rendering();
     void MainOptions();
     void CameraOption();
     void Material();

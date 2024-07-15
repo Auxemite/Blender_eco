@@ -15,7 +15,6 @@ void App::Windows()
         ImGui::Begin("Actions");
         MeshOptions();
         ImGui::End();
-        App::Rendering();
         ImGui::Begin("Material");
         Material();
         ImGui::End();
@@ -54,24 +53,6 @@ void App::Windows()
         ImGui::EndPopup();
     }
 
-    if (ImGui::Button("Add Mesh"))
-        ImGui::OpenPopup("add_mesh");
-    if (ImGui::BeginPopup("add_mesh"))
-    {
-        ImGui::SeparatorText("Mesh Types");
-        for (auto & i : names)
-            if (ImGui::Selectable(i)) {
-                std::string name = i;
-                name[0] = tolower(name[0]);
-                env.add_mesh(name);
-            }
-        ImGui::EndPopup();
-    }
-    if (env.scene.focus_mesh != nullptr) {
-        ImGui::SameLine();
-        if (ImGui::Button("Delete Mesh")) { env.delete_mesh(); }
-    }
-
     ImGuiIO &io = ImGui::GetIO();
     ImVec2 pos = ImGui::GetCursorScreenPos();
     App::Inputs(io, pos);
@@ -81,32 +62,33 @@ void App::Windows()
 //    ImGui::ShowDemoWindow();
 }
 
-void App::Rendering() {
-    ImGui::Begin("Rendering");
-    ImGui::End();
-}
-
 void App::MainOptions() {
     ImGui::Begin("Main Options");
+    ImGui::Text("Camera Settings");
+    ImGui::SliderInt("Zoom Speed", &speed_zoom, 5, 20);
+    ImGui::SliderInt("Rotation Speed", &speed_rotation, 10, 50);
+    ImGui::SliderFloat("Mouse Sensibility", &sensitivity, 0.1, 2);
+    ImGui::SliderFloat("Zoom Sensibility", &zoom_sensitivity, 0.1, 2);
+
     if (env.photorealist) {
         if (ImGui::Button("Desactivate Render")) {
             env.photorealist = false;
             env.render();
         }
-        ImGui::SameLine();
-        if (ImGui::Button("Change background"))
-            ImGui::OpenPopup("change_bg");
-        if (ImGui::BeginPopup("change_bg"))
-        {
-            ImGui::SeparatorText("Background Images");
-            for (auto & i : name_bgs)
-                if (ImGui::Selectable(i)) {
-                    std::string name = i;
-                    name[0] = tolower(name[0]);
-                    env.change_bg(name);
-                }
-            ImGui::EndPopup();
-        }
+//        ImGui::SameLine();
+//        if (ImGui::Button("Change background"))
+//            ImGui::OpenPopup("change_bg");
+//        if (ImGui::BeginPopup("change_bg"))
+//        {
+//            ImGui::SeparatorText("Background Images");
+//            for (auto & i : name_bgs)
+//                if (ImGui::Selectable(i)) {
+//                    std::string name = i;
+//                    name[0] = tolower(name[0]);
+//                    env.change_bg(name);
+//                }
+//            ImGui::EndPopup();
+//        }
     }
     else {
         if (ImGui::Button("Activate Render")) {
@@ -133,13 +115,14 @@ void App::MainOptions() {
         ImGui::SameLine();
         if (ImGui::RadioButton("Summit", &env.scene.selected_mode, 3)) { env.scene.update_selection_mode(); env.render(); }
     }
-    if (ImGui::RadioButton("Fast Selection", &env.fast_selection, 1)) { env.render(); }
-    ImGui::SameLine();
-    if (ImGui::RadioButton("Classic Selection", &env.fast_selection, 0)) { env.render(); }
+//    if (ImGui::RadioButton("Fast Selection", &env.fast_selection, 1)) { env.render(); }
+//    ImGui::SameLine();
+//    if (ImGui::RadioButton("Classic Selection", &env.fast_selection, 0)) { env.render(); }
 
     if (ImGui::RadioButton("Grid", &env.scene.activate_grid, 1)) { env.render(); }
     ImGui::SameLine();
     if (ImGui::RadioButton("No Grid", &env.scene.activate_grid, 0)) { env.render(); }
+    ImGui::Checkbox("Alpha Features", &alpha_feature);
     ImGui::End();
 }
 
@@ -217,12 +200,28 @@ void App::CameraOption() {
         env.render();
     }
 
-
     ImGui::End();
 }
 
 void App::TreeNode() {
     ImGui::Begin("Tree");
+    if (ImGui::Button("Add Mesh"))
+        ImGui::OpenPopup("add_mesh");
+    if (ImGui::BeginPopup("add_mesh"))
+    {
+        ImGui::SeparatorText("Mesh Types");
+        for (auto & i : names)
+            if (ImGui::Selectable(i)) {
+                std::string name = i;
+                name[0] = tolower(name[0]);
+                env.add_mesh(name);
+            }
+        ImGui::EndPopup();
+    }
+    if (env.scene.focus_mesh != nullptr) {
+        ImGui::SameLine();
+        if (ImGui::Button("Delete Mesh")) { env.delete_mesh(); }
+    }
     for (int i = 0; i < env.scene.meshes.size(); i++) {
         std::string name = "> Mesh " + to_string(i);
         if (ImGui::Button(name.c_str())) {
@@ -354,11 +353,17 @@ void App::PrintObjInfo() const {
     }
     string text = "type : Mesh\n";
     text += "Number of Faces : " + to_string(env.scene.focus_mesh->faces.size()) + "\n";
-    text += "Number of Edges : " + to_string(env.scene.focus_mesh->points.size()) + "\n";
-    text += "Edges :\n";
-    for (auto & edge : env.scene.focus_mesh->points) {
-        text += edge->to_string() + "\n";
+    text += "Number of Summit : " + to_string(env.scene.focus_mesh->points.size()) + "\n";
+    text += "Summits :\n";
+    for (auto & summit : env.scene.focus_mesh->points) {
+        text += summit->to_string() + "\n";
     }
+//    text += "Faces :\n";
+//    for (auto & face : env.scene.focus_mesh->faces) {
+//        text += face->a->to_string() + " ";
+//        text += face->b->to_string() + " ";
+//        text += face->c->to_string() + "\n";
+//    }
     ImGui::Text("%s", text.c_str());
 }
 

@@ -203,7 +203,9 @@ int Scene::select_mesh(float x, float y) {
     std::cout << "Selecting on x = " << x << " and y = " << y << "\n";
     auto c = camera;
     auto pixel_center = c.pixel_loc + (static_cast<float>(x) * c.pixel_u) + (static_cast<float>(y) * c.pixel_v);
+    std::cout << "Pixel center : " << pixel_center << "\n";
     auto dir = (pixel_center - c.center).norm();
+    std::cout << "Dir : " << dir << "\n";
     auto inter = Intersection(c.center, dir);
     Mesh *selected_mesh = nullptr;
     int mesh_index = -1;
@@ -223,9 +225,13 @@ int Scene::select_mesh(float x, float y) {
                 auto inter_scal = face->ray_intersection(c.center, dir);
                 if (inter_scal > 0)
                 {
+                    std::cout << "Point A : " << *face->a << "\n";
+                    std::cout << "Point B : " << *face->b << "\n";
+                    std::cout << "Point C : " << *face->c << "\n";
                     Point3 new_inter_loc = c.center + dir * inter_scal;
+                    std::cout << "New inter Loc : " << new_inter_loc << "\n";
                     if (inter.inter_loc == null_point
-                        || (new_inter_loc - camera.center).length() < (inter.inter_loc - c.center).length()) {
+                        || (new_inter_loc - c.center).length() < (inter.inter_loc - c.center).length()) {
                         inter.inter_loc = new_inter_loc;
                         selected_mesh = mesh;
                         mesh_index = i;
@@ -307,6 +313,9 @@ void Scene::change_focus(Mesh *mesh, Triangle *face) {
         auto it = find(focus_faces.begin(), focus_faces.end(), face);
         focus_faces.erase(it);
     }
+    std::cout << "Point A : " << *face->a << "\n";
+    std::cout << "Point B : " << *face->b << "\n";
+    std::cout << "Point C : " << *face->c << "\n";
     face->selected = !face->selected;
 }
 
