@@ -14,7 +14,7 @@ uniform float lightPower;
 void main() {
     //! ambient
     float ns = materialAttr[0];
-    vec3 ambientColor = vec3(ns) * fragColor;
+    vec3 ambientColor = (lightPower / 150) * fragColor;
 
     //! diffuse
     float kd = materialAttr[1];
@@ -27,7 +27,7 @@ void main() {
     float ks = materialAttr[2];
     vec3 viewDir = normalize(cameraPos - fragPos);
     vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(0.0, dot(viewDir, reflectDir)), 64);
+    float spec = pow(max(0.0, dot(viewDir, reflectDir)), ns);
     vec3 specularColor = lightColor * ks * spec * lightPower;
 
     vec3 res = ambientColor;

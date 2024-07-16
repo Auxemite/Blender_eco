@@ -244,10 +244,10 @@ void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view,
     unsigned int materialAttrLoc = glGetUniformLocation(shaderProgram, "materialAttr");
     if (scene.focus_index != mesh_index) {
         Texture material = scene.meshes[mesh_index]->faces[0]->texture.material.texture;
-        glUniform3f(materialAttrLoc, material.ns / 150, material.kd, material.ks);
+        glUniform3f(materialAttrLoc, material.ns, material.kd, material.ks);
     }
     else
-        glUniform3f(materialAttrLoc, scene.ns / 150, scene.kd, scene.ks);
+        glUniform3f(materialAttrLoc, scene.ns, scene.kd, scene.ks);
 
     glBindVertexArray(VAOs[mesh_index]);
     glDrawElements(GL_TRIANGLES, scene.meshes[mesh_index]->faces.size() * 3, GL_UNSIGNED_INT, 0);
