@@ -13,11 +13,10 @@ void main() {
     vec3 v1 = vertexPos[1] - vertexPos[0];
     vec3 v2 = vertexPos[2] - vertexPos[0];
     vec3 normal = normalize(cross(v1, v2));
-
+    fragColor = vertexColor[0];
+    fragNormal = normal;
     for(int i = 0; i < 3; i++) {
-        fragColor = vertexColor[0];
         fragPos = vertexPos[i];
-        fragNormal = normal;
         gl_Position = gl_in[i].gl_Position;
         EmitVertex();
     }

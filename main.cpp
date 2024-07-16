@@ -98,7 +98,8 @@ int main(int argc, char** argv)
 
     unsigned int baseShaderProgram = createShaderProgram("../src/shaders/vrtx_base.glsl", "../src/shaders/frag_base.glsl");
     unsigned int shaderProgram = createShaderProgram("../src/shaders/vrtx_gray.glsl",
-                                                     "../src/shaders/frag_gray.glsl",
+                                                     //"../src/shaders/frag_gray.glsl",
+                                                     "../src/shaders/frag_phong.glsl",                                                     
                                                      "../src/shaders/geo_gray.glsl");
     checkOpenGLError("Post shader compilation");
     app.env.load_grid();
