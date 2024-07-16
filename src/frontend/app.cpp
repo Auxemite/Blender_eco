@@ -12,12 +12,8 @@ App::App(){
 void App::Windows()
 {
     if (env.scene.focus_mesh != nullptr) {
-        ImGui::Begin("Actions");
         MeshOptions();
-        ImGui::End();
-        ImGui::Begin("Material");
         Material();
-        ImGui::End();
     }
 
 //    CameraOption();
@@ -26,7 +22,7 @@ void App::Windows()
 
     App::MainOptions();
 
-    ImGui::Begin("Render Options");
+    ImGui::Begin("Shaders Options");
     if (ImGui::Button("Base")) { render_mode = 0; env.render_all(); }
     ImGui::SameLine();
     if (ImGui::Button("Normals")) { render_mode = 1; env.render_all(); }
@@ -40,20 +36,6 @@ void App::Windows()
     if (ImGui::Button("Specular")) { render_mode = 5; env.render_all(); }
     ImGui::End();
 
-//    if (ImGui::Button("Save Render"))
-//        ImGui::OpenPopup("save_render");
-//    if (ImGui::BeginPopup("save_render"))
-//    {
-//        static char filename[128] = "";
-//        ImGui::InputText("File Name", filename, IM_ARRAYSIZE(filename));
-//        ImGui::SameLine();
-//        if (ImGui::Button("Save file"))
-//            env.image.save_as_ppm("../test/" + string(filename) + ".ppm");
-//        ImGui::EndPopup();
-//    }
-//
-//    ImGui::SameLine();
-
     ImGui::Begin("End options");
     if (ImGui::Button("Save file as"))
         ImGui::OpenPopup("save_file");
@@ -66,6 +48,16 @@ void App::Windows()
             env.save_mesh("../test/" + string(filename) + ".obj");
         ImGui::EndPopup();
     }
+    ImGui::SameLine();
+    if (ImGui::Button("Render")) {
+        env.create_texture();
+        env.image.render(env.scene, bg, true, true);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, env.image.width, env.image.height,
+                        GL_RGB, GL_UNSIGNED_BYTE, env.image.char_data);
+        display_image = true;
+    }
+    if (display_image)
+        Rendering();
 
     ImGuiIO &io = ImGui::GetIO();
     ImVec2 pos = ImGui::GetCursorScreenPos();
@@ -76,6 +68,48 @@ void App::Windows()
 //    ImGui::ShowDemoWindow();
 }
 
+void App::Rendering() {
+    ImGui::Begin("Render");
+    ImGui::Image((void*)(intptr_t)env.render_image,
+                 ImVec2(static_cast<float>(env.image.width), static_cast<float>(env.image.height)));
+
+    if (ImGui::Button("Change background"))
+        ImGui::OpenPopup("change_bg");
+    if (ImGui::BeginPopup("change_bg"))
+    {
+        ImGui::SeparatorText("Background Images");
+        for (auto & i : name_bgs)
+            if (ImGui::Selectable(i)) {
+                std::string name = i;
+                name[0] = tolower(name[0]);
+                env.change_bg(name);
+            }
+        ImGui::EndPopup();
+    }
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("Save Render"))
+        ImGui::OpenPopup("save_render");
+    if (ImGui::BeginPopup("save_render"))
+    {
+        static char filename[128] = "";
+        ImGui::InputText("File Name", filename, IM_ARRAYSIZE(filename));
+        ImGui::SameLine();
+        if (ImGui::Button("Save file")) {
+            env.image.save_as_ppm("../test/" + string(filename) + ".ppm");
+            display_image = false;
+        }
+        ImGui::EndPopup();
+    }
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("Cancel"))
+        display_image = false;
+    ImGui::End();
+}
+
 void App::MainOptions() {
     ImGui::Begin("Main Options");
     ImGui::Text("Camera Settings");
@@ -84,33 +118,6 @@ void App::MainOptions() {
     ImGui::SliderFloat("Mouse Sensibility", &sensitivity, 0.1, 2);
     ImGui::SliderFloat("Zoom Sensibility", &zoom_sensitivity, 0.1, 2);
 
-//    if (env.photorealist) {
-//        if (ImGui::Button("Desactivate Render")) {
-//            env.photorealist = false;
-//            env.render();
-//        }
-//        ImGui::SameLine();
-//        if (ImGui::Button("Change background"))
-//            ImGui::OpenPopup("change_bg");
-//        if (ImGui::BeginPopup("change_bg"))
-//        {
-//            ImGui::SeparatorText("Background Images");
-//            for (auto & i : name_bgs)
-//                if (ImGui::Selectable(i)) {
-//                    std::string name = i;
-//                    name[0] = tolower(name[0]);
-//                    env.change_bg(name);
-//                }
-//            ImGui::EndPopup();
-//        }
-//    }
-//    else {
-//        if (ImGui::Button("Activate Render")) {
-//            env.photorealist = true;
-//            env.render();
-//        }
-//    }
-//    ImGui::SameLine();
     if (!env.scene.editmode) {
         if (ImGui::Button("Edit Mode"))
             env.edit_mode();
@@ -135,15 +142,16 @@ void App::MainOptions() {
 
     ImGui::Checkbox("Grid", &env.scene.activate_grid);
     ImGui::Checkbox("Alpha Features", &alpha_feature);
-    if (ImGui::Button("Render"))
+    if (ImGui::Button("Update"))
         env.render();
     ImGui::SameLine();
-    if (ImGui::Button("Render All"))
+    if (ImGui::Button("Update All"))
         env.render_all();
     ImGui::End();
 }
 
 void App::Material() {
+    ImGui::Begin("Material");
     static bool alpha_preview = true;
     static bool alpha_half_preview = false;
     static bool drag_and_drop = true;
@@ -176,10 +184,6 @@ void App::Material() {
     ImGui::SliderFloat("ks", &env.scene.ks, 0, 1);
     ImGui::SliderFloat("ns", &env.scene.ns, 1, 150);
 
-//    ImGui::SliderFloat("kd", &kd, 0, 1);
-//    ImGui::SliderFloat("ks", &ks, 0, 1);
-//    ImGui::SliderFloat("ns", &ns, 1, 150);
-
     if (ImGui::Button("Update Material")) {
         Texture texture = env.scene.focus_mesh->texture.material.texture;
         Color material_color = Color(color.x, color.y, color.z);
@@ -195,6 +199,7 @@ void App::Material() {
 
     if (ImGui::Button("Update Light Color"))
         env.scene.lights[0]->color = Color(color.x, color.y, color.z);
+    ImGui::End();
 }
 
 void App::CameraOption() {
@@ -304,6 +309,7 @@ void App::TreeMesh(Mesh *mesh, int index) {
 }
 
 void App::MeshOptions() {
+    ImGui::Begin("Actions");
     ImGui::Text("Main Mesh Actions : ");
     if (env.scene.editmode) {
         static float v1 = 1.00f;
@@ -376,6 +382,7 @@ void App::MeshOptions() {
             env.render();
         }
     }
+    ImGui::End();
 }
 
 void App::PrintObjInfo() const {

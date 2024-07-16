@@ -1,6 +1,5 @@
 #include "env.hh"
 
-Image *bg = load_image("../data/sunset.ppm");
 int render_count = 0;
 
 Env::Env() {
@@ -10,8 +9,6 @@ Env::Env() {
     VAOs = std::vector<unsigned int>(1, 0);
     EBOs = std::vector<unsigned int>(1, 0);
     update_data(0);
-//    render();
-//    create_texture();
 }
 
 void Env::create_texture() {
@@ -37,7 +34,8 @@ void Env::change_bg(const std::string& name) {
     delete bg;
     bg = img;
     std::cout << "Changed Background Image";
-//    render();
+    image.render(scene, bg, true, true);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, image.width, image.height, GL_RGB, GL_UNSIGNED_BYTE, image.char_data);
 }
 
 void Env::update_data(int mesh_index) {
@@ -101,8 +99,7 @@ void Env::update_data(int mesh_index) {
 
 void Env::render(int mesh_index) {
     render_count++;
-    std::cout  << "Rendering " << render_count << "\n";
-//    image.render(scene, bg, photorealist, fast_selection);
+    std::cout  << "Updating " << render_count << "\n";
     if (mesh_index != -1)
         update_data(mesh_index);
     else if (scene.focus_mesh != nullptr)

@@ -13,6 +13,7 @@ class App {
     void Windows();
     void MainOptions();
     void CameraOption();
+    void Rendering();
     void Material();
     void Inputs(const ImGuiIO& io, ImVec2 pos);
     void TreeMesh(Mesh *mesh, int index);

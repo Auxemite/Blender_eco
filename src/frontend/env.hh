@@ -18,8 +18,9 @@
 
 #define WIDTH 1920
 #define HEIGHT 1080
-#define TEMP_WIDTH 1920
-#define TEMP_HEIGHT 1080
+#define TEMP_WIDTH 1280
+#define TEMP_HEIGHT 720
+inline Image *bg = load_image("../data/sunset.ppm");
 
 // Main Flags
 inline bool alpha_feature = 0;
@@ -51,6 +52,7 @@ inline float zoom_sensitivity = 0.5f;
 
 // Render Flags
 inline int render_mode = 1;
+inline bool display_image = false;
 
 class Env {
     public:
