@@ -52,7 +52,9 @@ void Env::update_data(int mesh_index) {
         Point3 *p_a = mesh->faces[i]->a;
         Point3 *p_b = mesh->faces[i]->b;
         Point3 *p_c = mesh->faces[i]->c;
-        //if (mesh->faces[i]->selected)
+//        Color color(1.0f, 1.0f, 1.0f);
+//        if (mesh->faces[i]->selected)
+//            color = Color(0.0f, 2.0f, 2.0f);
         auto color = Color(mesh->faces[0]->texture.material.color);
 
         vertices.push_back(p_a->x);

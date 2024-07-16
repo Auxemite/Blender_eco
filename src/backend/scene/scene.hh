@@ -24,7 +24,7 @@ class Scene
 
         // Flags
         int selected_mode = 0;
-        int activate_grid = 1;
+        bool activate_grid = true;
         bool editmode = false;
 
         Scene()=default;

@@ -97,9 +97,11 @@ int main(int argc, char** argv)
     IM_ASSERT(app.env.image.width != 0);
 
     unsigned int baseShaderProgram = createShaderProgram("../src/shaders/vrtx_base.glsl", "../src/shaders/frag_base.glsl");
-    unsigned int shaderProgram = createShaderProgram("../src/shaders/vrtx_gray.glsl",
-                                                     //"../src/shaders/frag_gray.glsl",
+    unsigned int phongShaderProgram = createShaderProgram("../src/shaders/vrtx_gray.glsl",
                                                      "../src/shaders/frag_phong.glsl",                                                     
+                                                     "../src/shaders/geo_gray.glsl");
+    unsigned int grayShaderProgram = createShaderProgram("../src/shaders/vrtx_gray.glsl",
+                                                                "../src/shaders/frag_gray.glsl",
                                                      "../src/shaders/geo_gray.glsl");
     checkOpenGLError("Post shader compilation");
     app.env.load_grid();
@@ -112,12 +114,13 @@ int main(int argc, char** argv)
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
+        if (glfwGetKey(window, GLFW_KEY_GRAVE_ACCENT) == GLFW_PRESS)
+            break;
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         {
-            break;
-//            ToggleFullscreen(window);
-//            while (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-//                glfwPollEvents();
+            ToggleFullscreen(window);
+            while (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+                glfwPollEvents();
         }
         processInput(window);
 
@@ -157,6 +160,13 @@ int main(int argc, char** argv)
         if (app.env.scene.activate_grid)
             app.env.draw_grid(baseShaderProgram, model, view, projection);
 
+        unsigned int shaderProgram;
+        if (render_mode == 0)
+            shaderProgram = grayShaderProgram;
+        else if (render_mode == 1)
+            shaderProgram = phongShaderProgram;
+        else
+            shaderProgram = baseShaderProgram;
         if (app.env.scene.editmode)
             app.env.draw_data(shaderProgram, model, view, projection, app.env.scene.focus_index);
         else {
@@ -183,8 +193,9 @@ int main(int argc, char** argv)
     for (int i = 0; i < app.env.scene.meshes.size(); ++i)
         app.env.cleanup(i);
 
-    glDeleteProgram(shaderProgram);
+    glDeleteProgram(grayShaderProgram);
     glDeleteProgram(baseShaderProgram);
+    glDeleteProgram(phongShaderProgram);
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();

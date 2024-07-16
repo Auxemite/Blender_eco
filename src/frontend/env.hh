@@ -49,6 +49,9 @@ inline bool mousePressed = false;
 inline float sensitivity = 0.35f;
 inline float zoom_sensitivity = 0.5f;
 
+// Render Flags
+inline int render_mode = 0;
+
 class Env {
     public:
     GLuint render_image{};
@@ -59,7 +62,6 @@ class Env {
     glm::vec3 cameraPos = glm::vec3(0.0f, 5.0f, 3.0f);
 
     // Flags
-    bool photorealist = false;
     int fast_selection = 1;
     int action_mode = 0; // 0 = Camera; 1 = Move; 2 = Rotate; 3 = Scale
     int focus_axe = 0; // 0 = x; 1 = y; 2 = z

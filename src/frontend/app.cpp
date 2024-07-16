@@ -26,6 +26,14 @@ void App::Windows()
 
     App::MainOptions();
 
+    ImGui::Begin("Render Options");
+    if (ImGui::Button("0")) { render_mode = 0; }
+    ImGui::SameLine();
+    if (ImGui::Button("1")) { render_mode = 1; }
+    ImGui::SameLine();
+    if (ImGui::Button("2")) { render_mode = 2; }
+    ImGui::End();
+
 //    if (ImGui::Button("Save Render"))
 //        ImGui::OpenPopup("save_render");
 //    if (ImGui::BeginPopup("save_render"))
@@ -70,11 +78,11 @@ void App::MainOptions() {
     ImGui::SliderFloat("Mouse Sensibility", &sensitivity, 0.1, 2);
     ImGui::SliderFloat("Zoom Sensibility", &zoom_sensitivity, 0.1, 2);
 
-    if (env.photorealist) {
-        if (ImGui::Button("Desactivate Render")) {
-            env.photorealist = false;
-            env.render();
-        }
+//    if (env.photorealist) {
+//        if (ImGui::Button("Desactivate Render")) {
+//            env.photorealist = false;
+//            env.render();
+//        }
 //        ImGui::SameLine();
 //        if (ImGui::Button("Change background"))
 //            ImGui::OpenPopup("change_bg");
@@ -89,13 +97,13 @@ void App::MainOptions() {
 //                }
 //            ImGui::EndPopup();
 //        }
-    }
-    else {
-        if (ImGui::Button("Activate Render")) {
-            env.photorealist = true;
-            env.render();
-        }
-    }
+//    }
+//    else {
+//        if (ImGui::Button("Activate Render")) {
+//            env.photorealist = true;
+//            env.render();
+//        }
+//    }
     ImGui::SameLine();
     if (!env.scene.editmode) {
         if (ImGui::Button("Edit Mode"))
@@ -119,9 +127,7 @@ void App::MainOptions() {
 //    ImGui::SameLine();
 //    if (ImGui::RadioButton("Classic Selection", &env.fast_selection, 0)) { env.render(); }
 
-    if (ImGui::RadioButton("Grid", &env.scene.activate_grid, 1)) { env.render(); }
-    ImGui::SameLine();
-    if (ImGui::RadioButton("No Grid", &env.scene.activate_grid, 0)) { env.render(); }
+    ImGui::Checkbox("Grid", &env.scene.activate_grid);
     ImGui::Checkbox("Alpha Features", &alpha_feature);
     ImGui::End();
 }
