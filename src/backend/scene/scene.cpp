@@ -201,12 +201,12 @@ void Scene::extrude_along_points_normalized(float thickness) {
 }
 
 int Scene::select_mesh(float x, float y) {
-    std::cout << "Selecting on x = " << x << " and y = " << y << "\n";
+    //std::cout << "Selecting on x = " << x << " and y = " << y << "\n";
     auto c = camera;
     auto pixel_center = c.pixel_loc + (static_cast<float>(x) * c.pixel_u) + (static_cast<float>(y) * c.pixel_v);
-    std::cout << "Pixel center : " << pixel_center << "\n";
+    //std::cout << "Pixel center : " << pixel_center << "\n";
     auto dir = (pixel_center - c.center).norm();
-    std::cout << "Dir : " << dir << "\n";
+    //std::cout << "Dir : " << dir << "\n";
     auto inter = Intersection(c.center, dir);
     Mesh *selected_mesh = nullptr;
     int mesh_index = -1;

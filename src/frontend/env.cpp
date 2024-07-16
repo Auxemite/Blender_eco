@@ -81,8 +81,8 @@ void Env::update_data(int mesh_index) {
         vertices.push_back(color.b);
         indices.push_back(i * 3 + 2);
     }
-    std::cout << "POINT NB = " << vertices.size() << "\n";
-    std::cout << "INDICE NB = " << indices.size() << "\n";
+    // std::cout << "POINT NB = " << vertices.size() << "\n";
+    // std::cout << "INDICE NB = " << indices.size() << "\n";
 //    std::cout << "{ ";
 //    for (int i = 0; i < vertices.size(); i+=6) {
 //        if (i != 0 && i%18 == 0)
@@ -150,7 +150,7 @@ void Env::save_mesh(const std::string& filename) const {
 
 void Env::update_camera() {
     scene.camera.update_cam(Point3(cameraPos.x, cameraPos.y, cameraPos.z));
-    std::cout << "Camera Center : " << scene.camera.center << "\n";
+    //std::cout << "Camera Center : " << scene.camera.center << "\n";
 }
 
 void Env::cleanup(int mesh_index) {
@@ -223,6 +223,16 @@ void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view,
     unsigned int lightColorLoc = glGetUniformLocation(shaderProgram, "lightColor");
     auto lc = scene.lights[0]->color;
     glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);
+
+    unsigned int materialAttrLoc = glGetUniformLocation(shaderProgram, "materialAttr");
+    Texture material;
+    if (scene.focus_mesh == nullptr)
+        material = scene.meshes[mesh_index]->faces[0]->texture.material.texture;
+    else
+        material = scene.focus_mesh->faces[0]->texture.material.texture;
+    // ka kd ks shininess
+    glUniform3f(materialAttrLoc, material.ns / 15, material.kd, material.ks);
+    std::cout << "Material: " << material.ns / 15 << " " << material.kd << " " << material.ks << "\n";
 
     glBindVertexArray(VAOs[mesh_index]);
     glDrawElements(GL_TRIANGLES, scene.meshes[mesh_index]->faces.size() * 3, GL_UNSIGNED_INT, 0);
