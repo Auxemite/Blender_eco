@@ -52,10 +52,13 @@ void Env::update_data(int mesh_index) {
         Point3 *p_a = mesh->faces[i]->a;
         Point3 *p_b = mesh->faces[i]->b;
         Point3 *p_c = mesh->faces[i]->c;
-//        Color color(1.0f, 1.0f, 1.0f);
-//        if (mesh->faces[i]->selected)
-//            color = Color(0.0f, 2.0f, 2.0f);
-        auto color = Color(mesh->faces[0]->texture.material.color);
+        Color color(1.0f, 1.0f, 1.0f);
+        if (render_mode == 0 || render_mode == 1) {
+            if (mesh->faces[i]->selected)
+                color = Color(0.0f, 2.0f, 2.0f);
+        }
+        else
+            color = Color(mesh->faces[0]->texture.material.color);
 
         vertices.push_back(p_a->x);
         vertices.push_back(p_a->y);
@@ -97,7 +100,6 @@ void Env::update_data(int mesh_index) {
 }
 
 void Env::render(int mesh_index) {
-
     render_count++;
     std::cout  << "Rendering " << render_count << "\n";
 //    image.render(scene, bg, photorealist, fast_selection);
@@ -105,6 +107,11 @@ void Env::render(int mesh_index) {
         update_data(mesh_index);
     else if (scene.focus_mesh != nullptr)
         update_data(scene.focus_index);
+}
+
+void Env::render_all() {
+    for (int i = 0; i < scene.meshes.size(); ++i)
+        render(i);
 }
 
 void Env::edit_mode() {
@@ -137,8 +144,7 @@ void Env::delete_mesh() {
     VAOs.erase(VAOs.begin()+scene.focus_index);
     EBOs.erase(EBOs.begin()+scene.focus_index);
     scene.delete_mesh();
-    for (int i = 0; i < scene.meshes.size(); ++i)
-        update_data(i);
+    render_all();
 }
 
 void Env::save_mesh(const std::string& filename) const {
@@ -213,26 +219,35 @@ void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view,
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
+    unsigned int positionDec = glGetUniformLocation(shaderProgram, "positionDec");
+    if (scene.focus_index == mesh_index)
+        glUniform3f(positionDec, scene.dec_x, scene.dec_y, scene.dec_z);
+    else
+        glUniform3f(positionDec, 0, 0, 0);
+
     unsigned int cameraPosLoc = glGetUniformLocation(shaderProgram, "cameraPos");
     glUniform3f(cameraPosLoc, cameraPos.x, cameraPos.y, cameraPos.z);
 
     unsigned int lightPosLoc = glGetUniformLocation(shaderProgram, "lightPos");
-    auto lp = scene.lights[0]->center;
-    glUniform3f(lightPosLoc, lp.x, lp.y, lp.z);
+    auto light_center = scene.lights[0]->center;
+    glUniform3f(lightPosLoc, light_center.x, light_center.y, light_center.z);
 
     unsigned int lightColorLoc = glGetUniformLocation(shaderProgram, "lightColor");
-    auto lc = scene.lights[0]->color;
-    glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);
+    auto light_color = scene.lights[0]->color;
+    glUniform3f(lightColorLoc, light_color.r, light_color.g, light_color.b);
 
-    unsigned int materialAttrLoc = glGetUniformLocation(shaderProgram, "materialAttr");
-    Texture material;
-    if (scene.focus_mesh == nullptr)
-        material = scene.meshes[mesh_index]->faces[0]->texture.material.texture;
-    else
-        material = scene.focus_mesh->faces[0]->texture.material.texture;
+    unsigned int lightPower = glGetUniformLocation(shaderProgram, "lightPower");
+    auto light_power = scene.lights[0]->power;
+    glUniform1f(lightPower, light_power);
+
     // ka kd ks shininess
-    glUniform3f(materialAttrLoc, material.ns / 15, material.kd, material.ks);
-    std::cout << "Material: " << material.ns / 15 << " " << material.kd << " " << material.ks << "\n";
+    unsigned int materialAttrLoc = glGetUniformLocation(shaderProgram, "materialAttr");
+    if (scene.focus_index != mesh_index) {
+        Texture material = scene.meshes[mesh_index]->faces[0]->texture.material.texture;
+        glUniform3f(materialAttrLoc, material.ns / 150, material.kd, material.ks);
+    }
+    else
+        glUniform3f(materialAttrLoc, scene.ns / 150, scene.kd, scene.ks);
 
     glBindVertexArray(VAOs[mesh_index]);
     glDrawElements(GL_TRIANGLES, scene.meshes[mesh_index]->faces.size() * 3, GL_UNSIGNED_INT, 0);

@@ -109,6 +109,19 @@ void Scene::change_material(Color color, Texture texture) {
         face->texture = uni_text;
 }
 
+void Scene::change_material(float kd, float ks, float ns) {
+    if (focus_mesh == nullptr)
+        return;
+    focus_mesh->texture.material.texture.kd = kd;
+    focus_mesh->texture.material.texture.ks = ks;
+    focus_mesh->texture.material.texture.ns = ns;
+    for (auto & face : focus_mesh->faces) {
+        face->texture.material.texture.kd = kd;
+        face->texture.material.texture.ks = ks;
+        face->texture.material.texture.ns = ns;
+    }
+}
+
 void Scene::move_x(float value) {
     if (focus_mesh == nullptr)
         return;
@@ -275,6 +288,14 @@ void Scene::select_summit(float x, float y) {
         change_focus(selected_mesh, selected_summit);
 }
 
+void Scene::apply_mesh_changes() {
+    move_x(dec_x); dec_x = 0;
+    move_y(dec_y); dec_y = 0;
+    move_z(dec_z); dec_z = 0;
+    change_material(kd, ks, ns);
+    kd = 0.9f; ks = 0.1f; ns = 10.0f;
+}
+
 void Scene::change_focus(Mesh *mesh, int mesh_index) {
     if (mesh == nullptr || mesh_index == -1 || selected_mode != 0)
         return;
@@ -284,6 +305,7 @@ void Scene::change_focus(Mesh *mesh, int mesh_index) {
         return;
     }
 
+    apply_mesh_changes();
     if (focus_mesh != nullptr) {
         for (auto &face: focus_mesh->faces)
             face->selected = false;

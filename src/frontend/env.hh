@@ -50,7 +50,7 @@ inline float sensitivity = 0.35f;
 inline float zoom_sensitivity = 0.5f;
 
 // Render Flags
-inline int render_mode = 0;
+inline int render_mode = 1;
 
 class Env {
     public:
@@ -58,7 +58,6 @@ class Env {
     Scene scene;
     Image image;
 
-//    glm::vec3 cameraPos;
     glm::vec3 cameraPos = glm::vec3(0.0f, 5.0f, 3.0f);
 
     // Flags
@@ -82,6 +81,7 @@ class Env {
     void create_texture();
     void change_bg(const std::string& name);
     void render(int mesh_index=-1);
+    void render_all();
 
     void edit_mode();
     void normal_mode();

@@ -30,6 +30,6 @@ void main() {
     float spec = pow(max(0.0, dot(viewDir, reflectDir)), 64);
     vec3 specularColor = lightColor * ks * spec * lightPower;
 
-    vec3 res = ambientColor + diffuseColor + specularColor;
+    vec3 res = ambientColor;
     FragColor = vec4(res, 1.0);
 }

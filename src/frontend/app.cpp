@@ -27,11 +27,17 @@ void App::Windows()
     App::MainOptions();
 
     ImGui::Begin("Render Options");
-    if (ImGui::Button("0")) { render_mode = 0; }
+    if (ImGui::Button("Base")) { render_mode = 0; env.render_all(); }
     ImGui::SameLine();
-    if (ImGui::Button("1")) { render_mode = 1; }
+    if (ImGui::Button("Normals")) { render_mode = 1; env.render_all(); }
     ImGui::SameLine();
-    if (ImGui::Button("2")) { render_mode = 2; }
+    if (ImGui::Button("Phong")) { render_mode = 2; env.render_all(); }
+    ImGui::SameLine();
+    if (ImGui::Button("Ambient")) { render_mode = 3; env.render_all(); }
+    ImGui::SameLine();
+    if (ImGui::Button("Diffuse")) { render_mode = 4; env.render_all(); }
+    ImGui::SameLine();
+    if (ImGui::Button("Specular")) { render_mode = 5; env.render_all(); }
     ImGui::End();
 
 //    if (ImGui::Button("Save Render"))
@@ -104,7 +110,7 @@ void App::MainOptions() {
 //            env.render();
 //        }
 //    }
-    ImGui::SameLine();
+//    ImGui::SameLine();
     if (!env.scene.editmode) {
         if (ImGui::Button("Edit Mode"))
             env.edit_mode();
@@ -129,6 +135,11 @@ void App::MainOptions() {
 
     ImGui::Checkbox("Grid", &env.scene.activate_grid);
     ImGui::Checkbox("Alpha Features", &alpha_feature);
+    if (ImGui::Button("Render"))
+        env.render();
+    ImGui::SameLine();
+    if (ImGui::Button("Render All"))
+        env.render_all();
     ImGui::End();
 }
 
@@ -144,11 +155,7 @@ void App::Material() {
         return;
 
     Color cc = env.scene.focus_mesh->texture.material.color;
-    Texture texture1 = env.scene.focus_mesh->texture.material.texture;
-    static ImVec4 color = ImVec4(cc.r, cc.g, cc.b, 255.0f / 255.0f);
-    static float kd = texture1.kd;
-    static float ks = texture1.ks;
-    static float ns = texture1.ns;
+    static ImVec4 color = ImVec4(cc.r, cc.g, cc.b, 1.0f);
     static bool side_preview = true;
     static int display_mode = 0;
     static int picker_mode = 0;
@@ -165,26 +172,29 @@ void App::Material() {
     if (display_mode == 4) flags |= ImGuiColorEditFlags_DisplayHex;
     ImGui::ColorPicker4("MyColor##4", (float*)&color, flags);
 
-    ImGui::SliderFloat("kd", &kd, 0, 1);
-    ImGui::SliderFloat("ks", &ks, 0, 1);
-    ImGui::SliderFloat("ns", &ns, 1, 150);
+    ImGui::SliderFloat("kd", &env.scene.kd, 0, 1);
+    ImGui::SliderFloat("ks", &env.scene.ks, 0, 1);
+    ImGui::SliderFloat("ns", &env.scene.ns, 1, 150);
+
+//    ImGui::SliderFloat("kd", &kd, 0, 1);
+//    ImGui::SliderFloat("ks", &ks, 0, 1);
+//    ImGui::SliderFloat("ns", &ns, 1, 150);
 
     if (ImGui::Button("Update Material")) {
-        Texture texture = {kd, ks, ns};
+        Texture texture = env.scene.focus_mesh->texture.material.texture;
         Color material_color = Color(color.x, color.y, color.z);
-        env.scene.change_material(material_color, texture);
+        env.scene.change_material(material_color, {texture.kd, texture.ks, texture.ns});
         env.render();
     }
 
     ImGui::Text("Light Options");
-    static float power = 20;
-    ImGui::SliderFloat("power", &power, 1, 150);
+    ImGui::SliderFloat("power", &env.scene.lights[0]->power, 1, 150);
+    ImGui::SliderFloat("Light X", &env.scene.lights[0]->center.x, -5, 5);
+    ImGui::SliderFloat("Light Y", &env.scene.lights[0]->center.y, -5, 5);
+    ImGui::SliderFloat("Light Z", &env.scene.lights[0]->center.z, -5, 5);
 
-    if (ImGui::Button("Update Light")) {
-        env.scene.lights[0]->power = power;
+    if (ImGui::Button("Update Light Color"))
         env.scene.lights[0]->color = Color(color.x, color.y, color.z);
-        env.render();
-    }
 }
 
 void App::CameraOption() {
@@ -232,7 +242,7 @@ void App::TreeNode() {
         std::string name = "> Mesh " + to_string(i);
         if (ImGui::Button(name.c_str())) {
             env.scene.change_focus(env.scene.meshes[i], i);
-            env.render(i);
+            env.render_all();
         }
         ImGui::SameLine();
         if (!env.scene.meshes[i]->watch) {
@@ -295,20 +305,36 @@ void App::TreeMesh(Mesh *mesh, int index) {
 
 void App::MeshOptions() {
     ImGui::Text("Main Mesh Actions : ");
-    static float v1 = 1.00f;
-    if (ImGui::Button("Move X")) { env.scene.move_x(v1); env.render(); }
-    ImGui::SameLine();
-    ImGui::SliderFloat("X", &v1, -5, 5);
+    if (env.scene.editmode) {
+        static float v1 = 1.00f;
+        if (ImGui::Button("Move X")) {
+            env.scene.move_x(v1);
+            env.render();
+        }
+        ImGui::SameLine();
+        ImGui::SliderFloat("X", &v1, -5, 5);
 
-    static float v2 = 1.00f;
-    if (ImGui::Button("Move Y")) { env.scene.move_y(v2); env.render(); }
-    ImGui::SameLine();
-    ImGui::SliderFloat("Y", &v2, -5, 5);
+        static float v2 = 1.00f;
+        if (ImGui::Button("Move Y")) {
+            env.scene.move_y(v2);
+            env.render();
+        }
+        ImGui::SameLine();
+        ImGui::SliderFloat("Y", &v2, -5, 5);
 
-    static float v3 = 1.00f;
-    if (ImGui::Button("Move Z")) { env.scene.move_z(v3); env.render(); }
-    ImGui::SameLine();
-    ImGui::SliderFloat("Z", &v3, -5, 5);
+        static float v3 = 1.00f;
+        if (ImGui::Button("Move Z")) {
+            env.scene.move_z(v3);
+            env.render();
+        }
+        ImGui::SameLine();
+        ImGui::SliderFloat("Z", &v3, -5, 5);
+    }
+    else {
+        ImGui::SliderFloat("X", &env.scene.dec_x, -5, 5);
+        ImGui::SliderFloat("Y", &env.scene.dec_y, -5, 5);
+        ImGui::SliderFloat("Z", &env.scene.dec_z, -5, 5);
+    }
 
     if (env.scene.selected_mode != 3) {
         static float scale = 1.00f;
@@ -395,8 +421,10 @@ void App::Inputs(const ImGuiIO& io, ImVec2 pos) {
                     env.scene.select_summit(region_x, region_y);
                     env.render();
                 }
-                else
-                    env.render(env.scene.select_mesh(region_x, region_y));
+                else {
+                    env.scene.select_mesh(region_x, region_y);
+                    env.render_all();
+                }
             }
         }
     }

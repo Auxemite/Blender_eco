@@ -21,6 +21,12 @@ class Scene
         int focus_index = -1;
         std::vector<Triangle *> focus_faces;
         Point3 *focus_summit = nullptr;
+        float dec_x = 0.0f;
+        float dec_y = 0.0f;
+        float dec_z = 0.0f;
+        float kd = 0.9f;
+        float ks = 0.1f;
+        float ns = 10.0f;
 
         // Flags
         int selected_mode = 0;
@@ -34,6 +40,7 @@ class Scene
         void move_camera_x(float angle);
         void move_camera_y(float angle);
         void zoom_camera(float value);
+        void change_material(float kd, float ks, float ns);
         void change_material(Color color, Texture texture);
 
         void move_camera_z(float angle);
@@ -41,6 +48,7 @@ class Scene
         void delete_mesh();
         int select_mesh(float x, float y);
         void select_summit(float x, float y);
+        void apply_mesh_changes();
         void change_focus(Mesh *mesh, int mesh_index);
         void change_focus(Mesh *mesh, Triangle *face);
         void change_focus(Mesh *mesh, Point3 *summit);

@@ -26,8 +26,7 @@ void ToggleFullscreen(GLFWwindow* window)
     isFullscreen = !isFullscreen;
 }
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
 //    submain2();
 //}
     glfwSetErrorCallback(glfw_error_callback);
@@ -36,20 +35,19 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-    if (!monitor)
-    {
+    GLFWmonitor *monitor = glfwGetPrimaryMonitor();
+    if (!monitor) {
         glfwTerminate();
         return 1;
     }
-    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+    const GLFWvidmode *mode = glfwGetVideoMode(monitor);
 
-    const char* glsl_version = "#version 330";
+    const char *glsl_version = "#version 330";
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, "Blender Eco ++", monitor, nullptr);
+    GLFWwindow *window = glfwCreateWindow(mode->width, mode->height, "Blender Eco ++", monitor, nullptr);
     if (window == nullptr) {
         std::cerr << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -73,7 +71,8 @@ int main(int argc, char** argv)
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGuiIO &io = ImGui::GetIO();
+    (void) io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
@@ -82,9 +81,8 @@ int main(int argc, char** argv)
     ImGui::StyleColorsCustom();
     //ImGui::StyleColorsLight();
 
-    ImGuiStyle& style = ImGui::GetStyle();
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-    {
+    ImGuiStyle &style = ImGui::GetStyle();
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
         style.WindowRounding = 0.0f;
         style.Colors[ImGuiCol_WindowBg].w = 1.0f;
     }
@@ -96,13 +94,24 @@ int main(int argc, char** argv)
     auto app = App();
     IM_ASSERT(app.env.image.width != 0);
 
-    unsigned int baseShaderProgram = createShaderProgram("../src/shaders/vrtx_base.glsl", "../src/shaders/frag_base.glsl");
-    unsigned int phongShaderProgram = createShaderProgram("../src/shaders/vrtx_gray.glsl",
-                                                     "../src/shaders/frag_phong.glsl",                                                     
-                                                     "../src/shaders/geo_gray.glsl");
-    unsigned int grayShaderProgram = createShaderProgram("../src/shaders/vrtx_gray.glsl",
-                                                                "../src/shaders/frag_gray.glsl",
-                                                     "../src/shaders/geo_gray.glsl");
+    char vtx_base[] = "../src/shaders/vrtx_base.glsl";
+    char vtx_gray[] = "../src/shaders/vrtx_gray.glsl";
+    char geo[] = "../src/shaders/geo_gray.glsl";
+    char frag_base[] = "../src/shaders/frag_base.glsl";
+    char frag_gray[] = "../src/shaders/frag_gray.glsl";
+    char frag_phong[] = "../src/shaders/frag_phong.glsl";
+    char frag_phong_ambient[] = "../src/shaders/frag_phong_ambient.glsl";
+    char frag_phong_diffuse[] = "../src/shaders/frag_phong_diffuse.glsl";
+    char frag_phong_specular[] = "../src/shaders/frag_phong_specular.glsl";
+
+    unsigned int shaderPrograms[6] = {
+            createShaderProgram(vtx_base,frag_base),
+            createShaderProgram(vtx_gray,frag_gray,geo),
+            createShaderProgram(vtx_gray,frag_phong,geo),
+            createShaderProgram(vtx_gray,frag_phong_ambient,geo),
+            createShaderProgram(vtx_gray,frag_phong_diffuse,geo),
+            createShaderProgram(vtx_gray,frag_phong_specular,geo)
+    };
     checkOpenGLError("Post shader compilation");
     app.env.load_grid();
     checkOpenGLError("Post Loading Data");
@@ -158,21 +167,14 @@ int main(int argc, char** argv)
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1920.0f / 1080.0f, 0.1f, 100.0f);
 
         if (app.env.scene.activate_grid)
-            app.env.draw_grid(baseShaderProgram, model, view, projection);
+            app.env.draw_grid(shaderPrograms[0], model, view, projection);
 
-        unsigned int shaderProgram;
-        if (render_mode == 0)
-            shaderProgram = grayShaderProgram;
-        else if (render_mode == 1)
-            shaderProgram = phongShaderProgram;
-        else
-            shaderProgram = baseShaderProgram;
         if (app.env.scene.editmode)
-            app.env.draw_data(shaderProgram, model, view, projection, app.env.scene.focus_index);
+            app.env.draw_data(shaderPrograms[render_mode], model, view, projection, app.env.scene.focus_index);
         else {
             for (int i = 0; i < app.env.scene.meshes.size(); ++i) {
                 if (app.env.scene.meshes[i]->watch)
-                    app.env.draw_data(shaderProgram, model, view, projection, i);
+                    app.env.draw_data(shaderPrograms[render_mode], model, view, projection, i);
             }
         }
 
@@ -193,9 +195,8 @@ int main(int argc, char** argv)
     for (int i = 0; i < app.env.scene.meshes.size(); ++i)
         app.env.cleanup(i);
 
-    glDeleteProgram(grayShaderProgram);
-    glDeleteProgram(baseShaderProgram);
-    glDeleteProgram(phongShaderProgram);
+    for (unsigned int shaderProgram : shaderPrograms)
+        glDeleteProgram(shaderProgram);
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
