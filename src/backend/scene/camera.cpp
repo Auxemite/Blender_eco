@@ -16,7 +16,7 @@ void Camera::update(const Point3& center_, const Point3& lookat_)
     if (lookat_ != 0)
         lookat = lookat_;
 
-    float z_min = 1.0f;
+    float z_min = 1.3f;
     float screen_height = 1.0f;
     float screen_width = screen_height * (static_cast<float>(width)/static_cast<float>(height));
     Vector3 lookat_vect = (lookat - center).norm() * z_min;
@@ -27,7 +27,7 @@ void Camera::update(const Point3& center_, const Point3& lookat_)
     pixel_u = u / static_cast<float>(width);
     pixel_v = v / static_cast<float>(height);
 
-    auto upper_left = center + lookat_vect - u / 2 - v /2;
+    auto upper_left = center + lookat_vect - u / 2 - v / 2;
     pixel_loc = upper_left + (pixel_u + pixel_v) * 0.5;
 }
 

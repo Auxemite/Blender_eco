@@ -3,6 +3,15 @@ project(blender_eco)
 
 set(CMAKE_CXX_STANDARD 17)
 
+set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
+
+set(BLENDER_ECO_DEP C:/Users/ernes/Desktop/Travail/S8/Isim/Blender_eco/dep/)
+
+find_package(OpenGL REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(glm CONFIG REQUIRED)
+
 add_executable(blender_eco main.cpp
         src/frontend/imgui/imconfig.h
         src/frontend/imgui/imgui.cpp
@@ -46,34 +55,18 @@ add_executable(blender_eco main.cpp
         src/backend/utils/utils.hh
         src/backend/render/intersection.hh
         src/backend/render/intersection.cpp
+
+        src/frontend/inputs.hh
+        src/frontend/render_utils.h
+        submain.hh
+        src/frontend/render_utils.cpp
+        src/frontend/inputs.cpp
+        #        submain2.hh
+#        srce/Camera.h
+#        srce/Mesh.h
+#        srce/Model.h
+#        srce/Shader.h
 )
 
-find_package(OpenGL REQUIRED)
-target_link_libraries(blender_eco PUBLIC OpenGL::GL)
-
-find_package(glfw3 CONFIG REQUIRED)
-target_link_libraries(blender_eco PUBLIC glfw)
-
-
-## FOR DEBUG
-#
-#add_executable(blender_eco main_debug.cpp
-#        src/backend/utils/vector3.hh
-#        src/backend/utils/vector3.cpp
-#        src/backend/utils/color.hh
-#        src/backend/utils/color.cpp
-#        src/backend/image/image.hh
-#        src/backend/image/image.cpp
-#        src/backend/scene/object.hh
-#        src/backend/scene/object.cpp
-#        src/backend/scene/light.hh
-#        src/backend/scene/camera.hh
-#        src/backend/scene/camera.cpp
-#        src/backend/scene/scene.hh
-#        src/backend/scene/scene.cpp
-#        src/backend/utils/texture_material.hh
-#        src/backend/utils/texture_material.cpp
-#        src/backend/utils/utils.hh
-#        src/backend/render/intersection.hh
-#        src/backend/render/intersection.cpp
-#)
+target_link_libraries(blender_eco PRIVATE OpenGL::GL glfw GLEW::GLEW)
+target_include_directories(blender_eco PRIVATE ${GLM_INCLUDE_DIRS})
