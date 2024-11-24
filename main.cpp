@@ -6,29 +6,17 @@
 //MY INCLUDES
 #include "src/frontend/app.hh"
 #include "src/frontend/inputs.hh"
-//#include "submain.hh"
+//#include "subtest.hh"
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1900) && !defined(IMGUI_DISABLE_WIN32_FUNCTIONS)
 #pragma comment(lib, "legacy_stdio_definitions")
 #endif
 
-void ToggleFullscreen(GLFWwindow* window)
-{
-    if (isFullscreen)
-        glfwSetWindowMonitor(window, nullptr, 0, 0, WIDTH, HEIGHT, 0);
-    else
-    {
-        monitor = glfwGetPrimaryMonitor();
-        mode = glfwGetVideoMode(monitor);
-        glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
-    }
-
-    isFullscreen = !isFullscreen;
-}
+void ToggleFullscreen(GLFWwindow* window);
 
 int main(int argc, char** argv) {
 //    submain2();
-//}
+//}/*
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW" << std::endl;
@@ -100,33 +88,25 @@ int main(int argc, char** argv) {
     char frag_base[] = "../src/shaders/frag_base.glsl";
     char frag_gray[] = "../src/shaders/frag_gray.glsl";
     char frag_phong[] = "../src/shaders/frag_phong.glsl";
-    char frag_phong_ambient[] = "../src/shaders/frag_phong_ambient.glsl";
-    char frag_phong_diffuse[] = "../src/shaders/frag_phong_diffuse.glsl";
-    char frag_phong_specular[] = "../src/shaders/frag_phong_specular.glsl";
 
     unsigned int shaderPrograms[6] = {
-            createShaderProgram(vtx_base,frag_base),
-            createShaderProgram(vtx_gray,frag_gray,geo),
-            createShaderProgram(vtx_gray,frag_phong,geo),
-            createShaderProgram(vtx_gray,frag_phong_ambient,geo),
-            createShaderProgram(vtx_gray,frag_phong_diffuse,geo),
-            createShaderProgram(vtx_gray,frag_phong_specular,geo)
+            createShaderProgram(vtx_base, frag_base),
+            createShaderProgram(vtx_gray, frag_gray, geo),
+            createShaderProgram(vtx_gray, frag_phong, geo)
     };
     checkOpenGLError("Post shader compilation");
     app.env.load_grid();
     checkOpenGLError("Post Loading Data");
     //TODO CODE HERE
 
-    while (!glfwWindowShouldClose(window))
-    {
+    while (!glfwWindowShouldClose(window)) {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
         if (glfwGetKey(window, GLFW_KEY_GRAVE_ACCENT) == GLFW_PRESS)
             break;
-        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        {
+        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
             ToggleFullscreen(window);
             while (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
                 glfwPollEvents();
@@ -148,8 +128,6 @@ int main(int argc, char** argv) {
         glViewport(0, 0, display_w, display_h);
         glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
-//        glClear(GL_COLOR_BUFFER_BIT);
 
         glm::vec3 center = glm::vec3(0.0f);
         if (!alpha_feature) {
@@ -180,9 +158,8 @@ int main(int argc, char** argv) {
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-        {
-            GLFWwindow* backup_current_context = glfwGetCurrentContext();
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+            GLFWwindow *backup_current_context = glfwGetCurrentContext();
             ImGui::UpdatePlatformWindows();
             ImGui::RenderPlatformWindowsDefault();
             glfwMakeContextCurrent(backup_current_context);
@@ -195,7 +172,7 @@ int main(int argc, char** argv) {
     for (int i = 0; i < app.env.scene.meshes.size(); ++i)
         app.env.cleanup(i);
 
-    for (unsigned int shaderProgram : shaderPrograms)
+    for (unsigned int shaderProgram: shaderPrograms)
         glDeleteProgram(shaderProgram);
 
     ImGui_ImplOpenGL3_Shutdown();
@@ -207,3 +184,19 @@ int main(int argc, char** argv) {
 
     return 0;
 }
+
+void ToggleFullscreen(GLFWwindow* window)
+{
+    if (isFullscreen)
+        glfwSetWindowMonitor(window, nullptr, 0, 0, WIDTH, HEIGHT, 0);
+    else
+    {
+        monitor = glfwGetPrimaryMonitor();
+        mode = glfwGetVideoMode(monitor);
+        glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+    }
+
+    isFullscreen = !isFullscreen;
+}
+
+//*/

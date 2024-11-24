@@ -57,15 +57,19 @@ add_executable(blender_eco main.cpp
         src/backend/render/intersection.cpp
 
         src/frontend/inputs.hh
-        src/frontend/render_utils.h
-        submain.hh
-        src/frontend/render_utils.cpp
         src/frontend/inputs.cpp
+
+        src/frontend/shader_utils.hh
+        src/frontend/shader_utils.cpp
+        maintest.hh
+        maintest.hh
+        src/frontend/app_utils.hh
+        src/frontend/app_utils.cpp
+        src/frontend/ui_tree.hh
+        src/frontend/ui_tree.cpp
+        src/frontend/mesh_action.hh
+        src/frontend/mesh_action.cpp
         #        submain2.hh
-#        srce/Camera.h
-#        srce/Mesh.h
-#        srce/Model.h
-#        srce/Shader.h
 )
 
 target_link_libraries(blender_eco PRIVATE OpenGL::GL glfw GLEW::GLEW)

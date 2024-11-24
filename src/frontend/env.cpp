@@ -8,6 +8,8 @@ Env::Env() {
     VBOs = std::vector<unsigned int>(1, 0);
     VAOs = std::vector<unsigned int>(1, 0);
     EBOs = std::vector<unsigned int>(1, 0);
+    gridVBO = 0;
+    gridVAO = 0;
     update_data(0);
 }
 

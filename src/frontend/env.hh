@@ -14,7 +14,7 @@
 
 #include "../backend/render/intersection.hh"
 #include "../backend/image/image.hh"
-#include "render_utils.h"
+#include "shader_utils.hh"
 
 #define WIDTH 1920
 #define HEIGHT 1080

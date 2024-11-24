@@ -1,9 +1,39 @@
 #pragma once
-#include "src/frontend/render_utils.h"
-#include "src/frontend/inputs.hh"
+
+#include "src/frontend/shader_utils.hh"
 
 inline glm::vec3 cameraPos;
-inline unsigned int VBO, VAO, EBO;
+inline glm::vec3 cameraFront;
+inline glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+inline glm::vec3 cameraDec = glm::vec3(0.0f, 5.0f, 0.0f); //decalage
+inline float lastFrame = 0.0;
+unsigned int VBO, VAO, EBO;
+inline float deltaTime = 0.0f;
+inline float radius = 10.0f;
+inline float yaw = -45.0f;
+inline float pitch =  0.0f;
+inline int speed_rotation = 30;
+inline int speed_zoom = 10;
+
+void processInpute(GLFWwindow* window) {
+    float cameraSpeedz = speed_zoom * deltaTime;
+    float cameraSpeedr = speed_rotation * 10.0f * deltaTime;
+    if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
+        radius -= cameraSpeedz;
+    if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
+        radius += cameraSpeedz;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        yaw -= cameraSpeedr;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        yaw += cameraSpeedr;
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        cameraDec.y += cameraSpeedz;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        cameraDec.y -= cameraSpeedz;
+
+    radius = glm::clamp(radius, 1.0f, 100.0f);
+}
 
 void load_data() {
     float vertices[] = {
@@ -173,7 +203,7 @@ int submain2() {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        processInput(window);
+        processInpute(window);
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
