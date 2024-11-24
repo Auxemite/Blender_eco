@@ -213,10 +213,14 @@ void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view,
     unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
     unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
     unsigned int projLoc = glGetUniformLocation(shaderProgram, "projection");
+    unsigned int fur_lengthLoc = glGetUniformLocation(shaderProgram, "fur_length");
+    unsigned int fur_sizeLoc = glGetUniformLocation(shaderProgram, "fur_size");
 
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+    glUniform1i(fur_lengthLoc, fur_length);
+    glUniform1f(fur_sizeLoc, fur_size);
 
     unsigned int positionDec = glGetUniformLocation(shaderProgram, "positionDec");
     if (scene.focus_index == mesh_index)

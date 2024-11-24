@@ -36,6 +36,8 @@ void App::ShadersOptions() {
     if (ImGui::Button("Normals")) { render_mode = 1; env.render_all(); }
     ImGui::SameLine();
     if (ImGui::Button("Phong")) { render_mode = 2; env.render_all(); }
+    ImGui::SameLine();
+    if (ImGui::Button("Fur")) { render_mode = 3; env.render_all(); }
     ImGui::End();
 }
 
@@ -73,6 +75,9 @@ void App::MainOptions() {
     ImGui::SameLine();
     if (ImGui::Button("Update All"))
         env.render_all();
+
+    ImGui::SliderInt("Fur Length", &fur_length, 1, 10);
+    ImGui::SliderFloat("Fur Size", &fur_size, 0, 1);
 
     ImGui::End();
 }

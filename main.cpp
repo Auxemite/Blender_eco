@@ -82,17 +82,26 @@ int main(int argc, char** argv) {
     auto app = App();
     IM_ASSERT(app.env.image.width != 0);
 
-    char vtx_base[] = "../src/shaders/vrtx_base.glsl";
-    char vtx_gray[] = "../src/shaders/vrtx_gray.glsl";
-    char geo[] = "../src/shaders/geo_gray.glsl";
-    char frag_base[] = "../src/shaders/frag_base.glsl";
-    char frag_gray[] = "../src/shaders/frag_gray.glsl";
-    char frag_phong[] = "../src/shaders/frag_phong.glsl";
+    char vtx_basic[] = "../src/shaders/basic/basic.vtx";
+    char frag_basic[] = "../src/shaders/basic/basic.frag";
+
+    char vtx_normal[] = "../src/shaders/normal/normal.vtx";
+    char geo_normal[] = "../src/shaders/normal/normal.geo";
+    char frag_normal[] = "../src/shaders/normal/normal.frag";
+
+    char vtx_phong[] = "../src/shaders/phong/phong.vtx";
+    char geo_phong[] = "../src/shaders/phong/phong.geo";
+    char frag_phong[] = "../src/shaders/phong/phong.frag";
+
+    char vtx_hair[] = "../src/shaders/hair/hair.vtx";
+    char geo_hair[] = "../src/shaders/hair/hair.geo";
+    char frag_hair[] = "../src/shaders/hair/hair.frag";
 
     unsigned int shaderPrograms[6] = {
-            createShaderProgram(vtx_base, frag_base),
-            createShaderProgram(vtx_gray, frag_gray, geo),
-            createShaderProgram(vtx_gray, frag_phong, geo)
+            createShaderProgram(vtx_basic, frag_basic),
+            createShaderProgram(vtx_normal, frag_normal, geo_normal),
+            createShaderProgram(vtx_phong, frag_phong, geo_phong),
+            createShaderProgram(vtx_hair, frag_hair, geo_hair)
     };
     checkOpenGLError("Post shader compilation");
     app.env.load_grid();

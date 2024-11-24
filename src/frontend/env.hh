@@ -54,6 +54,10 @@ inline float zoom_sensitivity = 0.5f;
 inline int render_mode = 1;
 inline bool display_image = false;
 
+// Fur Flags
+inline int fur_length = 3;
+inline float fur_size = 0.1;
+
 class Env {
     public:
     GLuint render_image{};
