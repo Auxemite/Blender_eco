@@ -1,4 +1,6 @@
+#include <filesystem>
 #include "app_utils.hh"
+namespace fs = std::filesystem;
 
 void saveFile(Mesh *focus_mesh) {
     if (ImGui::Button("Save file as"))
@@ -32,16 +34,24 @@ void raycastRender(Env& env) {
                      ImVec2(static_cast<float>(env.image.width), static_cast<float>(env.image.height)));
 
         if (ImGui::Button("Change background"))
+        {
             ImGui::OpenPopup("change_bg");
+            std::string path = "../data/";
+            mesh_names.clear();
+            for (const auto & entry : fs::directory_iterator(path))
+                if (entry.path().extension() == ".ppm")
+                    mesh_names.push_back(entry.path().stem().string());
+        }
         if (ImGui::BeginPopup("change_bg"))
         {
             ImGui::SeparatorText("Background Images");
-            for (auto & i : background_names)
-                if (ImGui::Selectable(i)) {
-                    std::string name = i;
-                    name[0] = tolower(name[0]);
-                    env.change_bg(name);
+            for (const std::string& filename : mesh_names) {
+                std::string ui_filename = filename;
+                ui_filename[0] = toupper(ui_filename[0]);
+                if (ImGui::Selectable(ui_filename.c_str())) {
+                    env.change_bg(filename);
                 }
+            }
             ImGui::EndPopup();
         }
 
@@ -96,16 +106,24 @@ void colorSetup(ImVec4& color) {
 
 void addMesh(Env& env) {
     if (ImGui::Button("Add Mesh"))
+    {
         ImGui::OpenPopup("add_mesh");
+        std::string path = "../data/";
+        mesh_names.clear();
+        for (const auto & entry : fs::directory_iterator(path))
+            if (entry.path().extension() == ".obj")
+                mesh_names.push_back(entry.path().stem().string());
+    }
     if (ImGui::BeginPopup("add_mesh"))
     {
         ImGui::SeparatorText("Mesh Types");
-        for (auto & i : mesh_names)
-            if (ImGui::Selectable(i)) {
-                std::string name = i;
-                name[0] = tolower(name[0]);
-                env.add_mesh(name);
+        for (const std::string& filename : mesh_names) {
+            std::string ui_filename = filename;
+            ui_filename[0] = toupper(ui_filename[0]);
+            if (ImGui::Selectable(ui_filename.c_str())) {
+                env.add_mesh(filename);
             }
+        }
         ImGui::EndPopup();
     }
 }
