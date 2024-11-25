@@ -57,6 +57,7 @@ inline bool display_image = false;
 // Fur Flags
 inline int fur_length = 3;
 inline float fur_size = 0.1;
+inline bool fur = false;
 
 class Env {
     public:

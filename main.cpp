@@ -30,9 +30,9 @@ int main(int argc, char** argv) {
     }
     const GLFWvidmode *mode = glfwGetVideoMode(monitor);
 
-    const char *glsl_version = "#version 330";
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    const char *glsl_version = "#version 450";
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     GLFWwindow *window = glfwCreateWindow(mode->width, mode->height, "Blender Eco ++", monitor, nullptr);
@@ -160,8 +160,11 @@ int main(int argc, char** argv) {
             app.env.draw_data(shaderPrograms[render_mode], model, view, projection, app.env.scene.focus_index);
         else {
             for (int i = 0; i < app.env.scene.meshes.size(); ++i) {
-                if (app.env.scene.meshes[i]->watch)
+                if (app.env.scene.meshes[i]->watch) {
                     app.env.draw_data(shaderPrograms[render_mode], model, view, projection, i);
+                    if (fur)
+                        app.env.draw_data(shaderPrograms[3], model, view, projection, i);
+                }
             }
         }
 

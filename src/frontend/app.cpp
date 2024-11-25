@@ -37,7 +37,7 @@ void App::ShadersOptions() {
     ImGui::SameLine();
     if (ImGui::Button("Phong")) { render_mode = 2; env.render_all(); }
     ImGui::SameLine();
-    if (ImGui::Button("Fur")) { render_mode = 3; env.render_all(); }
+    ImGui::Checkbox("Fur", &fur);
     ImGui::End();
 }
 
