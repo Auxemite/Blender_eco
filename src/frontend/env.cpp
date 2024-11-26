@@ -221,7 +221,7 @@ void anim(unsigned int program_id) {
 
 void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection, int mesh_index, int render_id) {
     glUseProgram(shaderProgram);
-    if (render_id == 4 || render_id == 5) {
+    if (render_id == 3 || render_id == 4) {
         double current_time = glfwGetTime();
         if (current_time - last_time >= timer_interval) {
             anim(shaderProgram);
@@ -279,7 +279,7 @@ void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view,
         glUniform3f(materialAttrLoc, scene.ns, scene.kd, scene.ks);
 
     glBindVertexArray(VAOs[mesh_index]);
-    if (render_id == 4 || render_id == 5) {
+    if (render_id == 3 || render_id == 4) {
         glPatchParameteri(GL_PATCH_VERTICES, 3);
         glDrawArrays(GL_PATCHES, 0, scene.meshes[mesh_index]->faces.size() * 3);
     }

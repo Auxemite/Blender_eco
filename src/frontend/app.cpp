@@ -37,9 +37,9 @@ void App::ShadersOptions() {
     ImGui::SameLine();
     if (ImGui::Button("Phong")) { render_mode = 2; env.render_all(); }
     ImGui::SameLine();
-    if (ImGui::Button("Wave")) { render_mode = 4; env.render_all(); }
+    if (ImGui::Button("Fur only")) { render_mode = 3; env.render_all(); }
     ImGui::SameLine();
-    if (ImGui::Button("Hair Wave")) { render_mode = 5; env.render_all(); }
+    if (ImGui::Button("Wave")) { render_mode = 4; env.render_all(); }
     ImGui::SameLine();
     ImGui::Checkbox("Fur", &fur);
     ImGui::End();

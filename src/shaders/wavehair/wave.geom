@@ -27,7 +27,7 @@ void main() {
 //      color_frag = color_mean;
       gl_Position = projection * view * model * vec4(source, 1.0);
       EmitVertex();
-      source = normal * i + origin.xyz + vec3(0.0, -1.0/2.0 * i * i * 9.81 * 9.8, 0.0);
+      source = normal * i + origin.xyz;// + vec3(0.0, -1.0/2.0 * i * i * 9.81 * 9.8, 0.0);
   }
   EndPrimitive();
 }

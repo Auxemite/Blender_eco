@@ -64,8 +64,8 @@ inline bool fur = false;
 inline float last_time = 0.0f;
 inline float timer_interval = 0.033f;
 
-inline float waveAmplitude[3] = { 0.0f, 0.4f, 0.0f};
-inline float waveFrequency[3] = { 0.0f, 5.0f, 0.0f};
+inline float waveAmplitude[3] = { 0.0f, 0.0f, 0.0f};
+inline float waveFrequency[3] = { 0.0f, 0.0f, 0.0f};
 
 class Env {
     public:
