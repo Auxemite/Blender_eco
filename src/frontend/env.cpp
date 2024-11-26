@@ -221,27 +221,32 @@ void anim(unsigned int program_id) {
 
 void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection, int mesh_index, int render_id) {
     glUseProgram(shaderProgram);
-    if (render_id == 4) {
+    if (render_id == 4 || render_id == 5) {
         double current_time = glfwGetTime();
         if (current_time - last_time >= timer_interval) {
             anim(shaderProgram);
             last_time = current_time;
         }
     }
+    unsigned int fur_lengthLoc = glGetUniformLocation(shaderProgram, "fur_length");
+    unsigned int fur_sizeLoc = glGetUniformLocation(shaderProgram, "fur_size");
+    unsigned int surfaceLoc = glGetUniformLocation(shaderProgram, "surface");
+    unsigned int amplitudeLoc = glGetUniformLocation(shaderProgram, "wave_amplitude");
+    unsigned int frequencyLoc = glGetUniformLocation(shaderProgram, "wave_frequency");
+
+    glUniform1i(fur_lengthLoc, fur_length);
+    glUniform1f(fur_sizeLoc, fur_size);
+    glUniform1i(surfaceLoc, tesselation_surface);
+    glUniform3f(amplitudeLoc, waveAmplitude[0], waveAmplitude[1], waveAmplitude[2]);
+    glUniform3f(frequencyLoc, waveFrequency[0], waveFrequency[1], waveFrequency[2]);
 
     unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
     unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
     unsigned int projLoc = glGetUniformLocation(shaderProgram, "projection");
-    unsigned int fur_lengthLoc = glGetUniformLocation(shaderProgram, "fur_length");
-    unsigned int fur_sizeLoc = glGetUniformLocation(shaderProgram, "fur_size");
-    unsigned int surfaceLoc = glGetUniformLocation(shaderProgram, "surface");
 
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-    glUniform1i(fur_lengthLoc, fur_length);
-    glUniform1f(fur_sizeLoc, fur_size);
-    glUniform1i(surfaceLoc, tesselation_surface);
 
     unsigned int positionDec = glGetUniformLocation(shaderProgram, "positionDec");
     if (scene.focus_index == mesh_index)
@@ -274,7 +279,7 @@ void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view,
         glUniform3f(materialAttrLoc, scene.ns, scene.kd, scene.ks);
 
     glBindVertexArray(VAOs[mesh_index]);
-    if (render_id == 4) {
+    if (render_id == 4 || render_id == 5) {
         glPatchParameteri(GL_PATCH_VERTICES, 3);
         glDrawArrays(GL_PATCHES, 0, scene.meshes[mesh_index]->faces.size() * 3);
     }

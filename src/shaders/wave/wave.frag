@@ -1,7 +1,6 @@
 #version 450 core
 
 in vec4 p;
-in float delta;
 //in vec3 frag_color;
 
 out vec4 FragColor;
@@ -17,6 +16,6 @@ void main() {
     vec3 object_color = vec3(0.0, 1.0, 1.0);
     float lightPower = 150.0;
 
-    float diffuse = max(dot(normalize(normal), lightDir), 0.3f);
+    float diffuse = max(dot(normalize(normal), lightDir), 0.3);
     FragColor = vec4(object_color * diffuse, 1.0);
 }
