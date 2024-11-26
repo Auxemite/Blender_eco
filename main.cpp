@@ -151,7 +151,7 @@ int main(int argc, char** argv) {
             for (int i = 0; i < app.env.scene.meshes.size(); ++i) {
                 if (app.env.scene.meshes[i]->watch) {
                     app.env.draw_data(shaderPrograms[render_mode], model, view, projection, i, render_mode);
-                    if (fur)
+                    if (fur && render_mode != 4)
                         app.env.draw_data(shaderPrograms[3], model, view, projection, i, 3);
                     checkOpenGLError("Post draw_data of mesh " + std::to_string(i));
                 }
