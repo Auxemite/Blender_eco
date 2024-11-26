@@ -1,4 +1,3 @@
-#include <filesystem>
 #include "app_utils.hh"
 namespace fs = std::filesystem;
 
@@ -37,15 +36,15 @@ void raycastRender(Env& env) {
         {
             ImGui::OpenPopup("change_bg");
             std::string path = "../data/";
-            mesh_names.clear();
+            background_names.clear();
             for (const auto & entry : fs::directory_iterator(path))
                 if (entry.path().extension() == ".ppm")
-                    mesh_names.push_back(entry.path().stem().string());
+                    background_names.push_back(entry.path().stem().string());
         }
         if (ImGui::BeginPopup("change_bg"))
         {
             ImGui::SeparatorText("Background Images");
-            for (const std::string& filename : mesh_names) {
+            for (const std::string& filename : background_names) {
                 std::string ui_filename = filename;
                 ui_filename[0] = toupper(ui_filename[0]);
                 if (ImGui::Selectable(ui_filename.c_str())) {

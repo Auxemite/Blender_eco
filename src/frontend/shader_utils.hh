@@ -10,12 +10,11 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <filesystem>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void glfw_error_callback(int error, const char* description);
 void checkOpenGLError(const std::string &message);
 std::string readShaderSource(const std::string& filepath);
 unsigned int compileShader(const std::string& source, GLenum type);
-unsigned int createShaderProgram(const std::string& vertexPath,
-                                 const std::string& fragmentPath,
-                                 const std::string& geometryPath = "");
+unsigned int createShaderProgram(const std::string& path);

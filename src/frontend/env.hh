@@ -57,7 +57,12 @@ inline bool display_image = false;
 // Fur Flags
 inline int fur_length = 3;
 inline float fur_size = 0.1;
+inline int tesselation_surface = 10;
 inline bool fur = false;
+
+// Time Flags
+inline float last_time = 0.0f;
+inline float timer_interval = 0.033f;
 
 class Env {
     public:
@@ -101,7 +106,7 @@ class Env {
     void cleanup(int mesh_index);
     void load_data(int mesh_index, std::vector<float> vertices, std::vector<int> indices);
     void load_grid();
-    void draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection, int mesh_index);
+    void draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection, int mesh_index, int render_id);
     void draw_grid(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
 };
 

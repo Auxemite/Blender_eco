@@ -168,6 +168,7 @@ void Env::load_data(int mesh_index, std::vector<float> vertices, std::vector<int
     glGenVertexArrays(1, &(VAOs[mesh_index]));
     glGenBuffers(1, &(VBOs[mesh_index]));
     glGenBuffers(1, &(EBOs[mesh_index]));
+    checkOpenGLError("load_data : gen buffers");
 
     glBindVertexArray(VAOs[mesh_index]);
 
@@ -177,10 +178,14 @@ void Env::load_data(int mesh_index, std::vector<float> vertices, std::vector<int
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[mesh_index]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * indices.size(), indices.data(), GL_STATIC_DRAW);
 
+    checkOpenGLError("load_data : bind buffers");
+
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    checkOpenGLError("load_data : enable attributes");
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -207,20 +212,36 @@ void Env::load_grid() {
     glBindVertexArray(0);
 }
 
-void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection, int mesh_index) {
+void anim(unsigned int program_id) {
+    static float anim_time = 0.0f;
+    GLint anim_time_location = glGetUniformLocation(program_id, "anim_time");
+    glUniform1f(anim_time_location, anim_time);
+    anim_time += 0.1f; // Increment animation time
+}
+
+void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection, int mesh_index, int render_id) {
     glUseProgram(shaderProgram);
+    if (render_id == 4) {
+        double current_time = glfwGetTime();
+        if (current_time - last_time >= timer_interval) {
+            anim(shaderProgram);
+            last_time = current_time;
+        }
+    }
 
     unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
     unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
     unsigned int projLoc = glGetUniformLocation(shaderProgram, "projection");
     unsigned int fur_lengthLoc = glGetUniformLocation(shaderProgram, "fur_length");
     unsigned int fur_sizeLoc = glGetUniformLocation(shaderProgram, "fur_size");
+    unsigned int surfaceLoc = glGetUniformLocation(shaderProgram, "surface");
 
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
     glUniform1i(fur_lengthLoc, fur_length);
     glUniform1f(fur_sizeLoc, fur_size);
+    glUniform1i(surfaceLoc, tesselation_surface);
 
     unsigned int positionDec = glGetUniformLocation(shaderProgram, "positionDec");
     if (scene.focus_index == mesh_index)
@@ -253,7 +274,12 @@ void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view,
         glUniform3f(materialAttrLoc, scene.ns, scene.kd, scene.ks);
 
     glBindVertexArray(VAOs[mesh_index]);
-    glDrawElements(GL_TRIANGLES, scene.meshes[mesh_index]->faces.size() * 3, GL_UNSIGNED_INT, 0);
+    if (render_id == 4) {
+        glPatchParameteri(GL_PATCH_VERTICES, 3);
+        glDrawArrays(GL_PATCHES, 0, scene.meshes[mesh_index]->faces.size() * 3);
+    }
+    else
+        glDrawElements(GL_TRIANGLES, scene.meshes[mesh_index]->faces.size() * 3, GL_UNSIGNED_INT, 0);
 }
 
 void Env::draw_grid(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection) {

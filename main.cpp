@@ -82,34 +82,22 @@ int main(int argc, char** argv) {
     auto app = App();
     IM_ASSERT(app.env.image.width != 0);
 
-    char vtx_basic[] = "../src/shaders/basic/basic.vtx";
-    char frag_basic[] = "../src/shaders/basic/basic.frag";
-
-    char vtx_normal[] = "../src/shaders/normal/normal.vtx";
-    char geo_normal[] = "../src/shaders/normal/normal.geo";
-    char frag_normal[] = "../src/shaders/normal/normal.frag";
-
-    char vtx_phong[] = "../src/shaders/phong/phong.vtx";
-    char geo_phong[] = "../src/shaders/phong/phong.geo";
-    char frag_phong[] = "../src/shaders/phong/phong.frag";
-
-    char vtx_hair[] = "../src/shaders/hair/hair.vtx";
-    char geo_hair[] = "../src/shaders/hair/hair.geo";
-    char frag_hair[] = "../src/shaders/hair/hair.frag";
-
     unsigned int shaderPrograms[6] = {
-            createShaderProgram(vtx_basic, frag_basic),
-            createShaderProgram(vtx_normal, frag_normal, geo_normal),
-            createShaderProgram(vtx_phong, frag_phong, geo_phong),
-            createShaderProgram(vtx_hair, frag_hair, geo_hair)
+            createShaderProgram("../src/shaders/basic"),
+            createShaderProgram("../src/shaders/normal"),
+            createShaderProgram("../src/shaders/phong"),
+            createShaderProgram("../src/shaders/hair"),
+            createShaderProgram("../src/shaders/wave")
     };
     checkOpenGLError("Post shader compilation");
     app.env.load_grid();
     checkOpenGLError("Post Loading Data");
+    last_time = static_cast<float>(glfwGetTime());
+    timer_interval = 0.033;
     //TODO CODE HERE
 
     while (!glfwWindowShouldClose(window)) {
-        float currentFrame = glfwGetTime();
+        float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
@@ -157,13 +145,14 @@ int main(int argc, char** argv) {
             app.env.draw_grid(shaderPrograms[0], model, view, projection);
 
         if (app.env.scene.editmode)
-            app.env.draw_data(shaderPrograms[render_mode], model, view, projection, app.env.scene.focus_index);
+            app.env.draw_data(shaderPrograms[render_mode], model, view, projection, app.env.scene.focus_index, render_mode);
         else {
             for (int i = 0; i < app.env.scene.meshes.size(); ++i) {
                 if (app.env.scene.meshes[i]->watch) {
-                    app.env.draw_data(shaderPrograms[render_mode], model, view, projection, i);
+                    app.env.draw_data(shaderPrograms[render_mode], model, view, projection, i, render_mode);
                     if (fur)
-                        app.env.draw_data(shaderPrograms[3], model, view, projection, i);
+                        app.env.draw_data(shaderPrograms[3], model, view, projection, i, 3);
+                    checkOpenGLError("Post draw_data of mesh " + std::to_string(i));
                 }
             }
         }

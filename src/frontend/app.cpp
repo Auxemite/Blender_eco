@@ -37,6 +37,8 @@ void App::ShadersOptions() {
     ImGui::SameLine();
     if (ImGui::Button("Phong")) { render_mode = 2; env.render_all(); }
     ImGui::SameLine();
+    if (ImGui::Button("Wave")) { render_mode = 4; env.render_all(); }
+    ImGui::SameLine();
     ImGui::Checkbox("Fur", &fur);
     ImGui::End();
 }
@@ -78,6 +80,7 @@ void App::MainOptions() {
 
     ImGui::SliderInt("Fur Length", &fur_length, 1, 10);
     ImGui::SliderFloat("Fur Size", &fur_size, 0, 1);
+    ImGui::SliderInt("Tesselation Surface", &tesselation_surface, 1, 50);
 
     ImGui::End();
 }

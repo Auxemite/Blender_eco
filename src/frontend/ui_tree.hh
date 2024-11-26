@@ -4,7 +4,7 @@
 #include "env.hh"
 #include "app_utils.hh"
 
-static const char* eye[] = {"<O>", "<Ø>"};
+static const char* eye[] = {"<Ø>", "<O>"};
 
 void TreeNode(Env& env);
 void treeMesh(Env& env, int index);
