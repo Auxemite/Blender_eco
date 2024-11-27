@@ -12,6 +12,7 @@ class App {
 
     void Windows();
     void MainOptions();
+    void SpecialOptions();
     void ShadersOptions();
     void Material();
     void MeshOptions();

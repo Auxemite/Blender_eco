@@ -64,8 +64,9 @@ inline bool fur = false;
 inline float last_time = 0.0f;
 inline float timer_interval = 0.033f;
 
-inline float waveAmplitude[3] = { 0.0f, 0.0f, 0.0f};
-inline float waveFrequency[3] = { 0.0f, 0.0f, 0.0f};
+inline glm::vec3 waveAmplitude = glm::vec3(0.0f, 0.0f, 0.0f);
+inline glm::vec3 waveFrequency = glm::vec3(0.0f, 0.0f, 0.0f);
+inline bool waveDependance[3][2] = {{false, false}, {false, false}, {false, false}};
 
 class Env {
     public:
@@ -84,11 +85,13 @@ class Env {
 //    std::vector<float> vertices;
 //    std::vector<int> indices;
     std::vector<float> gridVertices;
+
     std::vector<unsigned int> VBOs;
     std::vector<unsigned int> VAOs;
     std::vector<unsigned int> EBOs;
-
     unsigned int gridVBO, gridVAO;
+    unsigned int furVBO, furVAO;
+    std::vector<float> furVertices;
 
     Env();
 
@@ -109,8 +112,11 @@ class Env {
     void cleanup(int mesh_index);
     void load_data(int mesh_index, std::vector<float> vertices, std::vector<int> indices);
     void load_grid();
+    void load_fur();
     void draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection, int mesh_index, int render_id);
     void draw_grid(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
+    void drawFur(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
 };
 
 std::vector<float> generateGrid(int gridSize);
+std::vector<float> generateFur();

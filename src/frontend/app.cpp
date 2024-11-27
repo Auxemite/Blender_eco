@@ -15,6 +15,7 @@ void App::Windows()
     Material();
     MainOptions();
     ShadersOptions();
+    SpecialOptions();
 
     ImGui::Begin("End options");
     saveFile(env.scene.focus_mesh);
@@ -42,6 +43,26 @@ void App::ShadersOptions() {
     if (ImGui::Button("Wave")) { render_mode = 4; env.render_all(); }
     ImGui::SameLine();
     ImGui::Checkbox("Fur", &fur);
+    ImGui::End();
+}
+
+void App::SpecialOptions() {
+    ImGui::Begin("Special Options");
+    ImGui::SliderInt("Fur Length", &fur_length, 1, 10);
+    ImGui::SliderFloat("Fur Size", &fur_size, 0, 1);
+    ImGui::SliderInt("Tesselation Surface", &tesselation_surface, 1, 50);
+
+    std::string dependance[3][4] = {{"AX", "FX", "X = F(Y)", "X = F(Z)"},
+                                    {"AY", "FY", "Y = F(X)","Y = F(Z)"},
+                                    {"AZ", "FZ", "Z = F(X)", "Z = F(Y)"}};
+    ImGui::Text("Sinus Options");
+    for (int i = 0; i < 3; ++i) {
+        ImGui::Checkbox(dependance[i][2].c_str(), &waveDependance[i][0]);
+        ImGui::SameLine();
+        ImGui::Checkbox(dependance[i][3].c_str(), &waveDependance[i][1]);
+        ImGui::SliderFloat(dependance[i][0].c_str(), &waveAmplitude[i], 0, 1);
+        ImGui::SliderFloat(dependance[i][1].c_str(), &waveFrequency[i], 0, 10);
+    }
     ImGui::End();
 }
 
@@ -79,12 +100,6 @@ void App::MainOptions() {
     ImGui::SameLine();
     if (ImGui::Button("Update All"))
         env.render_all();
-
-    ImGui::SliderInt("Fur Length", &fur_length, 1, 10);
-    ImGui::SliderFloat("Fur Size", &fur_size, 0, 1);
-    ImGui::SliderInt("Tesselation Surface", &tesselation_surface, 1, 50);
-    ImGui::SliderFloat3("AX AY AZ", waveAmplitude, 0, 1);
-    ImGui::SliderFloat3("FX FY FZ", waveFrequency, 0, 10);
 
     ImGui::End();
 }

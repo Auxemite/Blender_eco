@@ -86,12 +86,14 @@ int main(int argc, char** argv) {
             createShaderProgram("../src/shaders/basic"),
             createShaderProgram("../src/shaders/normal"),
             createShaderProgram("../src/shaders/phong"),
-            createShaderProgram("../src/shaders/wavehair"),
+            createShaderProgram("../src/shaders/fur"),
             createShaderProgram("../src/shaders/wave"),
+            createShaderProgram("../src/shaders/wavehair"),
 //            createShaderProgram("../src/shaders/hair"),
     };
     checkOpenGLError("Post shader compilation");
     app.env.load_grid();
+    app.env.load_fur();
     checkOpenGLError("Post Loading Data");
     last_time = static_cast<float>(glfwGetTime());
     timer_interval = 0.033;
@@ -142,8 +144,12 @@ int main(int argc, char** argv) {
         glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1920.0f / 1080.0f, 0.1f, 100.0f);
 
-        if (app.env.scene.activate_grid)
+        if (app.env.scene.activate_grid) {
             app.env.draw_grid(shaderPrograms[0], model, view, projection);
+            checkOpenGLError("Post draw_data of grid ");
+//            app.env.drawFur(shaderPrograms[5], model, view, projection);
+//            checkOpenGLError("Post draw_data of fur ");
+        }
 
         if (app.env.scene.editmode)
             app.env.draw_data(shaderPrograms[render_mode], model, view, projection, app.env.scene.focus_index, render_mode);
@@ -151,7 +157,7 @@ int main(int argc, char** argv) {
             for (int i = 0; i < app.env.scene.meshes.size(); ++i) {
                 if (app.env.scene.meshes[i]->watch) {
                     app.env.draw_data(shaderPrograms[render_mode], model, view, projection, i, render_mode);
-                    if (fur && render_mode != 4)
+                    if (fur && render_mode != 4 && render_mode != 5)
                         app.env.draw_data(shaderPrograms[3], model, view, projection, i, 3);
                     checkOpenGLError("Post draw_data of mesh " + std::to_string(i));
                 }
