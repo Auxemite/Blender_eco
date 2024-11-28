@@ -229,21 +229,18 @@ void Env::load_fur() {
     glBindVertexArray(0);
 }
 
-void anim(unsigned int program_id) {
-    static float anim_time = 0.0f;
-    GLint anim_time_location = glGetUniformLocation(program_id, "anim_time");
-    glUniform1f(anim_time_location, anim_time);
-    anim_time += 0.1f; // Increment animation time
-}
+//void anim(unsigned int program_id) {
+//    static float anim_time = 0.0f;
+//    GLint anim_time_location = glGetUniformLocation(program_id, "anim_time");
+//    glUniform1f(anim_time_location, anim_time);
+//    anim_time += 0.1f; // Increment animation time
+//}
 
 void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection, int mesh_index, int render_id) {
     glUseProgram(shaderProgram);
     if (render_id == 3 || render_id == 4 || render_id == 5) {
-        double current_time = glfwGetTime();
-        if (current_time - last_time >= timer_interval) {
-            anim(shaderProgram);
-            last_time = current_time;
-        }
+        GLint anim_time_location = glGetUniformLocation(shaderProgram, "anim_time");
+        glUniform1f(anim_time_location, anim_time);
     }
     unsigned int fur_lengthLoc = glGetUniformLocation(shaderProgram, "fur_length");
     unsigned int fur_sizeLoc = glGetUniformLocation(shaderProgram, "fur_size");
@@ -330,11 +327,9 @@ void Env::draw_grid(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view,
 void Env::drawFur(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection) {
     glUseProgram(shaderProgram);
 
-    double current_time = glfwGetTime();
-    if (current_time - last_time >= timer_interval) {
-        anim(shaderProgram);
-        last_time = current_time;
-    }
+    GLint anim_time_location = glGetUniformLocation(shaderProgram, "anim_time");
+    glUniform1f(anim_time_location, anim_time);
+
     unsigned int fur_lengthLoc = glGetUniformLocation(shaderProgram, "fur_length");
     unsigned int fur_sizeLoc = glGetUniformLocation(shaderProgram, "fur_size");
     unsigned int surfaceLoc = glGetUniformLocation(shaderProgram, "surface");

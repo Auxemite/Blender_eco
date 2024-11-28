@@ -152,13 +152,18 @@ int main(int argc, char** argv) {
 //            checkOpenGLError("Post draw_data of fur ");
         }
 
+        double current_time = glfwGetTime();
+        if (current_time - last_time >= timer_interval) {
+            anim_time += 0.1f;
+            last_time = current_time;
+        }
         if (app.env.scene.editmode)
             app.env.draw_data(shaderPrograms[render_mode], model, view, projection, app.env.scene.focus_index, render_mode);
         else {
             for (int i = 0; i < app.env.scene.meshes.size(); ++i) {
                 if (app.env.scene.meshes[i]->watch) {
                     app.env.draw_data(shaderPrograms[render_mode], model, view, projection, i, render_mode);
-                    if (fur && render_mode != 4 && render_mode != 5)
+                    if (fur)
                         app.env.draw_data(shaderPrograms[3], model, view, projection, i, 3);
                     checkOpenGLError("Post draw_data of mesh " + std::to_string(i));
                 }

@@ -15,6 +15,8 @@ uniform float fur_size;
 uniform float anim_time;
 uniform vec3 wave_amplitude;
 uniform vec3 wave_frequency;
+uniform vec3 dep;
+uniform vec3 dep2;
 
 void main() {
   vec3 v1 = position[1] - position[0];
@@ -29,12 +31,25 @@ void main() {
   float step = fur_size / fur_length;
   for(float i = 0.0; i < fur_size; i += step) {
 //      color_frag = color_mean;
-      float sin_value_y = wave_amplitude.y * sin(wave_frequency.y * source.x + anim_time);
-      source += vec3(-0.2f, sin_value_y, 0.0f);
+
+      float depx = dep.x * source.y + dep2.x * source.z;
+      float depy = dep.y * source.x + dep2.y * source.z;
+      float depz = dep.z * source.x + dep2.z * source.y;
+
+      float sin_value_x = wave_amplitude.x * depx * sin(wave_frequency.x * depx + anim_time);
+      float sin_value_y = wave_amplitude.y * depy * sin(wave_frequency.y * depy + anim_time);
+      float sin_value_z = wave_amplitude.z * depz * sin(wave_frequency.z * depz + anim_time);
+
+//      float sin_value_y = wave_amplitude.y * (source.z) * sin(wave_frequency.y * source.z + anim_time);
+      source += vec3(sin_value_x, sin_value_y, sin_value_z);
+      vec3 depvector = vec3(dep.y + dep.z, dep.x + dep2.z, dep2.x + dep2.y);
+      source += (-0.2f) * depvector;
 
       gl_Position = projection * view * model * vec4(source, 1.0);
       EmitVertex();
-      source = normal * i + origin.xyz + vec3(-1.0/2.0 * i * i * 9.81 * 9.8, 0.0, 0.0);
+      float gravity = -1.0/2.0 * i * i * 9.81 * 9.8;
+
+      source = normal * i + origin.xyz + gravity * depvector;
   }
   EndPrimitive();
 }

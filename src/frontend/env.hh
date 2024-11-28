@@ -66,6 +66,7 @@ inline bool waveDependance[3][2] = {{false, false}, {false, false}, {false, fals
 // Time Flags
 inline float last_time = 0.0f;
 inline float timer_interval = 0.033f;
+inline float anim_time = 0.0f;
 
 // BRDF Flags
 inline float metaless = 0.0f;
