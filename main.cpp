@@ -82,13 +82,14 @@ int main(int argc, char** argv) {
     auto app = App();
     IM_ASSERT(app.env.image.width != 0);
 
-    unsigned int shaderPrograms[6] = {
+    unsigned int shaderPrograms[7] = {
             createShaderProgram("../src/shaders/basic"),
             createShaderProgram("../src/shaders/normal"),
             createShaderProgram("../src/shaders/phong"),
             createShaderProgram("../src/shaders/fur"),
             createShaderProgram("../src/shaders/wave"),
             createShaderProgram("../src/shaders/wavehair"),
+            createShaderProgram("../src/shaders/brdf"),
 //            createShaderProgram("../src/shaders/hair"),
     };
     checkOpenGLError("Post shader compilation");

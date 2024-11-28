@@ -59,14 +59,27 @@ inline int fur_length = 3;
 inline float fur_size = 0.1;
 inline int tesselation_surface = 10;
 inline bool fur = false;
+inline glm::vec3 waveAmplitude = glm::vec3(0.0f, 0.0f, 0.0f);
+inline glm::vec3 waveFrequency = glm::vec3(0.0f, 0.0f, 0.0f);
+inline bool waveDependance[3][2] = {{false, false}, {false, false}, {false, false}};
 
 // Time Flags
 inline float last_time = 0.0f;
 inline float timer_interval = 0.033f;
 
-inline glm::vec3 waveAmplitude = glm::vec3(0.0f, 0.0f, 0.0f);
-inline glm::vec3 waveFrequency = glm::vec3(0.0f, 0.0f, 0.0f);
-inline bool waveDependance[3][2] = {{false, false}, {false, false}, {false, false}};
+// BRDF Flags
+inline float metaless = 0.0f;
+inline float roughness = 0.5f;
+
+//enum RenderMode {
+//    BASIC_MODE = 0,
+//    NORMAL = 1,
+//    PHONG = 2,
+//    FUR = 3,
+//    WAVE = 4,
+//    WAVEHAIR = 5,
+//    BRDF = 6,
+//};
 
 class Env {
     public:

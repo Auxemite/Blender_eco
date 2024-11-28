@@ -252,6 +252,8 @@ void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view,
     unsigned int frequencyLoc = glGetUniformLocation(shaderProgram, "wave_frequency");
     unsigned int dependanceLoc = glGetUniformLocation(shaderProgram, "dep");
     unsigned int dependance2Loc = glGetUniformLocation(shaderProgram, "dep2");
+    unsigned int metalessLoc = glGetUniformLocation(shaderProgram, "metaless");
+    unsigned int roughnessLoc = glGetUniformLocation(shaderProgram, "roughness");
 
     glUniform1i(fur_lengthLoc, fur_length);
     glUniform1f(fur_sizeLoc, fur_size);
@@ -260,6 +262,8 @@ void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view,
     glUniform3f(frequencyLoc, waveFrequency.x, waveFrequency.y, waveFrequency.z);
     glUniform3f(dependanceLoc, waveDependance[0][0], waveDependance[1][0], waveDependance[2][0]);
     glUniform3f(dependance2Loc, waveDependance[0][1], waveDependance[1][1], waveDependance[2][1]);
+    glUniform1f(metalessLoc, metaless);
+    glUniform1f(roughnessLoc, roughness);
 
     unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
     unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
