@@ -57,6 +57,7 @@ inline bool display_image = false;
 // Fur Flags
 inline int fur_length = 3;
 inline float fur_size = 0.1;
+inline Color fur_color = Color(0.0f, 0.0f, 0.0f);
 inline int tesselation_surface = 10;
 inline bool fur = false;
 inline glm::vec3 waveAmplitude = glm::vec3(0.0f, 0.0f, 0.0f);

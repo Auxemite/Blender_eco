@@ -91,7 +91,6 @@ int main(int argc, char** argv) {
             createShaderProgram("../src/shaders/wavehair"),
             createShaderProgram("../src/shaders/brdf"),
             createShaderProgram("../src/shaders/outline"),
-//            createShaderProgram("../src/shaders/hair"),
     };
     checkOpenGLError("Post shader compilation");
     app.env.load_grid();

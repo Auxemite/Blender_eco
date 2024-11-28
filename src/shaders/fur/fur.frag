@@ -3,9 +3,8 @@
 //in vec3 frag_color;
 out vec4 FragColor;
 
-//uniform vec3 cameraPos;
+uniform vec3 fur_color;
 
 void main() {
-    vec3 object_color = vec3(1.0, 1.0, 0.0);
-    FragColor = vec4(object_color, 1.0);
+    FragColor = vec4(fur_color, 1.0);
 }

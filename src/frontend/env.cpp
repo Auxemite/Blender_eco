@@ -220,21 +220,14 @@ void Env::load_fur() {
     glBindVertexArray(0);
 }
 
-//void anim(unsigned int program_id) {
-//    static float anim_time = 0.0f;
-//    GLint anim_time_location = glGetUniformLocation(program_id, "anim_time");
-//    glUniform1f(anim_time_location, anim_time);
-//    anim_time += 0.1f; // Increment animation time
-//}
-
-void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection, int mesh_index, int render_id) {
-    glUseProgram(shaderProgram);
+void special_uniform(unsigned int shaderProgram, int render_id) {
     if (render_id == 3 || render_id == 4 || render_id == 5) {
         GLint anim_time_location = glGetUniformLocation(shaderProgram, "anim_time");
         glUniform1f(anim_time_location, anim_time);
     }
     unsigned int fur_lengthLoc = glGetUniformLocation(shaderProgram, "fur_length");
     unsigned int fur_sizeLoc = glGetUniformLocation(shaderProgram, "fur_size");
+    unsigned int fur_colorLoc = glGetUniformLocation(shaderProgram, "fur_color");
     unsigned int surfaceLoc = glGetUniformLocation(shaderProgram, "surface");
     unsigned int amplitudeLoc = glGetUniformLocation(shaderProgram, "wave_amplitude");
     unsigned int frequencyLoc = glGetUniformLocation(shaderProgram, "wave_frequency");
@@ -245,6 +238,7 @@ void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view,
 
     glUniform1i(fur_lengthLoc, fur_length);
     glUniform1f(fur_sizeLoc, fur_size);
+    glUniform3f(fur_colorLoc, fur_color.r, fur_color.g, fur_color.b);
     glUniform1i(surfaceLoc, tesselation_surface);
     glUniform3f(amplitudeLoc, waveAmplitude.x, waveAmplitude.y, waveAmplitude.z);
     glUniform3f(frequencyLoc, waveFrequency.x, waveFrequency.y, waveFrequency.z);
@@ -252,6 +246,12 @@ void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view,
     glUniform3f(dependance2Loc, waveDependance[0][1], waveDependance[1][1], waveDependance[2][1]);
     glUniform1f(metalessLoc, metaless);
     glUniform1f(roughnessLoc, roughness);
+}
+
+void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection, int mesh_index, int render_id) {
+    glUseProgram(shaderProgram);
+    if (render_mode != 0)
+        special_uniform(shaderProgram, render_id);
 
     unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
     unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
@@ -318,23 +318,7 @@ void Env::draw_grid(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view,
 void Env::drawFur(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection) {
     glUseProgram(shaderProgram);
 
-    GLint anim_time_location = glGetUniformLocation(shaderProgram, "anim_time");
-    glUniform1f(anim_time_location, anim_time);
-
-    unsigned int fur_lengthLoc = glGetUniformLocation(shaderProgram, "fur_length");
-    unsigned int fur_sizeLoc = glGetUniformLocation(shaderProgram, "fur_size");
-    unsigned int surfaceLoc = glGetUniformLocation(shaderProgram, "surface");
-    unsigned int amplitudeLoc = glGetUniformLocation(shaderProgram, "wave_amplitude");
-    unsigned int frequencyLoc = glGetUniformLocation(shaderProgram, "wave_frequency");
-    unsigned int dependanceLoc = glGetUniformLocation(shaderProgram, "dep");
-    unsigned int dependance2Loc = glGetUniformLocation(shaderProgram, "dep2");
-    glUniform1i(fur_lengthLoc, fur_length);
-    glUniform1f(fur_sizeLoc, fur_size);
-    glUniform1i(surfaceLoc, tesselation_surface);
-    glUniform3f(amplitudeLoc, waveAmplitude[0], waveAmplitude[1], waveAmplitude[2]);
-    glUniform3f(frequencyLoc, waveFrequency[0], waveFrequency[1], waveFrequency[2]);
-    glUniform3f(dependanceLoc, waveDependance[0][0], waveDependance[1][0], waveDependance[2][0]);
-    glUniform3f(dependance2Loc, waveDependance[0][1], waveDependance[1][1], waveDependance[2][1]);
+    special_uniform(shaderProgram, 3);
 
     unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
     unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");

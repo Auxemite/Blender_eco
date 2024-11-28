@@ -141,8 +141,8 @@ void App::Material() {
     ImGui::SliderFloat("Metaless", &metaless, 0, 1);
     ImGui::SliderFloat("Roughness", &roughness, 0, 1);
 
-//    if (ImGui::Button("Update Light Color"))
-//        env.scene.lights[0]->color = Color(color.x, color.y, color.z);
+    if (ImGui::Button("Update Fur Color"))
+        fur_color = Color(color.x, color.y, color.z);
 
     ImGui::End();
 }
