@@ -72,15 +72,9 @@ void printObjInfo(Mesh* focus_mesh) {
     std::string text = "type : Mesh\n";
     text += "Number of Faces : " + std::to_string(focus_mesh->faces.size()) + "\n";
     text += "Number of Summit : " + std::to_string(focus_mesh->points.size()) + "\n";
-    text += "Summits :\n";
-    for (auto & summit : focus_mesh->points) {
-        text += summit->to_string() + "\n";
-    }
-//    text += "Faces :\n";
-//    for (auto & face : env.scene.focus_mesh->faces) {
-//        text += face->a->to_string() + " ";
-//        text += face->b->to_string() + " ";
-//        text += face->c->to_string() + "\n";
+//    text += "Summits :\n";
+//    for (auto & summit : focus_mesh->points) {
+//        text += summit->to_string() + "\n";
 //    }
     ImGui::Text("%s", text.c_str());
 }

@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
     auto app = App();
     IM_ASSERT(app.env.image.width != 0);
 
-    unsigned int shaderPrograms[7] = {
+    unsigned int shaderPrograms[8] = {
             createShaderProgram("../src/shaders/basic"),
             createShaderProgram("../src/shaders/normal"),
             createShaderProgram("../src/shaders/phong"),
@@ -90,6 +90,7 @@ int main(int argc, char** argv) {
             createShaderProgram("../src/shaders/wave"),
             createShaderProgram("../src/shaders/wavehair"),
             createShaderProgram("../src/shaders/brdf"),
+            createShaderProgram("../src/shaders/outline"),
 //            createShaderProgram("../src/shaders/hair"),
     };
     checkOpenGLError("Post shader compilation");
@@ -157,8 +158,10 @@ int main(int argc, char** argv) {
             anim_time += 0.1f;
             last_time = current_time;
         }
-        if (app.env.scene.editmode)
-            app.env.draw_data(shaderPrograms[render_mode], model, view, projection, app.env.scene.focus_index, render_mode);
+        if (app.env.scene.editmode) {
+            app.env.draw_data(shaderPrograms[render_mode], model, view, projection, app.env.scene.focus_index,
+                              render_mode);
+        }
         else {
             for (int i = 0; i < app.env.scene.meshes.size(); ++i) {
                 if (app.env.scene.meshes[i]->watch) {
@@ -169,6 +172,8 @@ int main(int argc, char** argv) {
                 }
             }
         }
+        if (app.env.scene.focus_index != -1 && (render_mode == 0 || render_mode == 1))
+            app.env.draw_data(shaderPrograms[7], model, view, projection, app.env.scene.focus_index, 7);
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

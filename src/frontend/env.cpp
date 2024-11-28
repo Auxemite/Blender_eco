@@ -53,11 +53,13 @@ void Env::update_data(int mesh_index) {
         Point3 *p_b = mesh->faces[i]->b;
         Point3 *p_c = mesh->faces[i]->c;
         Color color(1.0f, 1.0f, 1.0f);
-        if (render_mode == 0 || render_mode == 1) {
-            if (mesh->faces[i]->selected)
-                color = Color(0.0f, 2.0f, 2.0f);
-        }
-        else
+//        if (render_mode == 0 || render_mode == 1) {
+//            if (mesh->faces[i]->selected)
+//                color = Color(0.0f, 2.0f, 2.0f);
+//        }
+//        else
+//            color = Color(mesh->faces[0]->texture.material.color);
+        if (render_mode != 0 && render_mode != 1)
             color = Color(mesh->faces[0]->texture.material.color);
 
         vertices.push_back(p_a->x);
@@ -84,17 +86,6 @@ void Env::update_data(int mesh_index) {
         vertices.push_back(color.b);
         indices.push_back(i * 3 + 2);
     }
-    // std::cout << "POINT NB = " << vertices.size() << "\n";
-    // std::cout << "INDICE NB = " << indices.size() << "\n";
-//    std::cout << "{ ";
-//    for (int i = 0; i < vertices.size(); i+=6) {
-//        if (i != 0 && i%18 == 0)
-//            std::cout << "\n";
-//        std::cout << vertices[i] << " ";
-//        std::cout << vertices[i+1] << " ";
-//        std::cout << vertices[i+2] << ";  ";
-//    }
-//    std::cout << " }\n";
     cleanup(mesh_index);
     load_data(mesh_index, vertices, indices);
 }

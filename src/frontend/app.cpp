@@ -36,6 +36,8 @@ void App::ShadersOptions() {
     ImGui::SameLine();
     if (ImGui::Button("Normals")) { render_mode = 1; env.render_all(); }
     ImGui::SameLine();
+    if (ImGui::Button("Outlines")) { render_mode = 7; env.render_all(); }
+    ImGui::SameLine();
     if (ImGui::Button("Phong")) { render_mode = 2; env.render_all(); }
     ImGui::SameLine();
     if (ImGui::Button("BRDF")) { render_mode = 6; env.render_all(); }
@@ -138,6 +140,9 @@ void App::Material() {
 
     ImGui::SliderFloat("Metaless", &metaless, 0, 1);
     ImGui::SliderFloat("Roughness", &roughness, 0, 1);
+
+//    if (ImGui::Button("Update Light Color"))
+//        env.scene.lights[0]->color = Color(color.x, color.y, color.z);
 
     ImGui::End();
 }
