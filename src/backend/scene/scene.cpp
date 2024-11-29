@@ -313,6 +313,7 @@ void Scene::change_focus(Mesh *mesh, int mesh_index) {
     if (focus_mesh == nullptr || focus_mesh != mesh) {
         focus_mesh = mesh;
         focus_index = mesh_index;
+        meshCenter = mesh->get_mid(mesh->points);
         for (auto &face: mesh->faces)
             face->selected = true;
     }

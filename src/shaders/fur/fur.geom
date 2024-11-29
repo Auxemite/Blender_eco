@@ -18,6 +18,8 @@ uniform vec3 wave_frequency;
 uniform vec3 dep;
 uniform vec3 dep2;
 
+out float fragStatus;
+
 void main() {
   vec3 v1 = position[1] - position[0];
   vec3 v2 = position[2] - position[0];
@@ -40,7 +42,9 @@ void main() {
       float sin_value_y = wave_amplitude.y * depy * sin(wave_frequency.y * depy + anim_time);
       float sin_value_z = wave_amplitude.z * depz * sin(wave_frequency.z * depz + anim_time);
 
-//      float sin_value_y = wave_amplitude.y * (source.z) * sin(wave_frequency.y * source.z + anim_time);
+      fragStatus = 1.0f;
+      if (wave_amplitude.y * depy * sin(wave_frequency.y * depy + (anim_time + 0.5f)) < sin_value_y)
+            fragStatus = 1.2f;
       source += vec3(sin_value_x, sin_value_y, sin_value_z);
       vec3 depvector = vec3(dep.y + dep.z, dep.x + dep2.z, dep2.x + dep2.y);
       source += (-0.2f) * depvector;

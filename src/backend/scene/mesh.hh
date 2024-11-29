@@ -20,6 +20,7 @@ public:
     bool watch=true;
 
     Mesh() = default;
+    explicit Mesh(Mesh *mesh);
     Mesh(const Point3& a_, const Point3& b_, const Point3& c_, const Uniform_Texture& uniformMaterial_);
     Mesh(std::vector<Point3 *> points_vec, const std::vector<std::vector<int>>& faces_vec, const Uniform_Texture& uniformMaterial_);
     Mesh(const std::string& filename, const Uniform_Texture& uniformMaterial_); //From .obj

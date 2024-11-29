@@ -58,7 +58,7 @@ inline bool display_image = false;
 inline int fur_length = 3;
 inline float fur_size = 0.1;
 inline Color fur_color = Color(0.0f, 0.0f, 0.0f);
-inline int tesselation_surface = 10;
+inline int tesselation_surface = 1;
 inline bool fur = false;
 inline glm::vec3 waveAmplitude = glm::vec3(0.0f, 0.0f, 0.0f);
 inline glm::vec3 waveFrequency = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -119,6 +119,7 @@ class Env {
     void edit_mode();
     void normal_mode();
     void add_mesh(const std::string& name);
+    void duplicate_mesh();
     void delete_mesh();
 
     void update_camera();

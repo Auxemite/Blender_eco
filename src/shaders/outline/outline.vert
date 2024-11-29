@@ -7,8 +7,9 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 uniform vec3 positionDec;
+uniform vec3 positionCenter;
 
 void main() {
-  vec3 position = (aPos + positionDec) * 1.01;
+  vec3 position = (aPos - positionCenter) * 1.01 + positionDec + positionCenter;
   gl_Position = projection * view * model * vec4(position, 1.0f);
 }

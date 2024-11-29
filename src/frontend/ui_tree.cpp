@@ -6,6 +6,8 @@ void TreeNode(Env& env) {
     if (env.scene.focus_mesh != nullptr) {
         ImGui::SameLine();
         if (ImGui::Button("Delete Mesh")) { env.delete_mesh(); }
+        ImGui::SameLine();
+        if (ImGui::Button("Duplicate Mesh")) { env.duplicate_mesh(); }
     }
 
     for (int i = 0; i < env.scene.meshes.size(); i++) {

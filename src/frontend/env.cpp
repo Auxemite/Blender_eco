@@ -129,6 +129,18 @@ void Env::add_mesh(const std::string& name) {
     render(scene.meshes.size()-1);
 }
 
+void Env::duplicate_mesh() {
+    if (scene.focus_mesh == nullptr)
+        return;
+    unsigned int VBO, VAO, EBO;
+    VBOs.push_back(VBO);
+    VAOs.push_back(VAO);
+    EBOs.push_back(EBO);
+    Mesh *mesh = new Mesh(*scene.focus_mesh);
+    scene.add_mesh(mesh);
+    render(scene.meshes.size()-1);
+}
+
 void Env::delete_mesh() {
     VBOs.erase(VBOs.begin()+scene.focus_index);
     VAOs.erase(VAOs.begin()+scene.focus_index);
@@ -261,11 +273,16 @@ void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view,
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-    unsigned int positionDec = glGetUniformLocation(shaderProgram, "positionDec");
-    if (scene.focus_index == mesh_index)
-        glUniform3f(positionDec, scene.dec_x, scene.dec_y, scene.dec_z);
-    else
-        glUniform3f(positionDec, 0, 0, 0);
+    unsigned int positionDecLoc = glGetUniformLocation(shaderProgram, "positionDec");
+    unsigned int positionCenterLoc = glGetUniformLocation(shaderProgram, "positionCenter");
+    if (scene.focus_index == mesh_index) {
+        glUniform3f(positionDecLoc, scene.dec_x, scene.dec_y, scene.dec_z);
+        glUniform3f(positionCenterLoc, scene.meshCenter.x, scene.meshCenter.y, scene.meshCenter.z);
+    }
+    else {
+        glUniform3f(positionDecLoc, 0, 0, 0);
+        glUniform3f(positionCenterLoc, 0, 0, 0);
+    }
 
     unsigned int cameraPosLoc = glGetUniformLocation(shaderProgram, "cameraPos");
     glUniform3f(cameraPosLoc, cameraPos.x, cameraPos.y, cameraPos.z);
