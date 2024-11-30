@@ -53,6 +53,7 @@ inline float zoom_sensitivity = 0.5f;
 // Render Flags
 inline int render_mode = 1;
 inline bool display_image = false;
+inline bool smooth = false;
 
 // Fur Flags
 inline int fur_length = 3;

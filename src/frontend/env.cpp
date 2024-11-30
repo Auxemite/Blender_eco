@@ -268,10 +268,12 @@ void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view,
     unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
     unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
     unsigned int projLoc = glGetUniformLocation(shaderProgram, "projection");
+    unsigned int smoothLoc = glGetUniformLocation(shaderProgram, "smooth_shading");
 
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+    glUniform1i(smoothLoc, smooth);
 
     unsigned int positionDecLoc = glGetUniformLocation(shaderProgram, "positionDec");
     unsigned int positionCenterLoc = glGetUniformLocation(shaderProgram, "positionCenter");

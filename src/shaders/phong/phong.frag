@@ -18,7 +18,7 @@ void main() {
 
     //! diffuse
     float kd = materialAttr[1];
-    vec3 norm = normalize(fragNormal); // https://registry.khronos.org/OpenGL-Refpages/gl4/index.php
+    vec3 norm = normalize(fragNormal);
     vec3 lightDir = normalize(lightPos - fragPos);
     float diffuse = max(0.0, dot(norm, lightDir));
     vec3 diffuseColor = (diffuse * kd) * fragColor;

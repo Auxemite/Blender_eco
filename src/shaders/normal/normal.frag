@@ -11,8 +11,8 @@ void main() {
     float diff = dot(viewDir, fragNormal) / 5;
     vec3 gray = fragColor * diff;
     // vec3 gray = vec3(diff);
-    if (diff <= 0)
-        gray = fragColor * (-diff);
+//    if (diff <= 0)
+//        gray = fragColor * (-diff);
         // gray = vec3(-diff);
 
     FragColor = vec4(vec3(0.3f) + gray, 1.0f);

@@ -32,6 +32,7 @@ void App::Windows()
 
 void App::ShadersOptions() {
     ImGui::Begin("Shaders Options");
+
     if (ImGui::Button("Base")) { render_mode = 0; env.render_all(); }
     ImGui::SameLine();
     if (ImGui::Button("Normals")) { render_mode = 1; env.render_all(); }
@@ -42,12 +43,16 @@ void App::ShadersOptions() {
     ImGui::SameLine();
     if (ImGui::Button("BRDF")) { render_mode = 6; env.render_all(); }
     ImGui::SameLine();
+    ImGui::Checkbox("Smooth", &smooth);
+
     if (ImGui::Button("Fur only")) { render_mode = 3; env.render_all(); }
     ImGui::SameLine();
     if (ImGui::Button("Wave")) { render_mode = 4; env.render_all(); }
     ImGui::SameLine();
-    ImGui::Checkbox("Fur", &fur);
     if (ImGui::Button("Explosion")) { render_mode = 8; env.render_all(); }
+    ImGui::SameLine();
+    ImGui::Checkbox("Fur", &fur);
+
     ImGui::End();
 }
 
