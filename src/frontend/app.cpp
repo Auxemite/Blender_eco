@@ -47,11 +47,16 @@ void App::ShadersOptions() {
     if (ImGui::Button("Wave")) { render_mode = 4; env.render_all(); }
     ImGui::SameLine();
     ImGui::Checkbox("Fur", &fur);
+    if (ImGui::Button("Explosion")) { render_mode = 8; env.render_all(); }
     ImGui::End();
 }
 
 void App::SpecialOptions() {
     ImGui::Begin("Special Options");
+    if (ImGui::Button("Restart Anim Time"))
+        anim_time = 0;
+    ImGui::SameLine();
+    ImGui::Checkbox("Stop Anim Time", &stop_anim_time);
     ImGui::SliderInt("Fur Length", &fur_length, 1, 10);
     ImGui::SliderFloat("Fur Size", &fur_size, 0, 1);
     ImGui::SliderInt("Tesselation Surface", &tesselation_surface, 1, 50);

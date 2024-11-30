@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
     auto app = App();
     IM_ASSERT(app.env.image.width != 0);
 
-    unsigned int shaderPrograms[8] = {
+    unsigned int shaderPrograms[9] = {
             createShaderProgram("../src/shaders/basic"),
             createShaderProgram("../src/shaders/normal"),
             createShaderProgram("../src/shaders/phong"),
@@ -91,6 +91,7 @@ int main(int argc, char** argv) {
             createShaderProgram("../src/shaders/wavehair"),
             createShaderProgram("../src/shaders/brdf"),
             createShaderProgram("../src/shaders/outline"),
+            createShaderProgram("../src/shaders/explosion"),
     };
     checkOpenGLError("Post shader compilation");
     app.env.load_grid();
@@ -154,7 +155,8 @@ int main(int argc, char** argv) {
 
         double current_time = glfwGetTime();
         if (current_time - last_time >= timer_interval) {
-            anim_time += 0.1f;
+            if (!stop_anim_time)
+                anim_time += 0.1f;
             last_time = current_time;
         }
         if (app.env.scene.editmode) {

@@ -57,7 +57,7 @@ inline bool display_image = false;
 // Fur Flags
 inline int fur_length = 3;
 inline float fur_size = 0.1;
-inline Color fur_color = Color(0.0f, 0.0f, 0.0f);
+inline Color fur_color = Color(0.0f, 0.7f, 0.7f);
 inline int tesselation_surface = 1;
 inline bool fur = false;
 inline glm::vec3 waveAmplitude = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -68,6 +68,7 @@ inline bool waveDependance[3][2] = {{false, false}, {false, false}, {false, fals
 inline float last_time = 0.0f;
 inline float timer_interval = 0.033f;
 inline float anim_time = 0.0f;
+inline bool stop_anim_time = false;
 
 // BRDF Flags
 inline float metaless = 0.0f;

@@ -233,7 +233,7 @@ void Env::load_fur() {
 }
 
 void special_uniform(unsigned int shaderProgram, int render_id) {
-    if (render_id == 3 || render_id == 4 || render_id == 5) {
+    if (render_id == 3 || render_id == 4 || render_id == 5 || render_id == 8) {
         GLint anim_time_location = glGetUniformLocation(shaderProgram, "anim_time");
         glUniform1f(anim_time_location, anim_time);
     }
@@ -309,7 +309,7 @@ void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view,
         glUniform3f(materialAttrLoc, scene.ns, scene.kd, scene.ks);
 
     glBindVertexArray(VAOs[mesh_index]);
-    if (render_id == 3 || render_id == 4 || render_id == 5) {
+    if (render_id == 3 || render_id == 4 || render_id == 5 || render_id == 8) {
         glPatchParameteri(GL_PATCH_VERTICES, 3);
         glDrawArrays(GL_PATCHES, 0, scene.meshes[mesh_index]->faces.size() * 3);
     }
