@@ -4,9 +4,9 @@
 #include <cstdio>
 
 //MY INCLUDES
-#include "src/frontend/app.hh"
-#include "src/frontend/inputs.hh"
-//#include "subtest.hh"
+//#include "src/frontend/app.hh"
+//#include "src/frontend/inputs.hh"
+#include "maintest.hh"
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1900) && !defined(IMGUI_DISABLE_WIN32_FUNCTIONS)
 #pragma comment(lib, "legacy_stdio_definitions")
@@ -15,8 +15,8 @@
 void ToggleFullscreen(GLFWwindow* window);
 
 int main(int argc, char** argv) {
-//    submain2();
-//}/*
+    submain2();
+}/*
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW" << std::endl;

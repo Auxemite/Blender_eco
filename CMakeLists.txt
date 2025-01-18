@@ -62,14 +62,12 @@ add_executable(blender_eco main.cpp
         src/frontend/shader_utils.hh
         src/frontend/shader_utils.cpp
         maintest.hh
-        maintest.hh
         src/frontend/app_utils.hh
         src/frontend/app_utils.cpp
         src/frontend/ui_tree.hh
         src/frontend/ui_tree.cpp
         src/frontend/mesh_action.hh
         src/frontend/mesh_action.cpp
-        #        submain2.hh
 )
 
 target_link_libraries(blender_eco PRIVATE OpenGL::GL glfw GLEW::GLEW)

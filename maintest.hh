@@ -37,15 +37,15 @@ void processInpute(GLFWwindow* window) {
 
 void load_data() {
     float vertices[] = {
-            // positions                         // colors
-            -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f, // 0
-            0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f, // 1
-            0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f, // 2
-            -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f, // 3
-            -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f, // 4
-            0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 1.0f, // 5
-            0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, // 6
-            -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f, // 7
+            // positions                           // colors                      // UV
+            -0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f, // 0
+            0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 0.0f, // 1
+            0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f, // 2
+            -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f, // 3
+            -0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f, // 4
+            0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 0.0f, // 5
+            0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f, // 6
+            -0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f  // 7
     };
     unsigned int indices[] = {
             0, 1, 3,
@@ -62,69 +62,59 @@ void load_data() {
             5, 1, 0
     };
     float vertices2[] = {
-            // positions                         // colors
-            -0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, // 0
-            0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, // 1
-            -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, // 3
-
-            0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, // 1
-            0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, // 2
-            -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, // 3
-
-            0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, // 1
-            0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, // 2
-            0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, // 5
-
-            0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,// 2
-            0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, // 5
-            0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, // 6
-
-            -0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, // 4
-            0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f,  // 5
-            0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,  // 6
-
-            -0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, // 4
-            0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, // 6
-            -0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, // 7
-
-            -0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, // 0
-            -0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f,// 4
-            -0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, // 7
-
-            -0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, // 0
-            -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, // 3
-            -0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, // 7
-
-            0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, // 2
-            -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, // 3
-            -0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, // 7
-
-            0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, // 2
-            0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, // 6
-            -0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f, // 7
-
-            -0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, // 0
-            -0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f,// 4
-            0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, // 5
-
-            -0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, // 0
-            0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f, // 1
-            0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 1.0f, // 5
+            // positions                        // colors                        // UV
+            // Back
+            -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f, // 0
+            0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f, // 1
+            0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f, // 2
+            -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,  0.0f, 1.0f, // 3
+            // Front
+            -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f,  0.0f, 0.0f, // 4
+            0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 1.0f,  1.0f, 0.0f, // 5
+            0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f, // 6
+            -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f,  0.0f, 1.0f, // 7
+            // Left
+            -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f, // 0
+            -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,  1.0f, 0.0f, // 3
+            -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f,  1.0f, 1.0f, // 7
+            -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f,  0.0f, 1.0f, // 4
+            // Right
+            0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f, // 1
+            0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f, // 2
+            0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f, // 6
+            0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 1.0f,  0.0f, 1.0f, // 5
+            // Down
+            -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f, // 0
+            0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f, // 1
+            0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 1.0f,  1.0f, 1.0f, // 5
+            -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f,  0.0f, 1.0f, // 4
+            // Up
+            -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,  0.0f, 0.0f, // 3
+            0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f, // 2
+            0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f, // 6
+            -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f,  0.0f, 1.0f  // 7
     };
     unsigned int indices2[] = {
+            // Back
             0, 1, 2,
-            3, 4, 5,
-            6, 7, 8,
-            9, 10, 11,
+            2, 3, 0,
+            // Front
+            4, 5, 6,
+            6, 7, 4,
+            // Left
+            8, 9, 10,
+            10, 11, 8,
+            // Right
             12, 13, 14,
-            15, 16, 17,
-            18, 19, 20,
-            21, 22, 23,
-            24, 25, 26,
-            27, 28, 29,
-            30, 31, 32,
-            33, 34, 35
+            14, 15, 12,
+            // Down
+            16, 17, 18,
+            18, 19, 16,
+            // Up
+            20, 21, 22,
+            22, 23, 20
     };
+
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -138,10 +128,12 @@ void load_data() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices2), indices2, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); // position
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0); // position
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float))); // color
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float))); // color
     glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float))); // UV
+    glEnableVertexAttribArray(2);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -172,17 +164,20 @@ int submain2() {
         return -1;
     }
 
-    std::string vertexCode = readShaderSource("../src/shaders/vrtx_gray.glsl");
-    std::string geometryCode = readShaderSource("../src/shaders/geo_gray.glsl");
-    std::string fragmentCode = readShaderSource("../src/shaders/frag_gray.glsl");
+//    std::string vertexCode = readShaderSource("../src/shaders/normal/normal.vert");
+//    std::string geometryCode = readShaderSource("../src/shaders/normal/normal.geom");
+//    std::string fragmentCode = readShaderSource("../src/shaders/normal/normal.frag");
 
-    unsigned int vertexShader = compileShader(vertexCode, GL_VERTEX_SHADER);
-    unsigned int geometryShader = compileShader(geometryCode, GL_GEOMETRY_SHADER);
-    unsigned int fragmentShader = compileShader(fragmentCode, GL_FRAGMENT_SHADER);
+    std::string vertexCode = readShaderSource("../src/shaders/fur2/basic.vert");
+    std::string fragmentCode = readShaderSource("../src/shaders/fur2/basic.frag");
+
+    unsigned int vertexShader = compileShader(vertexCode, GL_VERTEX_SHADER, "Vertex");
+//    unsigned int geometryShader = compileShader(geometryCode, GL_GEOMETRY_SHADER, "Geometry");
+    unsigned int fragmentShader = compileShader(fragmentCode, GL_FRAGMENT_SHADER, "Fragment");
 
     unsigned int shaderProgram = glCreateProgram();
     glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, geometryShader);
+//    glAttachShader(shaderProgram, geometryShader);
     glAttachShader(shaderProgram, fragmentShader);
     glLinkProgram(shaderProgram);
 
@@ -205,7 +200,7 @@ int submain2() {
 
         processInpute(window);
 
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Render the grid and lines
@@ -239,4 +234,6 @@ int submain2() {
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+    return 0;
 }
