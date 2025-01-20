@@ -5,13 +5,15 @@ layout (location = 2) in vec2 iuv;
 
 out vec3 ourColor;
 out vec2 uv;
+out vec4 p;
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
 void main() {
-    gl_Position = projection * view * model * vec4(pos[0], pos[1], pos[2], 1.0);
+    p = vec4(pos[0], pos[1], pos[2], 1.0);
+    gl_Position = projection * view * model * p;
     ourColor = color;
     uv = iuv;
 }
