@@ -2,7 +2,7 @@
 
 Opengl 3 and Glfw are required to run this project.
 
-You can use vcpkg to install glfw on windows (it's very simple to use with Jet Brains Clion.
+You can use vcpkg to install glfw on windows (it's very simple to use with Jet Brains Clion).
 
 If everything is ok, run :
 cmake -B build .
