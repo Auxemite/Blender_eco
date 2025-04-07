@@ -1,8 +1,28 @@
+#include <cstdlib>
 #include "app.hh"
 
 using namespace std;
 
 App::App(){
+    unsigned int size = WIDTH * HEIGHT * 3; // size = w * h * rgb
+    char_data = (unsigned char *)calloc(size + 1, sizeof(unsigned char));
+    for (int i = 0; i < size; ++i) {
+        char_data[i] = 255;
+    }
+    char_data[size] = '\0';
+
+    // Opengl code to bind image to a texture
+    GLuint image_texture;
+    glGenTextures(1, &image_texture);
+    glBindTexture(GL_TEXTURE_2D, image_texture);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, WIDTH, HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, char_data);
+
+    glDeleteTextures(1, &render_image);
+    render_image = image_texture;
 }
 
 void App::Windows()
@@ -14,9 +34,16 @@ void App::Windows()
     ImGui::End();
 
     ImGui::Begin("Window 2");
+    ImGui::Image((void*)(intptr_t)render_image,
+                 ImVec2(static_cast<float>(WIDTH), static_cast<float>(HEIGHT)));
     ImGui::End();
 
     ImGui::ShowDemoWindow();
+}
+
+// To update image on screen
+void App::UpdateTexture() {
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, WIDTH, HEIGHT, GL_RGB, GL_UNSIGNED_BYTE, char_data);
 }
 
 void App::Inputs(const ImGuiIO& io, ImVec2 pos) {
