@@ -73,3 +73,48 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
     if (radius < 1.0f)
         radius = 1.0f;
 }
+
+void UI_inputs(Env& env, const ImGuiIO& io, ImVec2 pos) {
+//    float region_sz = 16.0f;
+    float region_x = io.MousePos.x;// - pos.x;// - region_sz * 0.5f;
+    float region_y = io.MousePos.y;// - pos.y;// - region_sz * 0.5f;
+    if (region_x < 0.0f) { return; }
+    else if (region_x > WIDTH) { return; }
+    if (region_y < 0.0f) { return; }
+    else if (region_y > HEIGHT) { return; }
+    ImGui::Text("Min: (%.2f, %.2f)", region_x, region_y);
+    ImGui::Text("Mouse down:");
+    for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++) {
+        if (io.MouseDownDuration[i] > 0.001)
+            return;
+        if (region_x >= 0.0f && region_x <= WIDTH && region_y >= 0.0f && region_y <= HEIGHT) {
+            if (ImGui::IsMouseDown(i)) {
+                ImGui::SameLine();
+                ImGui::Text("b%d (%.02f secs)", i, io.MouseDownDuration[i]);
+                env.update_camera();
+                if (env.scene.selected_mode == 3) {
+                    env.scene.select_summit(region_x, region_y);
+                    env.render();
+                }
+                else {
+                    env.scene.select_mesh(region_x, region_y);
+                    env.render_all();
+                }
+            }
+        }
+    }
+    ImGui::SameLine();
+    ImGui::Text("Keys down:");
+    struct funcs {
+        static bool IsLegacyNativeDupe(ImGuiKey key) {
+            return key >= 0 && key < 512 && ImGui::GetIO().KeyMap[key] != -1;
+        }
+    };
+
+    auto start_key = (ImGuiKey)0;
+    for (ImGuiKey key = start_key; key < ImGuiKey_NamedKey_END; key = (ImGuiKey)(key + 1)) {
+        if (funcs::IsLegacyNativeDupe(key) || !ImGui::IsKeyDown(key))
+            continue;
+        ImGui::SameLine(); ImGui::Text((key < ImGuiKey_NamedKey_BEGIN) ? "\"%s\"" : "\"%s\" %d", ImGui::GetKeyName(key), key);
+    }
+}

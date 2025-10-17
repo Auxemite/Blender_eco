@@ -1,4 +1,4 @@
-#version 330 core
+#version 450 core
 in vec3 fragColor;
 in vec3 fragPos;
 in vec3 fragNormal;
@@ -18,7 +18,7 @@ void main() {
 
     //! diffuse
     float kd = materialAttr[1];
-    vec3 norm = normalize(fragNormal); // https://registry.khronos.org/OpenGL-Refpages/gl4/index.php
+    vec3 norm = normalize(fragNormal);
     vec3 lightDir = normalize(lightPos - fragPos);
     float diffuse = max(0.0, dot(norm, lightDir));
     vec3 diffuseColor = (diffuse * kd) * fragColor;
@@ -30,6 +30,6 @@ void main() {
     float spec = pow(max(0.0, dot(viewDir, reflectDir)), ns);
     vec3 specularColor = lightColor * ks * spec * lightPower;
 
-    vec3 res = ambientColor;
+    vec3 res = ambientColor + diffuseColor + specularColor;
     FragColor = vec4(res, 1.0);
 }

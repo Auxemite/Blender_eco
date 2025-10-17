@@ -6,29 +6,17 @@
 //MY INCLUDES
 #include "src/frontend/app.hh"
 #include "src/frontend/inputs.hh"
-//#include "submain.hh"
+//#include "maintest.hh"
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1900) && !defined(IMGUI_DISABLE_WIN32_FUNCTIONS)
 #pragma comment(lib, "legacy_stdio_definitions")
 #endif
 
-void ToggleFullscreen(GLFWwindow* window)
-{
-    if (isFullscreen)
-        glfwSetWindowMonitor(window, nullptr, 0, 0, WIDTH, HEIGHT, 0);
-    else
-    {
-        monitor = glfwGetPrimaryMonitor();
-        mode = glfwGetVideoMode(monitor);
-        glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
-    }
-
-    isFullscreen = !isFullscreen;
-}
+void ToggleFullscreen(GLFWwindow* window);
 
 int main(int argc, char** argv) {
-//    submain2();
-//}
+/*    submain2();
+}*/
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW" << std::endl;
@@ -42,9 +30,9 @@ int main(int argc, char** argv) {
     }
     const GLFWvidmode *mode = glfwGetVideoMode(monitor);
 
-    const char *glsl_version = "#version 330";
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    const char *glsl_version = "#version 450";
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     GLFWwindow *window = glfwCreateWindow(mode->width, mode->height, "Blender Eco ++", monitor, nullptr);
@@ -94,39 +82,33 @@ int main(int argc, char** argv) {
     auto app = App();
     IM_ASSERT(app.env.image.width != 0);
 
-    char vtx_base[] = "../src/shaders/vrtx_base.glsl";
-    char vtx_gray[] = "../src/shaders/vrtx_gray.glsl";
-    char geo[] = "../src/shaders/geo_gray.glsl";
-    char frag_base[] = "../src/shaders/frag_base.glsl";
-    char frag_gray[] = "../src/shaders/frag_gray.glsl";
-    char frag_phong[] = "../src/shaders/frag_phong.glsl";
-    char frag_phong_ambient[] = "../src/shaders/frag_phong_ambient.glsl";
-    char frag_phong_diffuse[] = "../src/shaders/frag_phong_diffuse.glsl";
-    char frag_phong_specular[] = "../src/shaders/frag_phong_specular.glsl";
-
-    unsigned int shaderPrograms[6] = {
-            createShaderProgram(vtx_base,frag_base),
-            createShaderProgram(vtx_gray,frag_gray,geo),
-            createShaderProgram(vtx_gray,frag_phong,geo),
-            createShaderProgram(vtx_gray,frag_phong_ambient,geo),
-            createShaderProgram(vtx_gray,frag_phong_diffuse,geo),
-            createShaderProgram(vtx_gray,frag_phong_specular,geo)
+    unsigned int shaderPrograms[9] = {
+            createShaderProgram("../src/shaders/basic"),
+            createShaderProgram("../src/shaders/normal"),
+            createShaderProgram("../src/shaders/phong"),
+            createShaderProgram("../src/shaders/fur"),
+            createShaderProgram("../src/shaders/wave"),
+            createShaderProgram("../src/shaders/wavehair"),
+            createShaderProgram("../src/shaders/brdf"),
+            createShaderProgram("../src/shaders/outline"),
+            createShaderProgram("../src/shaders/explosion"),
     };
     checkOpenGLError("Post shader compilation");
     app.env.load_grid();
+    app.env.load_fur();
     checkOpenGLError("Post Loading Data");
+    last_time = static_cast<float>(glfwGetTime());
+    timer_interval = 0.033;
     //TODO CODE HERE
 
-    while (!glfwWindowShouldClose(window))
-    {
-        float currentFrame = glfwGetTime();
+    while (!glfwWindowShouldClose(window)) {
+        float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
         if (glfwGetKey(window, GLFW_KEY_GRAVE_ACCENT) == GLFW_PRESS)
             break;
-        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        {
+        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
             ToggleFullscreen(window);
             while (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
                 glfwPollEvents();
@@ -148,8 +130,6 @@ int main(int argc, char** argv) {
         glViewport(0, 0, display_w, display_h);
         glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
-//        glClear(GL_COLOR_BUFFER_BIT);
 
         glm::vec3 center = glm::vec3(0.0f);
         if (!alpha_feature) {
@@ -166,23 +146,40 @@ int main(int argc, char** argv) {
         glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1920.0f / 1080.0f, 0.1f, 100.0f);
 
-        if (app.env.scene.activate_grid)
+        if (app.env.scene.activate_grid) {
             app.env.draw_grid(shaderPrograms[0], model, view, projection);
+            checkOpenGLError("Post draw_data of grid ");
+//            app.env.drawFur(shaderPrograms[5], model, view, projection);
+//            checkOpenGLError("Post draw_data of fur ");
+        }
 
-        if (app.env.scene.editmode)
-            app.env.draw_data(shaderPrograms[render_mode], model, view, projection, app.env.scene.focus_index);
+        double current_time = glfwGetTime();
+        if (current_time - last_time >= timer_interval) {
+            if (!stop_anim_time)
+                anim_time += 0.1f;
+            last_time = current_time;
+        }
+        if (app.env.scene.editmode) {
+            app.env.draw_data(shaderPrograms[render_mode], model, view, projection, app.env.scene.focus_index,
+                              render_mode);
+        }
         else {
             for (int i = 0; i < app.env.scene.meshes.size(); ++i) {
-                if (app.env.scene.meshes[i]->watch)
-                    app.env.draw_data(shaderPrograms[render_mode], model, view, projection, i);
+                if (app.env.scene.meshes[i]->watch) {
+                    app.env.draw_data(shaderPrograms[render_mode], model, view, projection, i, render_mode);
+                    if (fur)
+                        app.env.draw_data(shaderPrograms[3], model, view, projection, i, 3);
+                    checkOpenGLError("Post draw_data of mesh " + std::to_string(i));
+                }
             }
         }
+        if (app.env.scene.focus_index != -1 && (render_mode == 0 || render_mode == 1))
+            app.env.draw_data(shaderPrograms[7], model, view, projection, app.env.scene.focus_index, 7);
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-        {
-            GLFWwindow* backup_current_context = glfwGetCurrentContext();
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+            GLFWwindow *backup_current_context = glfwGetCurrentContext();
             ImGui::UpdatePlatformWindows();
             ImGui::RenderPlatformWindowsDefault();
             glfwMakeContextCurrent(backup_current_context);
@@ -195,7 +192,7 @@ int main(int argc, char** argv) {
     for (int i = 0; i < app.env.scene.meshes.size(); ++i)
         app.env.cleanup(i);
 
-    for (unsigned int shaderProgram : shaderPrograms)
+    for (unsigned int shaderProgram: shaderPrograms)
         glDeleteProgram(shaderProgram);
 
     ImGui_ImplOpenGL3_Shutdown();
@@ -207,3 +204,19 @@ int main(int argc, char** argv) {
 
     return 0;
 }
+
+void ToggleFullscreen(GLFWwindow* window)
+{
+    if (isFullscreen)
+        glfwSetWindowMonitor(window, nullptr, 0, 0, WIDTH, HEIGHT, 0);
+    else
+    {
+        monitor = glfwGetPrimaryMonitor();
+        mode = glfwGetVideoMode(monitor);
+        glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+    }
+
+    isFullscreen = !isFullscreen;
+}
+
+//*/

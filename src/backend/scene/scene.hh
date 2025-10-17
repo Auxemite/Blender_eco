@@ -24,6 +24,7 @@ class Scene
         float dec_x = 0.0f;
         float dec_y = 0.0f;
         float dec_z = 0.0f;
+        Point3 meshCenter = Point3(0.0f, 0.0f, 0.0f);
         float kd = 0.9f;
         float ks = 0.1f;
         float ns = 10.0f;

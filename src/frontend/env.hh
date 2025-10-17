@@ -14,7 +14,7 @@
 
 #include "../backend/render/intersection.hh"
 #include "../backend/image/image.hh"
-#include "render_utils.h"
+#include "shader_utils.hh"
 
 #define WIDTH 1920
 #define HEIGHT 1080
@@ -53,6 +53,37 @@ inline float zoom_sensitivity = 0.5f;
 // Render Flags
 inline int render_mode = 1;
 inline bool display_image = false;
+inline bool smooth = false;
+
+// Fur Flags
+inline int fur_length = 3;
+inline float fur_size = 0.1;
+inline Color fur_color = Color(0.0f, 0.7f, 0.7f);
+inline int tesselation_surface = 1;
+inline bool fur = false;
+inline glm::vec3 waveAmplitude = glm::vec3(0.0f, 0.0f, 0.0f);
+inline glm::vec3 waveFrequency = glm::vec3(0.0f, 0.0f, 0.0f);
+inline bool waveDependance[3][2] = {{false, false}, {false, false}, {false, false}};
+
+// Time Flags
+inline float last_time = 0.0f;
+inline float timer_interval = 0.033f;
+inline float anim_time = 0.0f;
+inline bool stop_anim_time = false;
+
+// BRDF Flags
+inline float metaless = 0.0f;
+inline float roughness = 0.5f;
+
+//enum RenderMode {
+//    BASIC_MODE = 0,
+//    NORMAL = 1,
+//    PHONG = 2,
+//    FUR = 3,
+//    WAVE = 4,
+//    WAVEHAIR = 5,
+//    BRDF = 6,
+//};
 
 class Env {
     public:
@@ -71,11 +102,13 @@ class Env {
 //    std::vector<float> vertices;
 //    std::vector<int> indices;
     std::vector<float> gridVertices;
+
     std::vector<unsigned int> VBOs;
     std::vector<unsigned int> VAOs;
     std::vector<unsigned int> EBOs;
-
     unsigned int gridVBO, gridVAO;
+    unsigned int furVBO, furVAO;
+    std::vector<float> furVertices;
 
     Env();
 
@@ -88,6 +121,7 @@ class Env {
     void edit_mode();
     void normal_mode();
     void add_mesh(const std::string& name);
+    void duplicate_mesh();
     void delete_mesh();
 
     void update_camera();
@@ -96,8 +130,11 @@ class Env {
     void cleanup(int mesh_index);
     void load_data(int mesh_index, std::vector<float> vertices, std::vector<int> indices);
     void load_grid();
-    void draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection, int mesh_index);
+    void load_fur();
+    void draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection, int mesh_index, int render_id);
     void draw_grid(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
+    void drawFur(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
 };
 
 std::vector<float> generateGrid(int gridSize);
+std::vector<float> generateFur();

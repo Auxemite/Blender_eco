@@ -8,6 +8,8 @@ Env::Env() {
     VBOs = std::vector<unsigned int>(1, 0);
     VAOs = std::vector<unsigned int>(1, 0);
     EBOs = std::vector<unsigned int>(1, 0);
+    gridVBO = 0;
+    gridVAO = 0;
     update_data(0);
 }
 
@@ -51,11 +53,13 @@ void Env::update_data(int mesh_index) {
         Point3 *p_b = mesh->faces[i]->b;
         Point3 *p_c = mesh->faces[i]->c;
         Color color(1.0f, 1.0f, 1.0f);
-        if (render_mode == 0 || render_mode == 1) {
-            if (mesh->faces[i]->selected)
-                color = Color(0.0f, 2.0f, 2.0f);
-        }
-        else
+//        if (render_mode == 0 || render_mode == 1) {
+//            if (mesh->faces[i]->selected)
+//                color = Color(0.0f, 2.0f, 2.0f);
+//        }
+//        else
+//            color = Color(mesh->faces[0]->texture.material.color);
+        if (render_mode != 0 && render_mode != 1)
             color = Color(mesh->faces[0]->texture.material.color);
 
         vertices.push_back(p_a->x);
@@ -82,17 +86,6 @@ void Env::update_data(int mesh_index) {
         vertices.push_back(color.b);
         indices.push_back(i * 3 + 2);
     }
-    // std::cout << "POINT NB = " << vertices.size() << "\n";
-    // std::cout << "INDICE NB = " << indices.size() << "\n";
-//    std::cout << "{ ";
-//    for (int i = 0; i < vertices.size(); i+=6) {
-//        if (i != 0 && i%18 == 0)
-//            std::cout << "\n";
-//        std::cout << vertices[i] << " ";
-//        std::cout << vertices[i+1] << " ";
-//        std::cout << vertices[i+2] << ";  ";
-//    }
-//    std::cout << " }\n";
     cleanup(mesh_index);
     load_data(mesh_index, vertices, indices);
 }
@@ -136,6 +129,18 @@ void Env::add_mesh(const std::string& name) {
     render(scene.meshes.size()-1);
 }
 
+void Env::duplicate_mesh() {
+    if (scene.focus_mesh == nullptr)
+        return;
+    unsigned int VBO, VAO, EBO;
+    VBOs.push_back(VBO);
+    VAOs.push_back(VAO);
+    EBOs.push_back(EBO);
+    Mesh *mesh = new Mesh(*scene.focus_mesh);
+    scene.add_mesh(mesh);
+    render(scene.meshes.size()-1);
+}
+
 void Env::delete_mesh() {
     VBOs.erase(VBOs.begin()+scene.focus_index);
     VAOs.erase(VAOs.begin()+scene.focus_index);
@@ -166,6 +171,7 @@ void Env::load_data(int mesh_index, std::vector<float> vertices, std::vector<int
     glGenVertexArrays(1, &(VAOs[mesh_index]));
     glGenBuffers(1, &(VBOs[mesh_index]));
     glGenBuffers(1, &(EBOs[mesh_index]));
+    checkOpenGLError("load_data : gen buffers");
 
     glBindVertexArray(VAOs[mesh_index]);
 
@@ -175,10 +181,14 @@ void Env::load_data(int mesh_index, std::vector<float> vertices, std::vector<int
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[mesh_index]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * indices.size(), indices.data(), GL_STATIC_DRAW);
 
+    checkOpenGLError("load_data : bind buffers");
+
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    checkOpenGLError("load_data : enable attributes");
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -205,22 +215,76 @@ void Env::load_grid() {
     glBindVertexArray(0);
 }
 
-void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection, int mesh_index) {
+void Env::load_fur() {
+    furVertices = generateFur();
+    glGenVertexArrays(1, &furVAO);
+    glGenBuffers(1, &furVBO);
+
+    glBindVertexArray(furVAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, furVBO);
+    glBufferData(GL_ARRAY_BUFFER, furVertices.size() * sizeof(float), furVertices.data(), GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+}
+
+void special_uniform(unsigned int shaderProgram, int render_id) {
+    if (render_id == 3 || render_id == 4 || render_id == 5 || render_id == 8) {
+        GLint anim_time_location = glGetUniformLocation(shaderProgram, "anim_time");
+        glUniform1f(anim_time_location, anim_time);
+    }
+    unsigned int fur_lengthLoc = glGetUniformLocation(shaderProgram, "fur_length");
+    unsigned int fur_sizeLoc = glGetUniformLocation(shaderProgram, "fur_size");
+    unsigned int fur_colorLoc = glGetUniformLocation(shaderProgram, "fur_color");
+    unsigned int surfaceLoc = glGetUniformLocation(shaderProgram, "surface");
+    unsigned int amplitudeLoc = glGetUniformLocation(shaderProgram, "wave_amplitude");
+    unsigned int frequencyLoc = glGetUniformLocation(shaderProgram, "wave_frequency");
+    unsigned int dependanceLoc = glGetUniformLocation(shaderProgram, "dep");
+    unsigned int dependance2Loc = glGetUniformLocation(shaderProgram, "dep2");
+    unsigned int metalessLoc = glGetUniformLocation(shaderProgram, "metaless");
+    unsigned int roughnessLoc = glGetUniformLocation(shaderProgram, "roughness");
+
+    glUniform1i(fur_lengthLoc, fur_length);
+    glUniform1f(fur_sizeLoc, fur_size);
+    glUniform3f(fur_colorLoc, fur_color.r, fur_color.g, fur_color.b);
+    glUniform1i(surfaceLoc, tesselation_surface);
+    glUniform3f(amplitudeLoc, waveAmplitude.x, waveAmplitude.y, waveAmplitude.z);
+    glUniform3f(frequencyLoc, waveFrequency.x, waveFrequency.y, waveFrequency.z);
+    glUniform3f(dependanceLoc, waveDependance[0][0], waveDependance[1][0], waveDependance[2][0]);
+    glUniform3f(dependance2Loc, waveDependance[0][1], waveDependance[1][1], waveDependance[2][1]);
+    glUniform1f(metalessLoc, metaless);
+    glUniform1f(roughnessLoc, roughness);
+}
+
+void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection, int mesh_index, int render_id) {
     glUseProgram(shaderProgram);
+    if (render_mode != 0)
+        special_uniform(shaderProgram, render_id);
 
     unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
     unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
     unsigned int projLoc = glGetUniformLocation(shaderProgram, "projection");
+    unsigned int smoothLoc = glGetUniformLocation(shaderProgram, "smooth_shading");
 
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+    glUniform1i(smoothLoc, smooth);
 
-    unsigned int positionDec = glGetUniformLocation(shaderProgram, "positionDec");
-    if (scene.focus_index == mesh_index)
-        glUniform3f(positionDec, scene.dec_x, scene.dec_y, scene.dec_z);
-    else
-        glUniform3f(positionDec, 0, 0, 0);
+    unsigned int positionDecLoc = glGetUniformLocation(shaderProgram, "positionDec");
+    unsigned int positionCenterLoc = glGetUniformLocation(shaderProgram, "positionCenter");
+    if (scene.focus_index == mesh_index) {
+        glUniform3f(positionDecLoc, scene.dec_x, scene.dec_y, scene.dec_z);
+        glUniform3f(positionCenterLoc, scene.meshCenter.x, scene.meshCenter.y, scene.meshCenter.z);
+    }
+    else {
+        glUniform3f(positionDecLoc, 0, 0, 0);
+        glUniform3f(positionCenterLoc, 0, 0, 0);
+    }
 
     unsigned int cameraPosLoc = glGetUniformLocation(shaderProgram, "cameraPos");
     glUniform3f(cameraPosLoc, cameraPos.x, cameraPos.y, cameraPos.z);
@@ -247,7 +311,12 @@ void Env::draw_data(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view,
         glUniform3f(materialAttrLoc, scene.ns, scene.kd, scene.ks);
 
     glBindVertexArray(VAOs[mesh_index]);
-    glDrawElements(GL_TRIANGLES, scene.meshes[mesh_index]->faces.size() * 3, GL_UNSIGNED_INT, 0);
+    if (render_id == 3 || render_id == 4 || render_id == 5 || render_id == 8) {
+        glPatchParameteri(GL_PATCH_VERTICES, 3);
+        glDrawArrays(GL_PATCHES, 0, scene.meshes[mesh_index]->faces.size() * 3);
+    }
+    else
+        glDrawElements(GL_TRIANGLES, scene.meshes[mesh_index]->faces.size() * 3, GL_UNSIGNED_INT, 0);
 }
 
 void Env::draw_grid(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection) {
@@ -263,6 +332,39 @@ void Env::draw_grid(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view,
 
     glBindVertexArray(gridVAO);
     glDrawArrays(GL_LINES, 0, gridVertices.size() / 6);
+}
+
+void Env::drawFur(unsigned int shaderProgram, glm::mat4 model, glm::mat4 view, glm::mat4 projection) {
+    glUseProgram(shaderProgram);
+
+    special_uniform(shaderProgram, 3);
+
+    unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
+    unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
+    unsigned int projLoc = glGetUniformLocation(shaderProgram, "projection");
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+    glBindVertexArray(furVAO);
+    glPatchParameteri(GL_PATCH_VERTICES, 2);
+    glDrawArrays(GL_PATCHES, 0, furVertices.size() / 6);
+}
+
+std::vector<float> generateFur() {
+    float fur_length_test = 10.0f;
+    std::vector<float> furVertices;
+    for (float y = -1.0f; y < 1.0f; y+=0.1f) {
+        for (float x = -1.0f; x < 1.0f; x+=0.1f) {
+            furVertices.push_back(x);
+            furVertices.push_back(y);
+            furVertices.push_back(-1.0f);
+            furVertices.push_back(x);
+            furVertices.push_back(y);
+            furVertices.push_back(1.0f);
+        }
+    }
+    return furVertices;
 }
 
 std::vector<float> generateGrid(int gridSize) {

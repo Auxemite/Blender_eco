@@ -126,7 +126,7 @@ std::vector<int> Mesh::get_face_index(const Triangle& face) const
 
 void Mesh::to_dot_obj(const std::string& filename)
 {
-    std::ofstream f(filename);
+    std::ofstream f(filename + ".obj");
     if (!f)
         return;
     
