@@ -11,9 +11,34 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-The aim of this project was to re-implement a modeling software : 
-- From scratch (main branch)
-- With opengl (dev and opengl branch)
+The goal of this project was to create 3D modeling software based on how Blender works. For this project, we used Dear IMGUI with GLFW and Opengl for the graphical interface.
+
+This project has two separate versions accessible via different branches.
+
+### Raytracing version (on the “main” and “raycasting” branches)
+
+This version was created to implement the software without a graphics API (only in C++) and with simple raytracing. Opengl and GLFW were used only for the interface.
+
+It has the following features: 
+
+#### Simple 3D scene
+* Creation of a scene consisting of a cube with the option to disable the grid
+* Move the camera around the scene using the arrow keys (with speed options)
+* View the scene's object tree and hide objects
+* Add or remove an object in the scene with a choice of ten basic objects (cube, plane, triangle, cone, sphere, icosphere, cylinder, donut, monkey)
+* Select an object in the scene to move, rotate, or resize it
+* Save the scene in .obj format
+
+#### Edit Mode
+* Switch to “edit mode” after selecting an object to select or move the face or vertex of an object
+* Several extrude options on a face of an object in “edit mode”
+
+#### Render Mode
+* Activate “render” mode to see the result of ray tracing on the scene with light.
+* Add a skybox with the option to change it.
+* Use Phong for light management on objects with the ability to change the color, kd, ks, and ns of an object's material.
+* Option to change the light intensity.
+* Option to save a render in .ppm format.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
