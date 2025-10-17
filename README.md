@@ -4,7 +4,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/Auxemite/Blender_eco/">
-    <img src="data/interface_screeshot.webp" alt="3D Modeling Software"> <!-- width="80" height="80"> -->
+    <img src="data/screenshot.png" alt="3D Modeling Software"> <!-- width="80" height="80"> -->
   </a>
 </div>
 
