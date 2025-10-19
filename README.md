@@ -1,5 +1,5 @@
 <a id="readme-top"></a>
-# 3D Modeling Software
+# 3D Modeling Software (Rasterization Version)
 
 <br />
 <div align="center">
