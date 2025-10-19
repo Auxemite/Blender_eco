@@ -11,9 +11,9 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-The goal of this project was to create 3D modeling software based on how Blender works. For this project, we used Dear IMGUI with GLFW and Opengl for the graphical interface.
+The goal of this project was to create Blender like 3D modeling software. For this project, we used Dear IMGUI with GLFW and Opengl for the graphical interface.
 
-This project has two separate versions accessible via different branches : Raytracing version and Rasterization version (opengl).
+This project has two separate versions available via different branches : Raytracing version and Rasterization version (opengl).
 
 ### Raytracing version (on the “main” and “raycasting” branches)
 
@@ -63,7 +63,7 @@ The goal of this version was to port the raytracing version to opengl in order t
 * Option to simulate hair in a very simplified way using tessellation shader with the “fur only” button or the “fur” checkbox. Addition of customization options (fur length, fur size, and tessellation surface).
 * Option to distort meshes using sinusoids with the “wave” button. It is possible to distort a mesh with sinusoids in all directions with any dependency, amplitude, and frequency (can be combined with hair simulation).
 
-For this version of the software, we used modern rasterization light management techniques (PBR) as well as advanced OpenGL features (geometry shader, tessellation shader).
+For this software version, we used modern rasterization light management techniques (PBR) as well as advanced OpenGL features (geometry shader, tessellation shader).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
