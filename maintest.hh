@@ -4,11 +4,8 @@
 #include "frontend/window.hh"
 #include "frontend/uniform.hh"
 #include "backend/scene.hh"
-#include "maintest.hh"
 
-int main(int argc, char **argv) {
-    return maintest();
-
+int maintest() {
     GLFWwindow *window = Window::glfwWindowInit();
     if (window == nullptr)
         return -1;

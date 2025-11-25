@@ -2,7 +2,7 @@
 
 #include "glm/vec3.hpp"
 
-enum LightType {
+enum class LightType {
     PointLight,
 };
 

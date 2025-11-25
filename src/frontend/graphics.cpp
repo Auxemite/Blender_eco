@@ -1,10 +1,28 @@
-#include "graphics_utils.hh"
+#include "graphics.hh"
 
-#include "shader_utils.hh"
+#include "shaderUtils.hh"
 #include "env.hh"
 #include "vertex.hh"
 
 namespace Graphics {
+
+u32 bufferUsageToGL(BufferUsage usage) {
+    switch(usage) {
+        case BufferUsage::Attribute:
+            return GL_ARRAY_BUFFER;
+
+        case BufferUsage::Index:
+            return GL_ELEMENT_ARRAY_BUFFER;
+
+        case BufferUsage::Uniform:
+            return GL_UNIFORM_BUFFER;
+
+        case BufferUsage::Storage:
+            return GL_SHADER_STORAGE_BUFFER;
+    }
+
+    FATAL("Unknown usage value");
+}
 
 void clearWindow() {
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
@@ -54,15 +72,15 @@ void loadData() {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Env::indices), Env::indices, GL_STATIC_DRAW);
 
     // Vertex position
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(engine::vertex), nullptr);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Engine::vertex), nullptr);
     // Vertex normal
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(engine::vertex), (void *) (3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Engine::vertex), (void *) (3 * sizeof(float)));
     // Vertex uv
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(engine::vertex),(void *) (6 * sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Engine::vertex),(void *) (6 * sizeof(float)));
     // Tangent / bitangent sign
-    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(engine::vertex), (void *) (8 * sizeof(float)));
+    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Engine::vertex), (void *) (8 * sizeof(float)));
     // Vertex color
-    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(engine::vertex), (void *) (12 * sizeof(float)));
+    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Engine::vertex), (void *) (12 * sizeof(float)));
 
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
@@ -73,5 +91,4 @@ void loadData() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }
-
 }

@@ -48,13 +48,41 @@ Mesh::Mesh(const std::string &filename) {
             }
 
             // point index -1 because starting index is 1 in the .obj file
-            faces.push_back(new Triangle(points[f[0] - 1],
-                                         points[f[1] - 1],
-                                         points[f[2] - 1]));
+            faces.push_back(new Triangle(f[0] - 1,
+                                         f[1] - 1,
+                                         f[2] - 1));
         }
     }
 
     material = nullptr;
     selected = false;
     is_visible = true;
+    graphicsObject = new GraphicsObject(this->vertices(), this->indices());
 }
+
+std::vector<Engine::vertex> Mesh::vertices() {
+    auto vertices = std::vector<Engine::vertex>();
+    for (auto & point : points) {
+        glm::vec3 color = material == nullptr ? glm::vec3(1.0) : material->color;
+        struct Engine::vertex vertex = {
+                *point,
+                glm::vec3(),
+                glm::vec2(),
+                glm::vec4(),
+                color
+        };
+        vertices.push_back(vertex);
+    }
+    return vertices;
+}
+
+std::vector<u32> Mesh::indices() {
+    auto indices = std::vector<u32>();
+    for (auto & triangle : faces) {
+        indices.push_back(triangle->ia);
+        indices.push_back(triangle->ib);
+        indices.push_back(triangle->ic);
+    }
+    return indices;
+}
+

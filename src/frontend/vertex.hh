@@ -4,7 +4,7 @@
 #include "glm/vec3.hpp"
 #include "glm/vec4.hpp"
 
-namespace engine {
+namespace Engine {
 
 struct vertex {
     glm::vec3 position;

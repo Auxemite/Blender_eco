@@ -1,4 +1,4 @@
-#include "shader_utils.hh"
+#include "shaderUtils.hh"
 
 namespace fs = std::filesystem;
 

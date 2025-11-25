@@ -3,7 +3,7 @@
 #include "glm/vec3.hpp"
 #include "glm/vec2.hpp"
 
-enum MATERIAL_TYPE {
+enum class MATERIAL_TYPE {
     PHONG,
     PBR
 };
@@ -15,5 +15,6 @@ public:
     glm::vec3 phong_factor; // kd ks ns
     glm::vec2 pbr_factor; // roughness metalness
 
-    Material(MATERIAL_TYPE _materialType);
+    Material()=default;
+    explicit Material(MATERIAL_TYPE _materialType);
 };
