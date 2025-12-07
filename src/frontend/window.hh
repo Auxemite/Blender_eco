@@ -8,10 +8,11 @@
 
 namespace Window {
 
-void framebufferSizeCallback(GLFWwindow *window, int width, int height);
-void glfwErrorCallback(int error, const char *description);
+    void framebufferSizeCallback(GLFWwindow *window, int width, int height);
+    void glfwErrorCallback(int error, const char *description);
 
-GLFWwindow *glfwWindowInit();
-void processInpute(GLFWwindow *window, Camera *camera);
+    GLFWwindow *glfwWindowInit();
+    void shutDown(GLFWwindow *window);
+    void processInpute(GLFWwindow *window, Camera *camera);
 
 }

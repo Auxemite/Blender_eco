@@ -2,16 +2,18 @@
 
 namespace Graphics {
 
-    ByteBuffer::ByteBuffer(const void* data, size_t _size) {
+    ByteBuffer::ByteBuffer(const void* _data, size_t _size) {
         ALWAYS_ASSERT(_size, "Buffer size can not be 0");
 
-        GLuint _bufferId = 0;
-        glCreateBuffers(1, &_bufferId);
-
-        bufferId = _bufferId;
-        size = _size;
-
-        glNamedBufferData(bufferId, size, data, GL_STATIC_DRAW);
+//        GLuint _bufferId = 0;
+//        glCreateBuffers(1, &_bufferId);
+//
+//        bufferId = _bufferId;
+//        size = _size;
+//
+//        glNamedBufferData(bufferId, size, _data, GL_STATIC_DRAW);
+//
+//        data = _data;
     }
 
     ByteBuffer::~ByteBuffer() {

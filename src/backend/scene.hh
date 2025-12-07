@@ -6,7 +6,7 @@
 #include "light.hh"
 #include "modifier.hh"
 
-class Scene {
+class Scene : NonMovable {
 public:
     Camera camera;
 
@@ -23,4 +23,5 @@ public:
     bool editmode = false;
 
     Scene()=default;
+    void addMesh(const std::string& filename);
 };

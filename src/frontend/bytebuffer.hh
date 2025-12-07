@@ -18,6 +18,7 @@ namespace Graphics {
 
         u32 bufferId = 0;
         size_t size = 0;
+        const void* data;
     };
 
 }

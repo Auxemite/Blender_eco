@@ -4,15 +4,17 @@
 #include "graphicsUtils.hh"
 #include "typebuffer.hh"
 
-class GraphicsObject {
+class GraphicsObject : NonMovable {
 public:
-    Graphics::TypedBuffer<Engine::vertex> vertex_buffer;
-    Graphics::TypedBuffer<u32> index_buffer;
+    GLuint VAO;
+    GLuint VBO;
+    GLuint EBO;
+    int eboSize;
 
+    void setup(std::vector<Engine::vertex> vertices, std::vector<u32> indices);
     GraphicsObject() = default;
-    GraphicsObject(std::vector<Engine::vertex> vertices, std::vector<u32> indices);
     ~GraphicsObject() = default;
 
-    void updateFromMesh(std::vector<Engine::vertex> vertices, std::vector<u32> indices);
+//    void updateFromMesh(std::vector<Engine::vertex> vertices, std::vector<u32> indices);
     void draw();
 };

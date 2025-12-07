@@ -8,7 +8,7 @@
 
 int main(int argc, char **argv) {
     return maintest();
-
+/*
     GLFWwindow *window = Window::glfwWindowInit();
     if (window == nullptr)
         return -1;
@@ -41,5 +41,5 @@ int main(int argc, char **argv) {
     }
 
     delete scene;
-    return 0;
+    return 0;*/
 }

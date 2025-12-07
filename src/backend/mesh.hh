@@ -10,12 +10,12 @@
 #include "frontend/graphicsUtils.hh"
 #include "frontend/graphicsObject.hh"
 
-class Mesh {
+class Mesh : NonCopyable {
 public:
     std::vector<glm::vec3 *> points;
     std::vector<Triangle *> faces;
     Material *material = nullptr;
-    GraphicsObject *graphicsObject = nullptr;
+    GraphicsObject *graphicsObject;
 
     bool selected = false;
     bool is_visible = true;

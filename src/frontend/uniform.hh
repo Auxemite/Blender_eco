@@ -11,6 +11,7 @@
 
 namespace Uniform {
 
-void setUniforms(unsigned int shaderProgram, Camera *camera);
+    void setModelViewProj(unsigned int shaderProgram, Camera *camera);
+    void setUniforms(unsigned int shaderProgram, Camera *camera);
 
 }

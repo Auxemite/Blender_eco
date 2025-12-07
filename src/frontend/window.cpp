@@ -4,6 +4,8 @@
 
 namespace Window {
 
+
+
 void framebufferSizeCallback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
     std::cout << "Viewport set to width: " << width << " height: " << height
@@ -23,8 +25,9 @@ GLFWwindow *glfwWindowInit() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint( GLFW_DECORATED, GLFW_FALSE );
 
-    GLFWwindow *window = glfwCreateWindow(1920, 1080, "Blender Eco+", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "Wings", nullptr, nullptr);
     if (!window) {
         std::cerr << "Error glfw_window_init : Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -40,6 +43,11 @@ GLFWwindow *glfwWindowInit() {
     }
 
     return window;
+}
+
+void shutDown(GLFWwindow *window) {
+    glfwDestroyWindow(window);
+    glfwTerminate();
 }
 
 void processInpute(GLFWwindow *window, Camera *camera) {

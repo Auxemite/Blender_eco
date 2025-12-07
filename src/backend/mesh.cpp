@@ -57,7 +57,8 @@ Mesh::Mesh(const std::string &filename) {
     material = nullptr;
     selected = false;
     is_visible = true;
-    graphicsObject = new GraphicsObject(this->vertices(), this->indices());
+    graphicsObject = new GraphicsObject();
+    graphicsObject->setup(vertices(), indices());
 }
 
 std::vector<Engine::vertex> Mesh::vertices() {
@@ -67,7 +68,7 @@ std::vector<Engine::vertex> Mesh::vertices() {
         struct Engine::vertex vertex = {
                 *point,
                 glm::vec3(),
-                glm::vec2(),
+                glm::vec2(point->x, point->y),
                 glm::vec4(),
                 color
         };

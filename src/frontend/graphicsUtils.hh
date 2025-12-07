@@ -32,6 +32,23 @@ using byte = std::byte;
 #define DEBUG_ASSERT(cond) ALWAYS_ASSERT(cond, "Assert failed: " #cond)
 #endif
 
+struct NonCopyable {
+    inline constexpr NonCopyable() {}
+    NonCopyable(const NonCopyable&) = delete;
+    NonCopyable& operator=(const NonCopyable&) = delete;
+
+    NonCopyable(NonCopyable&&) = default;
+    NonCopyable& operator=(NonCopyable&&) = default;
+};
+
+struct NonMovable : NonCopyable {
+    inline constexpr NonMovable() {}
+    NonMovable(const NonMovable&) = delete;
+    NonMovable& operator=(const NonMovable&) = delete;
+
+    NonMovable(NonMovable&&) = delete;
+};
+
 namespace Graphics {
 
 
@@ -53,23 +70,6 @@ enum class AccessType {
     WriteOnly,
     ReadOnly,
     ReadWrite
-};
-
-struct NonCopyable {
-    inline constexpr NonCopyable() {}
-    NonCopyable(const NonCopyable&) = delete;
-    NonCopyable& operator=(const NonCopyable&) = delete;
-
-    NonCopyable(NonCopyable&&) = default;
-    NonCopyable& operator=(NonCopyable&&) = default;
-};
-
-struct NonMovable : NonCopyable {
-    inline constexpr NonMovable() {}
-    NonMovable(const NonMovable&) = delete;
-    NonMovable& operator=(const NonMovable&) = delete;
-
-    NonMovable(NonMovable&&) = delete;
 };
 
 template<typename T>

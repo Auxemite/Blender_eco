@@ -76,10 +76,10 @@ unsigned int invalidShaderPath(const std::string &path) {
     return 0;
 }
 
-unsigned int initShaderProgram()
+unsigned int initShaderProgram(const std::string &vertexPath, const std::string &fragmentPath)
 {
-    std::string vertexCode = readShaderSource("../shaders/basic.vert");
-    std::string fragmentCode = readShaderSource("../shaders/basic.frag");
+    std::string vertexCode = readShaderSource(vertexPath);
+    std::string fragmentCode = readShaderSource(fragmentPath);
 
     unsigned int vertexShader = compileShader(vertexCode, GL_VERTEX_SHADER, "Vertex");
     unsigned int fragmentShader = compileShader(fragmentCode, GL_FRAGMENT_SHADER, "Fragment");
