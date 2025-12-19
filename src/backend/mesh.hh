@@ -22,6 +22,7 @@ public:
 
     Mesh() = default;
     explicit Mesh(const std::string& filename); //From .obj
+    bool ray_intersection(const glm::vec3& cam_position, const glm::vec3& direction);
     std::vector<Engine::vertex> vertices();
     std::vector<u32> indices();
 };

@@ -59,13 +59,6 @@ bool running_in_debugger();
 void break_in_debugger();
 void fatal(const char* msg, const char* file = nullptr, int line = 0);
 
-enum class BufferUsage {
-    Attribute = GL_ARRAY_BUFFER,
-    Index = GL_ELEMENT_ARRAY_BUFFER,
-    Uniform = GL_UNIFORM_BUFFER,
-    Storage = GL_SHADER_STORAGE_BUFFER,
-};
-
 enum class AccessType {
     WriteOnly,
     ReadOnly,

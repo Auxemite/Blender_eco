@@ -11,10 +11,10 @@ public:
     Camera camera;
 
     std::vector<Mesh *> meshes;
+    std::vector<bool *> selectedMeshes;
     std::vector<Light *> lights;
     std::vector<Material *> materials;
 
-    std::vector<int> selectedMeshes;
     glm::vec3 sceneCenter = glm::vec3(0.0f, 0.0f, 0.0f);
     Modifier modifier;
 

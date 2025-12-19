@@ -1,128 +1,126 @@
 #include <iostream>
+#include <string>
+#include <filesystem>
 #include "gui.hh"
-#include "GLFW/glfw3.h"
-#include "imgui_internal.h"
+#include "backend/scene.hh"
+#include "shaderUtils.hh"
+namespace fs = std::filesystem;
 
 namespace Gui {
+    void mainGui(Scene *scene) {
+        ImGui::ShowDemoWindow();
+        ImGui::Begin("Viewport");
+        if (ImGui::Button("Basic"))
+            Env::mainShaderProgram = Shader::createShaderProgram("../shaders/basic");
+        if (ImGui::Button("Wireframe"))
+            Env::mainShaderProgram = Shader::createShaderProgram("../shaders/wireframe");
+        ImGui::SliderFloat("Position X", &scene->modifier.position.x, -5, 5);
+        ImGui::SliderFloat("Position Y", &scene->modifier.position.y, -5, 5);
+        ImGui::SliderFloat("Position Z", &scene->modifier.position.z, -5, 5);
 
-void initialize(ImGuiIO &io, GLFWwindow *window) {
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-//    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
-
-    ImGui::StyleColorsCustom();
-    //ImGui::StyleColorsLight();
-
-    ImGuiStyle &style = ImGui::GetStyle();
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-        style.WindowRounding = 0.0f;
-        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+        ImGui::SliderFloat("Rotation X", &scene->modifier.rotation.x, -5, 5);
+        ImGui::SliderFloat("Rotation Y", &scene->modifier.rotation.y, -5, 5);
+        ImGui::SliderFloat("Rotation Z", &scene->modifier.rotation.z, -5, 5);
+        ImGui::End();
+        meshTreeNode(scene);
     }
 
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 450");
-}
+    void meshTreeNode(Scene *scene) {
+        ImGui::Begin("Tree");
+        addMesh(scene);
+        if (false) { //TODO
+            ImGui::SameLine();
+            if (ImGui::Button("Delete Mesh")) { }
+            ImGui::SameLine();
+            if (ImGui::Button("Duplicate Mesh")) { }
+        }
 
-void newFrame() {
-//        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        for (int i = 0; i < scene->meshes.size(); i++) {
+            std::string name = "> Mesh " + std::to_string(i);
+            if (ImGui::Button(name.c_str())) {
+                scene->meshes[i]->selected = !scene->meshes[i]->selected;
+            }
+            ImGui::SameLine();
+            ImGui::PushID(i);
+            if (ImGui::Button("<O>")) {
+                scene->meshes[i]->is_visible = !scene->meshes[i]->is_visible;
+            }
+            ImGui::PopID();
+//            ImGui::SameLine();
+//            treeMesh(env, i);
+        }
 
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
+        ImGui::End();
+    }
 
-//    const ImGuiViewport* main_vp = ImGui::GetMainViewport();
-//    ImGui::SetNextWindowPos(main_vp->Pos);
-//    ImGui::SetNextWindowSize(main_vp->Size);
-//    ImGui::SetNextWindowViewport(main_vp->ID);
-//
-//    ImGui::Begin("MainDockSpace");
-//    ImGuiID dockspace_id = ImGui::GetID("MyMainDockSpace");
-//    ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f));
-//    ImGui::End();
-//    if (!dock_built)
-//    {
-//        dock_built = true;
-//        ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-//        ImGui::DockBuilderDockWindow("Viewport", dockspace_id);
-//        ImGui::DockBuilderFinish(dockspace_id);
+    void addMesh(Scene *scene) {
+        if (ImGui::Button("Add Mesh"))
+        {
+            ImGui::OpenPopup("add_mesh");
+            std::string path = "../data/";
+            mesh_names.clear();
+            for (const auto & entry : fs::directory_iterator(path))
+                if (entry.path().extension() == ".obj")
+                    mesh_names.push_back(entry.path().stem().string());
+        }
+        if (ImGui::BeginPopup("add_mesh"))
+        {
+            ImGui::SeparatorText("Mesh Types");
+            for (const std::string& filename : mesh_names) {
+                std::string ui_filename = filename;
+                ui_filename[0] = toupper(ui_filename[0]);
+                if (ImGui::Selectable(ui_filename.c_str())) {
+                    scene->addMesh("../data/" + filename + ".obj");
+                }
+            }
+            ImGui::EndPopup();
+        }
+    }
+
+//    void treeMesh(Env& env, int index) {
+//        static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+//        static bool align_label_with_current_x_position = false;
+//        Mesh *mesh = env.scene.meshes[index];
+//        std::string name = "Faces Mesh " + std::to_string(index);
+//        if (ImGui::TreeNode(name.c_str()))
+//        {
+//            static int selection_mask = (1 << 2);
+//            int node_clicked = -1;
+//            for (int i = 0; i < mesh->faces.size(); i++)
+//            {
+//                ImGuiTreeNodeFlags node_flags = base_flags;
+//                const bool is_selected = (selection_mask & (1 << i)) != 0;
+//                if (is_selected)
+//                    node_flags |= ImGuiTreeNodeFlags_Selected;
+//                node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+//                ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, "> %s %d", "Face", i);
+//                if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()) {
+//                    node_clicked = i;
+//                    env.scene.change_focus(mesh, mesh->faces[i]);
+//                    env.render();
+//                    // BEHAVIOR IS HERE
+//                }
+//            }
+//            if (node_clicked != -1)
+//                selection_mask = (1 << node_clicked);
+//            if (align_label_with_current_x_position)
+//                ImGui::Indent(ImGui::GetTreeNodeToLabelSpacing());
+//            ImGui::TreePop();
+//        }
 //    }
 
-//        Gui::renderTextureViewport();
-}
-
-void render(ImGuiIO &io) {
-    ImGui::Render();
-
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-        GLFWwindow *backup_current_context = glfwGetCurrentContext();
-        ImGui::UpdatePlatformWindows();
-        ImGui::RenderPlatformWindowsDefault();
-        glfwMakeContextCurrent(backup_current_context);
-    }
-}
-
-void shutDown() {
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-}
-
-void setUpTextureViewport() {
-    // Main texture
-    glCreateTextures(GL_TEXTURE_2D, 1, &colorTex);
-    glTextureStorage2D(colorTex, 1, GL_RGBA8, WIDTH, HEIGHT);
-    glTextureParameteri(colorTex, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTextureParameteri(colorTex, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTextureParameteri(colorTex, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTextureParameteri(colorTex, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    // Depth Renderbuffer
-    glCreateRenderbuffers(1, &depthRbo);
-    glNamedRenderbufferStorage(depthRbo, GL_DEPTH24_STENCIL8, WIDTH, HEIGHT);
-
-    // FBO
-    glCreateFramebuffers(1, &fbo);
-    glNamedFramebufferTexture(fbo, GL_COLOR_ATTACHMENT0, colorTex, 0);
-    glNamedFramebufferRenderbuffer(fbo, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthRbo);
-
-    // Verification
-    if (glCheckNamedFramebufferStatus(fbo, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-    {
-        std::cerr << "Framebuffer for main texture done." << std::endl;
-    }
-}
-
-void renderTextureViewport() {
-    ImGui::Begin("Viewport");
-
-    ImVec2 avail = Gui::getResizeAvail();
-
-    // OpenGL texture ID → ImGui
-    ImGui::Image((void*)(intptr_t)Gui::colorTex,
-                 avail,
-                 ImVec2(0.0f, 1.0f),  // flip vertical
-                 ImVec2(1.0f, 0.0f));
-
-    ImGui::End();
-}
-
-ImVec2 getResizeAvail() {
-    ImVec2 avail = ImGui::GetContentRegionAvail();
-//    int newW = (int)avail.x;
-//    int newH = (int)avail.y;
-//
-//    if (newW > 0 && newH > 0 &&
-//        (newW != lastW || newH != lastH))
-//    {
-//        lastW = newW;
-//        lastH = newH;
-//
-//        glTextureStorage2D(colorTex, 1, GL_RGBA8, newW, newH);
-//        glNamedRenderbufferStorage(depthRbo, GL_DEPTH24_STENCIL8, newW, newH);
+    void printObjInfo(Mesh* focus_mesh) {
+        if (focus_mesh == nullptr) {
+            ImGui::Text("No Mesh Selected");
+            return;
+        }
+        std::string text = "type : Mesh\n";
+        text += "Number of Faces : " + std::to_string(focus_mesh->faces.size()) + "\n";
+        text += "Number of Summit : " + std::to_string(focus_mesh->points.size()) + "\n";
+//    text += "Summits :\n";
+//    for (auto & summit : focus_mesh->points) {
+//        text += summit->to_string() + "\n";
 //    }
-    return avail;
-}
+        ImGui::Text("%s", text.c_str());
+    }
 }

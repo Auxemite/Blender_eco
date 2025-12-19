@@ -2,7 +2,6 @@
 
 #include "vertex.hh"
 #include "graphicsUtils.hh"
-#include "typebuffer.hh"
 
 class GraphicsObject : NonMovable {
 public:

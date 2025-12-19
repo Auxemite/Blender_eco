@@ -10,9 +10,9 @@ enum class MATERIAL_TYPE {
 
 class Material {
 public:
-    MATERIAL_TYPE materialType;
+//    MATERIAL_TYPE materialType;
     glm::vec3 color; // r g b
-    glm::vec3 phong_factor; // kd ks ns
+//    glm::vec3 phong_factor; // kd ks ns
     glm::vec2 pbr_factor; // roughness metalness
 
     Material()=default;

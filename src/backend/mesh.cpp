@@ -61,6 +61,14 @@ Mesh::Mesh(const std::string &filename) {
     graphicsObject->setup(vertices(), indices());
 }
 
+bool Mesh::ray_intersection(const glm::vec3& cam_position, const glm::vec3& direction) {
+    for (auto & face : faces) {
+        if (face->ray_intersection(points, cam_position, direction))
+            return true;
+    }
+    return false;
+}
+
 std::vector<Engine::vertex> Mesh::vertices() {
     auto vertices = std::vector<Engine::vertex>();
     for (auto & point : points) {

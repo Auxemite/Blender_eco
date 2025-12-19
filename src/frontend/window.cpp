@@ -4,8 +4,6 @@
 
 namespace Window {
 
-
-
 void framebufferSizeCallback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
     std::cout << "Viewport set to width: " << width << " height: " << height

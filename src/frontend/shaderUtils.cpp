@@ -111,16 +111,31 @@ unsigned int createShaderProgram(const std::string &path) {
     std::string tessControlCode = "";
     std::string tessEvalCode = "";
     for (const auto &entry: fs::directory_iterator(path)) {
-        if (entry.path().extension() == ".vert")
+        if (entry.path().extension() == ".vert") {
+            if (!vertexCode.empty())
+                checkOpenGLError("More than one vertex shader in directory");
             vertexCode = readShaderSource(entry.path().string());
-        if (entry.path().extension() == ".frag")
+        }
+        else if (entry.path().extension() == ".frag") {
+            if (!fragmentCode.empty())
+                checkOpenGLError("More than one fragment shader in directory");
             fragmentCode = readShaderSource(entry.path().string());
-        if (entry.path().extension() == ".geom")
+        }
+        else if (entry.path().extension() == ".geom") {
+            if (!geometryCode.empty())
+                checkOpenGLError("More than one geometry shader in directory");
             geometryCode = readShaderSource(entry.path().string());
-        if (entry.path().extension() == ".tesc")
+        }
+        else if (entry.path().extension() == ".tesc") {
+            if (!tessControlCode.empty())
+                checkOpenGLError("More than one tesselation control shader in directory");
             tessControlCode = readShaderSource(entry.path().string());
-        if (entry.path().extension() == ".tese")
+        }
+        else if (entry.path().extension() == ".tese") {
+            if (!tessEvalCode.empty())
+                checkOpenGLError("More than one tesselation eval shader in directory");
             tessEvalCode = readShaderSource(entry.path().string());
+        }
     }
 
     unsigned int vertexShader = compileShader(vertexCode, GL_VERTEX_SHADER, "Vertex");

@@ -6,24 +6,6 @@
 
 namespace Graphics {
 
-u32 bufferUsageToGL(BufferUsage usage) {
-    switch(usage) {
-        case BufferUsage::Attribute:
-            return GL_ARRAY_BUFFER;
-
-        case BufferUsage::Index:
-            return GL_ELEMENT_ARRAY_BUFFER;
-
-        case BufferUsage::Uniform:
-            return GL_UNIFORM_BUFFER;
-
-        case BufferUsage::Storage:
-            return GL_SHADER_STORAGE_BUFFER;
-    }
-
-    FATAL("Unknown usage value");
-}
-
 void clearWindow() {
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -193,12 +175,56 @@ void loadGrid() {
     glVertexArrayAttribBinding(gridVAO, 1, 0);
 }
 
+void loadRay(glm::vec3 rayDirection, Camera *camera) {
+    if (loadedRay) {
+        glDeleteVertexArrays(1, &rayVAO);
+        glDeleteBuffers(1, &rayVBO);
+    }
+    loadedRay = true;
+    std::vector<float> rayVertices;
+    rayVertices.push_back(camera->position.x + rayDirection.x * 100.0f);
+    rayVertices.push_back(camera->position.y + rayDirection.y * 100.0f);
+    rayVertices.push_back(camera->position.z + rayDirection.z * 100.0f);
+    rayVertices.push_back(1.0f);
+    rayVertices.push_back(1.0f);
+    rayVertices.push_back(1.0f);
+    rayVertices.push_back(camera->position.x + rayDirection.x * -100.0f);
+    rayVertices.push_back(camera->position.y + rayDirection.y * -100.0f);
+    rayVertices.push_back(camera->position.z + rayDirection.z * -100.0f);
+    rayVertices.push_back(1.0f);
+    rayVertices.push_back(1.0f);
+    rayVertices.push_back(1.0f);
+    raySize = rayVertices.size();
+    glCreateVertexArrays(1, &rayVAO);
+    glCreateBuffers(1, &rayVBO);
+
+    glNamedBufferData(rayVBO, raySize * sizeof(float), rayVertices.data(), GL_STATIC_DRAW);
+    glVertexArrayVertexBuffer(rayVAO, 0, rayVBO, 0, 6 * sizeof(float));
+
+    glEnableVertexArrayAttrib(rayVAO, 0);
+    glEnableVertexArrayAttrib(rayVAO, 1);
+
+    glVertexArrayAttribFormat(rayVAO, 0, 3, GL_FLOAT, GL_FALSE, 0);
+    glVertexArrayAttribBinding(rayVAO, 0, 0);
+
+    glVertexArrayAttribFormat(rayVAO, 1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float));
+    glVertexArrayAttribBinding(rayVAO, 1, 0);
+}
+
 void drawGrid(unsigned int shaderProgram, Camera *camera) {
     glUseProgram(shaderProgram);
-    Uniform::setModelViewProj(shaderProgram, camera);
+    Uniform::setBasicUniforms(shaderProgram, camera);
 
     glBindVertexArray(gridVAO);
     glDrawArrays(GL_LINES, 0, gridSize / 6); // Warning : gridSize conversion from size_t to int
+}
+
+void drawRay(unsigned int shaderProgram, Camera *camera) {
+    glUseProgram(shaderProgram);
+    Uniform::setBasicUniforms(shaderProgram, camera);
+
+    glBindVertexArray(rayVAO);
+    glDrawArrays(GL_LINES, 0, raySize / 6); // Warning : gridSize conversion from size_t to int
 }
 
 }

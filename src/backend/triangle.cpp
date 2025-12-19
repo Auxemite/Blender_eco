@@ -1,3 +1,4 @@
+#include <iostream>
 #include "triangle.hh"
 #include "utils.hh"
 
@@ -19,35 +20,38 @@ Triangle::Triangle(const int& ia_, const int& ib_, const int& ic_)
     normalize();
 }
 
-//float Triangle::ray_intersection(const glm::vec3& cam_position, const glm::vec3& direction)
-//{
-//    glm::vec3 edge_1 = *b - *a;
-//    glm::vec3 edge_2 = *c - *a;
-//    glm::vec3 normal_vect = direction * edge_2;
-//    float det = dot(edge_1, normal_vect);
-//
-//    // Parallel
-//    if (abs_(det) <= 0.001)
-//        return -1.;
-//
-//    float inv_det = 1.0f / det;
-//    glm::vec3 s = cam_position - *a;
-//    float u = inv_det * dot(s, normal_vect);
-//
-//    if (u < 0 || u > 1)
-//        return -1.;
-//
-//    glm::vec3 s_cross_e1 = s * edge_1;
-//    float v = inv_det * dot(direction, s_cross_e1);
-//
-//    if (v < 0 || u + v > 1)
-//        return -1.;
-//
-//    float t = inv_det * dot(edge_2, s_cross_e1);
-//
-//    return t;
-//}
-//
+bool Triangle::ray_intersection(std::vector<glm::vec3 *> points, const glm::vec3& cam_position, const glm::vec3& direction)
+{
+    glm::vec3 edge_1 = *points[ib] - *points[ia];
+    glm::vec3 edge_2 = *points[ic] - *points[ia];
+    glm::vec3 normal_vect = cross(direction, edge_2);
+    float det = dot(edge_1, normal_vect);
+
+    // Parallel
+    if (abs_(det) <= 0.001) {
+        return false;
+    }
+
+    float inv_det = 1.0f / det;
+    glm::vec3 s = cam_position - *points[ia];
+    float u = inv_det * dot(s, normal_vect);
+
+    if (u < 0.0f || u > 1.0f) {
+        return false;
+    }
+
+    glm::vec3 s_cross_e1 = cross(s, edge_1);
+    float v = inv_det * dot(direction, s_cross_e1);
+
+    if (v < 0.0f || u + v > 1.0f) {
+        return false;
+    }
+
+    float t = inv_det * dot(edge_2, s_cross_e1);
+
+    return t > 0;
+}
+
 //void Triangle::scale(float size) const
 //{
 //    if (size == 1.)
