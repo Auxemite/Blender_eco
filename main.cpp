@@ -72,8 +72,12 @@ int main(int argc, char **argv) {
             if (mesh->is_visible) {
                 glUseProgram(Env::mainShaderProgram);
                 Uniform::setBasicUniforms(Env::mainShaderProgram, &scene->camera);
-//                if (mesh->selected && mesh->is_visible)
-                Uniform::setModifierUniforms(Env::mainShaderProgram, &scene->modifier);
+
+                if (mesh->selected && mesh->is_visible)
+                    Uniform::setModifierUniforms(Env::mainShaderProgram, scene->modifier);
+                else
+                    Uniform::setModifierUniforms(Env::mainShaderProgram,{});
+
                 Uniform::setMeshUniforms(Env::mainShaderProgram, mesh);
                 mesh->graphicsObject->draw();
             }
@@ -82,7 +86,7 @@ int main(int argc, char **argv) {
             if (mesh->selected) {
                 glUseProgram(wireframeShaderProgram);
                 Uniform::setBasicUniforms(wireframeShaderProgram, &scene->camera);
-                Uniform::setModifierUniforms(wireframeShaderProgram, &scene->modifier);
+                Uniform::setModifierUniforms(wireframeShaderProgram, scene->modifier);
                 mesh->graphicsObject->draw();
             }
         }

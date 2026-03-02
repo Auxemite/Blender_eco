@@ -41,31 +41,37 @@ void setBasicUniforms(unsigned int shaderProgram, Camera *camera) {
     glUniform3f(cameraPosLoc, camera->position.x, camera->position.y, camera->position.z);
 }
 
-glm::mat3 getRotationMatrix(Modifier *modifier) {
-    float angleX = modifier->rotation.x;
-    return {1.0, 0.0, 0.0,
-            0.0, cos(angleX), -sin(angleX),
-            0.0, sin(angleX), cos(angleX) };
+glm::mat3 getRotationMatrix(const glm::vec3& angle) {
+    glm::mat3 matX = {1.0, 0.0, 0.0,
+                      0.0, cos(angle.x), -sin(angle.x),
+                      0.0, sin(angle.x), cos(angle.x) };
+    glm::mat3 matY = {cos(angle.y), 0.0, sin(angle.y),
+                      0.0, 1.0, 0.0,
+                      -sin(angle.y), 0.0, cos(angle.y) };
+    glm::mat3 matZ = {cos(angle.z), -sin(angle.z), 0.0,
+                      sin(angle.z), cos(angle.z), 0.0,
+                      0.0, 0.0, 1.0 };
+    return matX * matY * matZ;
 }
 
-void setModifierUniforms(unsigned int shaderProgram, Modifier *modifier) {
+void setModifierUniforms(unsigned int shaderProgram, const Modifier &modifier) {
     GLint modifierPositionLoc = glGetUniformLocation(shaderProgram, "modifierPosition");
-    glUniform3f(modifierPositionLoc, modifier->position.x, modifier->position.y, modifier->position.z);
+    glUniform3f(modifierPositionLoc, modifier.position.x, modifier.position.y, modifier.position.z);
 
     GLint modifierRotationLoc = glGetUniformLocation(shaderProgram, "modifierRotation");
-    glm::mat3 rotationMatrix = getRotationMatrix(modifier);
+    glm::mat3 rotationMatrix = getRotationMatrix(modifier.rotation);
     glUniformMatrix3fv(modifierRotationLoc, 1, GL_FALSE, glm::value_ptr(rotationMatrix));
 
     GLint modifierScaleLoc = glGetUniformLocation(shaderProgram, "modifierScale");
-    glUniform1f(modifierScaleLoc, modifier->scale);
+    glUniform1f(modifierScaleLoc, modifier.scale);
 
-    if (modifier->material) {
+    if (modifier.material) {
         GLint modifierColorLoc = glGetUniformLocation(shaderProgram, "modifierColor");
-        glUniform3f(modifierColorLoc, modifier->material->color.x, modifier->material->color.y,
-                          modifier->material->color.z);
+        glUniform3f(modifierColorLoc, modifier.material->color.x, modifier.material->color.y,
+                          modifier.material->color.z);
 
         GLint modifierMaterialLoc = glGetUniformLocation(shaderProgram, "modifierMaterial");
-        glUniform2f(modifierMaterialLoc, modifier->material->pbr_factor.x, modifier->material->pbr_factor.y);
+        glUniform2f(modifierMaterialLoc, modifier.material->pbr_factor.x, modifier.material->pbr_factor.y);
     }
 }
 
