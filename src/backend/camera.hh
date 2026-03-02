@@ -16,4 +16,5 @@ public:
 
     Camera();
     Camera(glm::vec3 pos_, glm::vec3 up_, glm::vec3 height_);
+    glm::vec3 getMouseRay(double mouseX, double mouseY,int windowWidth, int windowHeight);
 };

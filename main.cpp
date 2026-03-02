@@ -6,30 +6,6 @@
 #include "backend/scene.hh"
 #include "frontend/gui.hh"
 
-glm::vec3 getMouseRay(Camera *camera, double mouseX, double mouseY,
-                      int windowWidth, int windowHeight)
-{
-    Env::view = glm::lookAt(camera->position, glm::vec3(0.0f), camera->up);
-
-    // Normalized Device Coordinates
-    float x = (2.0f * mouseX) / windowWidth - 1.0f;
-    float y = 1.0f - (2.0f * mouseY) / windowHeight;
-    float z = 1.0f;  // direction vers l'avant
-
-    // Clip space
-    glm::vec4 rayClip(x, y, -1.0f, 1.0f);
-
-    // Eye space (inverse projection)
-    glm::vec4 rayEye = glm::inverse(Env::projection) * rayClip;
-    rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f);
-
-    // World space (inverse view)
-    glm::vec4 rayWorld4 = glm::inverse(Env::view) * rayEye;
-    glm::vec3 rayWorld = glm::normalize(glm::vec3(rayWorld4));
-
-    return rayWorld;
-}
-
 int main(int argc, char **argv) {
     GLFWwindow *window = Window::glfwWindowInit();
     if (window == nullptr)
@@ -48,6 +24,7 @@ int main(int argc, char **argv) {
     Env::mainShaderProgram = Shader::createShaderProgram("../shaders/basic");
     GLuint gridShaderProgram = Shader::createShaderProgram("../shaders/grid");
     GLuint wireframeShaderProgram = Shader::createShaderProgram("../shaders/wireframe");
+    GLuint unicolorShaderProgram = Shader::createShaderProgram("../shaders/unicolor");
     glEnable(GL_DEPTH_TEST);
 
     while (!glfwWindowShouldClose(window)) {
@@ -60,7 +37,7 @@ int main(int argc, char **argv) {
         if (io.MouseDown[0] && io.MouseDownDuration[0] == 0) {
             double mouseX, mouseY;
             glfwGetCursorPos(window, &mouseX, &mouseY);
-            glm::vec3 ray = getMouseRay(&scene->camera, mouseX, mouseY, WIDTH, HEIGHT);
+            glm::vec3 ray = scene->camera.getMouseRay(mouseX, mouseY, WIDTH, HEIGHT);
 //            std::cout << "Ray value : x :" << ray.x << ", y : " << ray.y << ", z : " << ray.z << "\n";
 
             for (auto mesh : scene->meshes) {
@@ -80,20 +57,33 @@ int main(int argc, char **argv) {
 
         Graphics::drawGrid(gridShaderProgram, &scene->camera);
 
+        // Interface objects
+//        glUseProgram(unicolorShaderProgram);
+//        Uniform::setModelViewProjGui(unicolorShaderProgram, &scene->camera);
+//        Uniform::setModifierUniforms(unicolorShaderProgram, &scene->modifier);
+//        Uniform::setUniqueColorUniforms(unicolorShaderProgram, glm::vec3(1.0, 0.0, 0.0));
+//        scene->xArrow->graphicsObject->draw();
+//        Uniform::setUniqueColorUniforms(unicolorShaderProgram, glm::vec3(0.0, 1.0, 0.0));
+//        scene->yArrow->graphicsObject->draw();
+//        Uniform::setUniqueColorUniforms(unicolorShaderProgram, glm::vec3(0.0, 0.0, 1.0));
+//        scene->zArrow->graphicsObject->draw();
+
         for (auto mesh : scene->meshes) {
             if (mesh->is_visible) {
                 glUseProgram(Env::mainShaderProgram);
                 Uniform::setBasicUniforms(Env::mainShaderProgram, &scene->camera);
 //                if (mesh->selected && mesh->is_visible)
                 Uniform::setModifierUniforms(Env::mainShaderProgram, &scene->modifier);
+                Uniform::setMeshUniforms(Env::mainShaderProgram, mesh);
                 mesh->graphicsObject->draw();
+            }
 
-                if (mesh->selected) {
-                    glUseProgram(wireframeShaderProgram);
-                    Uniform::setBasicUniforms(wireframeShaderProgram, &scene->camera);
-                    Uniform::setModifierUniforms(Env::mainShaderProgram, &scene->modifier);
-                    mesh->graphicsObject->draw();
-                }
+            // Wireframe
+            if (mesh->selected) {
+                glUseProgram(wireframeShaderProgram);
+                Uniform::setBasicUniforms(wireframeShaderProgram, &scene->camera);
+                Uniform::setModifierUniforms(wireframeShaderProgram, &scene->modifier);
+                mesh->graphicsObject->draw();
             }
         }
 

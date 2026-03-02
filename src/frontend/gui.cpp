@@ -21,6 +21,8 @@ namespace Gui {
         ImGui::SliderFloat("Rotation X", &scene->modifier.rotation.x, -5, 5);
         ImGui::SliderFloat("Rotation Y", &scene->modifier.rotation.y, -5, 5);
         ImGui::SliderFloat("Rotation Z", &scene->modifier.rotation.z, -5, 5);
+
+        ImGui::SliderFloat("Scale", &scene->modifier.scale, 0.1, 5);
         ImGui::End();
         meshTreeNode(scene);
     }

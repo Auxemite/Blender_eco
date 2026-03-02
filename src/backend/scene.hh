@@ -15,6 +15,10 @@ public:
     std::vector<Light *> lights;
     std::vector<Material *> materials;
 
+    Mesh *xArrow = new Mesh("../data/xArrow.obj");
+    Mesh *yArrow = new Mesh("../data/yArrow.obj");
+    Mesh *zArrow = new Mesh("../data/zArrow.obj");
+
     glm::vec3 sceneCenter = glm::vec3(0.0f, 0.0f, 0.0f);
     Modifier modifier;
 

@@ -9,10 +9,14 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "backend/camera.hh"
 #include "backend/modifier.hh"
+#include "backend/mesh.hh"
 
 namespace Uniform {
 
     void setModelViewProj(unsigned int shaderProgram, Camera *camera);
+    void setModelViewProjGui(unsigned int shaderProgram, Camera *camera);
     void setBasicUniforms(unsigned int shaderProgram, Camera *camera);
     void setModifierUniforms(unsigned int shaderProgram, Modifier *modifier);
+    void setMeshUniforms(unsigned int shaderProgram, Mesh *mesh);
+    void setUniqueColorUniforms(unsigned int shaderProgram, const glm::vec3 &color);
 }

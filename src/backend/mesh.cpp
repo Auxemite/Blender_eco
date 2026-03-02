@@ -54,19 +54,11 @@ Mesh::Mesh(const std::string &filename) {
         }
     }
 
-    material = nullptr;
     selected = false;
     is_visible = true;
     graphicsObject = new GraphicsObject();
-    graphicsObject->setup(vertices(), indices());
-}
-
-bool Mesh::ray_intersection(const glm::vec3& cam_position, const glm::vec3& direction) {
-    for (auto & face : faces) {
-        if (face->ray_intersection(points, cam_position, direction))
-            return true;
-    }
-    return false;
+    graphicsObject->setup(vertices(), indices());;
+    this->update();
 }
 
 std::vector<Engine::vertex> Mesh::vertices() {
@@ -95,3 +87,24 @@ std::vector<u32> Mesh::indices() {
     return indices;
 }
 
+bool Mesh::ray_intersection(const glm::vec3& cam_position, const glm::vec3& direction) {
+    for (auto & face : faces) {
+        if (face->ray_intersection(points, cam_position, direction))
+            return true;
+    }
+    return false;
+}
+
+void Mesh::update() {
+    // Update Mid Point
+    glm::vec3 mid(0.0f, 0.0f, 0.0f);
+    size_t nbPoint = points.size();
+    for (auto point : points) {
+        mid += *point;
+    }
+    midPoint = mid / static_cast<float>(nbPoint);
+}
+
+void Mesh::applyAndUpdate(Modifier *modifier) {
+    update();
+}

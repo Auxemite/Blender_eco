@@ -14,12 +14,14 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+uniform vec3 meshCenter;
 uniform vec3 modifierPosition;
 uniform mat3 modifierRotation;
 uniform float modifierScale;
 
 void main() {
-    vec3 newPos = modifierRotation * (pos + modifierPosition);
+    vec3 newPos = modifierRotation * (pos - meshCenter) * modifierScale
+    + modifierPosition + meshCenter;
     vec4 matPos = vec4(newPos, 1.0);
     gl_Position = projection * view * model * matPos;
     uv = iuv;
