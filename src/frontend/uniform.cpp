@@ -1,4 +1,5 @@
 #include "uniform.hh"
+#include "backend/utils.hh"
 
 namespace Uniform {
 
@@ -39,19 +40,6 @@ void setBasicUniforms(unsigned int shaderProgram, Camera *camera) {
 
     GLint cameraPosLoc = glGetUniformLocation(shaderProgram, "cameraPos");
     glUniform3f(cameraPosLoc, camera->position.x, camera->position.y, camera->position.z);
-}
-
-glm::mat3 getRotationMatrix(const glm::vec3& angle) {
-    glm::mat3 matX = {1.0, 0.0, 0.0,
-                      0.0, cos(angle.x), -sin(angle.x),
-                      0.0, sin(angle.x), cos(angle.x) };
-    glm::mat3 matY = {cos(angle.y), 0.0, sin(angle.y),
-                      0.0, 1.0, 0.0,
-                      -sin(angle.y), 0.0, cos(angle.y) };
-    glm::mat3 matZ = {cos(angle.z), -sin(angle.z), 0.0,
-                      sin(angle.z), cos(angle.z), 0.0,
-                      0.0, 0.0, 1.0 };
-    return matX * matY * matZ;
 }
 
 void setModifierUniforms(unsigned int shaderProgram, const Modifier &modifier) {

@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
     Scene *scene = new Scene();
     scene->addMesh("../data/cube.obj");
     Graphics::loadGrid();
-//    Gui::setUpTextureViewport();
+    Gui::loadTextureViewport();
     Env::mainShaderProgram = Shader::createShaderProgram("../shaders/basic");
     GLuint gridShaderProgram = Shader::createShaderProgram("../shaders/grid");
     GLuint wireframeShaderProgram = Shader::createShaderProgram("../shaders/wireframe");
@@ -28,32 +28,31 @@ int main(int argc, char **argv) {
     glEnable(GL_DEPTH_TEST);
 
     while (!glfwWindowShouldClose(window)) {
-        float currentFrame = static_cast<float>(glfwGetTime());
-        Env::deltaTime = currentFrame - Env::lastFrame;
-        Env::lastFrame = currentFrame;
-        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+//        if (io.MouseDown[0] && io.MouseDownDuration[0] == 0) {
+//            double mouseX, mouseY;
+//            glfwGetCursorPos(window, &mouseX, &mouseY);
+//            glm::vec3 ray = scene->camera.getMouseRay(mouseX, mouseY, WIDTH, HEIGHT);
+////            std::cout << "Ray value : x :" << ray.x << ", y : " << ray.y << ", z : " << ray.z << "\n";
+//
+//            static bool voidRayCast = true;
+//            for (auto mesh : scene->meshes) {
+//                if (!mesh->is_visible)
+//                    continue;
+//
+//                if (mesh->rayIntersection(scene->camera.position, ray)) {
+//                    mesh->selected = !mesh->selected;
+//                    voidRayCast = false;
+//                    break;
+//                }
+//            }
+//            if (voidRayCast)
+//                std::cout << "Void Raycast\n";
+//        }
+
+        if (Window::processInput(window, &scene->camera) == 1)
             break;
 
-        if (io.MouseDown[0] && io.MouseDownDuration[0] == 0) {
-            double mouseX, mouseY;
-            glfwGetCursorPos(window, &mouseX, &mouseY);
-            glm::vec3 ray = scene->camera.getMouseRay(mouseX, mouseY, WIDTH, HEIGHT);
-//            std::cout << "Ray value : x :" << ray.x << ", y : " << ray.y << ", z : " << ray.z << "\n";
-
-            for (auto mesh : scene->meshes) {
-                if (!mesh->is_visible)
-                    continue;
-
-                if (mesh->ray_intersection(scene->camera.position, ray)) {
-                    mesh->selected = !mesh->selected;
-                    break;
-                }
-            }
-        }
-
-        Window::processInpute(window, &scene->camera);
-
-        Graphics::clearWindow();
+        Graphics::bindAndClearWindow();
 
         Graphics::drawGrid(gridShaderProgram, &scene->camera);
 
@@ -91,7 +90,7 @@ int main(int argc, char **argv) {
             }
         }
 
-        Gui::newFrame();
+        Gui::newFrame(io);
         Gui::mainGui(scene);
         Gui::render(io);
         glfwSwapBuffers(window);

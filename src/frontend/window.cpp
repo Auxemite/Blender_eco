@@ -48,9 +48,16 @@ void shutDown(GLFWwindow *window) {
     glfwTerminate();
 }
 
-void processInpute(GLFWwindow *window, Camera *camera) {
-    float cameraSpeedz = camera->speed_zoom * Env::deltaTime;
-    float cameraSpeedr = camera->speed_rotation * 10.0f * Env::deltaTime;
+// return 0 if normal, 1 if ask for shutdown and -1 for error
+int processInput(GLFWwindow *window, Camera *camera) {
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        return 1;
+
+    float currentFrame = static_cast<float>(glfwGetTime());
+    float deltaTime = currentFrame - Env::lastFrame;
+    Env::lastFrame = currentFrame;
+    float cameraSpeedz = camera->speed_zoom * deltaTime;
+    float cameraSpeedr = camera->speed_rotation * 10.0f * deltaTime;
     if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
         camera->radius -= cameraSpeedz;
     if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
@@ -66,6 +73,7 @@ void processInpute(GLFWwindow *window, Camera *camera) {
         camera->height.y -= cameraSpeedz;
 
     camera->radius = glm::clamp(camera->radius, 1.0f, 100.0f);
+    return 0;
 }
 
 }

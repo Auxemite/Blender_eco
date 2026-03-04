@@ -2,6 +2,7 @@
 #include <fstream>
 #include <filesystem>
 #include "mesh.hh"
+#include "utils.hh"
 
 #define LINE_LEN 512
 namespace fs = std::filesystem;
@@ -20,7 +21,6 @@ Mesh::Mesh(const std::string &filename) {
 
     while (!f.eof())
     {
-        // Foreach line
         char line[LINE_LEN];
         f.getline(line, LINE_LEN);
 
@@ -57,7 +57,7 @@ Mesh::Mesh(const std::string &filename) {
     selected = false;
     is_visible = true;
     graphicsObject = new GraphicsObject();
-    graphicsObject->setup(vertices(), indices());;
+    graphicsObject->setup(vertices(), indices());
     this->update();
 }
 
@@ -87,7 +87,7 @@ std::vector<u32> Mesh::indices() {
     return indices;
 }
 
-bool Mesh::ray_intersection(const glm::vec3& cam_position, const glm::vec3& direction) {
+bool Mesh::rayIntersection(const glm::vec3& cam_position, const glm::vec3& direction) {
     for (auto & face : faces) {
         if (face->ray_intersection(points, cam_position, direction))
             return true;
@@ -105,6 +105,12 @@ void Mesh::update() {
     midPoint = mid / static_cast<float>(nbPoint);
 }
 
-void Mesh::applyAndUpdate(Modifier *modifier) {
+void Mesh::applyAndUpdate(const Modifier& modifier) {
+    glm::mat3 rotationMat = getRotationMatrix(modifier.rotation);
+    for (auto point : points) {
+        *point = rotationMat * (*point - midPoint) * modifier.scale
+        + modifier.position + midPoint;
+    }
+    graphicsObject->updateVBOFromMesh(vertices());
     update();
 }

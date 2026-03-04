@@ -18,7 +18,6 @@ namespace Env {
                                                    0.1f, 100.0f);
 
     inline float lastFrame = 0.0;
-    inline float deltaTime = 0.0f;
 
     inline bool audit_bindings_before_draw = false;
     inline GLuint mainShaderProgram;

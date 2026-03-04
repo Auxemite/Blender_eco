@@ -8,7 +8,10 @@ namespace fs = std::filesystem;
 
 namespace Gui {
     void mainGui(Scene *scene) {
-        ImGui::ShowDemoWindow();
+//        ImGui::ShowDemoWindow();
+
+        Gui::renderTextureViewport(scene);
+
         ImGui::Begin("Viewport");
         if (ImGui::Button("Basic"))
             Env::mainShaderProgram = Shader::createShaderProgram("../shaders/basic");
@@ -24,6 +27,7 @@ namespace Gui {
 
         ImGui::SliderFloat("Scale", &scene->modifier.scale, 0.1, 5);
         ImGui::End();
+
         meshTreeNode(scene);
     }
 
@@ -37,9 +41,16 @@ namespace Gui {
             if (ImGui::Button("Duplicate Mesh")) { }
         }
 
+        bool appliedModifier = false;
         for (int i = 0; i < scene->meshes.size(); i++) {
             std::string name = "> Mesh " + std::to_string(i);
             if (ImGui::Button(name.c_str())) {
+                if (scene->meshes[i]->selected) {
+                    scene->meshes[i]->selected = false;
+                    scene->meshes[i]->applyAndUpdate(scene->modifier);
+                    appliedModifier = true;
+                }
+
                 scene->meshes[i]->selected = !scene->meshes[i]->selected;
             }
             ImGui::SameLine();
@@ -51,6 +62,8 @@ namespace Gui {
 //            ImGui::SameLine();
 //            treeMesh(env, i);
         }
+        if (appliedModifier)
+            scene->modifier.clear();
 
         ImGui::End();
     }

@@ -13,6 +13,6 @@ namespace Window {
 
     GLFWwindow *glfwWindowInit();
     void shutDown(GLFWwindow *window);
-    void processInpute(GLFWwindow *window, Camera *camera);
+    int processInput(GLFWwindow *window, Camera *camera);
 
 }

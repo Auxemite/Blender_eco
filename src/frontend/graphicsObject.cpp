@@ -1,7 +1,7 @@
 #include "graphicsObject.hh"
 
 void GraphicsObject::setup(std::vector<Engine::vertex> vertices, std::vector<u32> indices) {
-    eboSize = static_cast<int>(indices.size()); // Warning : conversion from long long to int
+    this->eboSize = static_cast<int>(indices.size()); // Warning : conversion from long long to int
     glCreateVertexArrays(1, &VAO);
     glCreateBuffers(1, &VBO);
     glCreateBuffers(1, &EBO);
@@ -42,10 +42,13 @@ void GraphicsObject::setup(std::vector<Engine::vertex> vertices, std::vector<u32
     glVertexArrayAttribBinding(VAO, 4, 0);
 }
 
-//void GraphicsObject::updateFromMesh(std::vector<Engine::vertex> vertices, std::vector<u32> indices) {
-//    vertex_buffer = Graphics::TypedBuffer<Engine::vertex>(vertices);
-//    index_buffer = Graphics::TypedBuffer<u32>(indices);
-//};
+void GraphicsObject::updateVBOFromMesh(std::vector<Engine::vertex> vertices) {
+    glNamedBufferSubData(VBO, 0, sizeof(Engine::vertex) * vertices.size(), vertices.data());
+}
+
+void GraphicsObject::updateEBOFromMesh(std::vector<u32> indices) {
+    glNamedBufferSubData(EBO, 0, sizeof(u32) * indices.size(),  indices.data());
+}
 
 void GraphicsObject::draw() {
     glBindVertexArray(VAO);

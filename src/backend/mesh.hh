@@ -27,10 +27,10 @@ public:
     std::vector<u32> indices();
     explicit Mesh(const std::string& filename); //From .obj
 
-    bool ray_intersection(const glm::vec3& cam_position, const glm::vec3& direction);
+    bool rayIntersection(const glm::vec3& cam_position, const glm::vec3& direction);
 
     // Apply & Udpate
     void update();
-    void applyAndUpdate(Modifier *modifier);
+    void applyAndUpdate(const Modifier& modifier);
 
 };
