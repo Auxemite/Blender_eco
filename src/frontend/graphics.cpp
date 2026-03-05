@@ -229,4 +229,16 @@ void drawRay(unsigned int shaderProgram, Camera *camera) {
     glDrawArrays(GL_LINES, 0, raySize / 6); // Warning : gridSize conversion from size_t to int
 }
 
+void drawInterfaceObject(unsigned int shaderProgram, Scene *scene) {
+    glUseProgram(shaderProgram);
+    Uniform::setModelViewProjGui(shaderProgram, &scene->camera);
+    Uniform::setModifierUniforms(shaderProgram, scene->modifier);
+    Uniform::setUniqueColorUniforms(shaderProgram, glm::vec3(1.0, 0.0, 0.0));
+    scene->xArrow->graphicsObject->draw();
+    Uniform::setUniqueColorUniforms(shaderProgram, glm::vec3(0.0, 1.0, 0.0));
+    scene->yArrow->graphicsObject->draw();
+    Uniform::setUniqueColorUniforms(shaderProgram, glm::vec3(0.0, 0.0, 1.0));
+    scene->zArrow->graphicsObject->draw();
+}
+
 }

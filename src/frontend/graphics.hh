@@ -3,6 +3,7 @@
 #include <string>
 #include "graphicsUtils.hh"
 #include "backend/camera.hh"
+#include "backend/scene.hh"
 
 namespace Graphics {
     inline GLuint gridVAO = 0;
@@ -23,4 +24,5 @@ namespace Graphics {
 
     void drawGrid(unsigned int shaderProgram, Camera *camera);
     void drawRay(unsigned int shaderProgram, Camera *camera);
+    void drawInterfaceObject(unsigned int shaderProgram, Scene *scene);
 }

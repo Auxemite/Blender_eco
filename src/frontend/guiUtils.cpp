@@ -26,8 +26,6 @@ void initialize(ImGuiIO &io, GLFWwindow *window) {
 }
 
 void newFrame(ImGuiIO &io) {
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();

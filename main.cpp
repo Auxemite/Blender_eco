@@ -28,45 +28,18 @@ int main(int argc, char **argv) {
     glEnable(GL_DEPTH_TEST);
 
     while (!glfwWindowShouldClose(window)) {
-//        if (io.MouseDown[0] && io.MouseDownDuration[0] == 0) {
-//            double mouseX, mouseY;
-//            glfwGetCursorPos(window, &mouseX, &mouseY);
-//            glm::vec3 ray = scene->camera.getMouseRay(mouseX, mouseY, WIDTH, HEIGHT);
-////            std::cout << "Ray value : x :" << ray.x << ", y : " << ray.y << ", z : " << ray.z << "\n";
-//
-//            static bool voidRayCast = true;
-//            for (auto mesh : scene->meshes) {
-//                if (!mesh->is_visible)
-//                    continue;
-//
-//                if (mesh->rayIntersection(scene->camera.position, ray)) {
-//                    mesh->selected = !mesh->selected;
-//                    voidRayCast = false;
-//                    break;
-//                }
-//            }
-//            if (voidRayCast)
-//                std::cout << "Void Raycast\n";
-//        }
-
+        // Poll events
+        glfwPollEvents();
         if (Window::processInput(window, &scene->camera) == 1)
             break;
 
+        // New Frame & Ui Menu Bar
+        Gui::newFrame(io);
+
+        // Main render Pass
         Graphics::bindAndClearWindow();
-
         Graphics::drawGrid(gridShaderProgram, &scene->camera);
-
-        // Interface objects
-//        glUseProgram(unicolorShaderProgram);
-//        Uniform::setModelViewProjGui(unicolorShaderProgram, &scene->camera);
-//        Uniform::setModifierUniforms(unicolorShaderProgram, &scene->modifier);
-//        Uniform::setUniqueColorUniforms(unicolorShaderProgram, glm::vec3(1.0, 0.0, 0.0));
-//        scene->xArrow->graphicsObject->draw();
-//        Uniform::setUniqueColorUniforms(unicolorShaderProgram, glm::vec3(0.0, 1.0, 0.0));
-//        scene->yArrow->graphicsObject->draw();
-//        Uniform::setUniqueColorUniforms(unicolorShaderProgram, glm::vec3(0.0, 0.0, 1.0));
-//        scene->zArrow->graphicsObject->draw();
-
+//        Graphics::drawInterfaceObject(unicolorShaderProgram, scene);
         for (auto mesh : scene->meshes) {
             if (mesh->is_visible) {
                 glUseProgram(Env::mainShaderProgram);
@@ -90,11 +63,13 @@ int main(int argc, char **argv) {
             }
         }
 
-        Gui::newFrame(io);
+        // UI construction
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
         Gui::mainGui(scene);
+
+        // UI render & swap buffer
         Gui::render(io);
         glfwSwapBuffers(window);
-        glfwPollEvents();
     }
 
     delete scene;
