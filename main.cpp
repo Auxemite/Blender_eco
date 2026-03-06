@@ -23,6 +23,7 @@ int main(int argc, char **argv) {
 
     ScreenFrameBuffer screenViewport(WIDTH, HEIGHT);
     VisualGrid visualGrid;
+    Ray ray(scene->camera.position);
 
     Env::mainShaderProgram = Shader::createShaderProgram("../shaders/basic");
     GLuint gridShaderProgram = Shader::createShaderProgram("../shaders/grid");
@@ -68,7 +69,7 @@ int main(int argc, char **argv) {
 
         // UI construction
         screenViewport.unbindTextures();
-        screenViewport.load(scene);
+        screenViewport.load(scene, &ray);
         Gui::mainGui(scene);
 
         // UI render & swap buffer

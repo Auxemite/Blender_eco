@@ -1,21 +1,15 @@
 #include <iostream>
 
 #include "imgui/imgui.h"
-#include "imgui/imgui_impl_opengl3.h"
-#include "imgui/imgui_impl_glfw.h"
 
 #include "screenFrameBuffer.hh"
-#include "glm/vec3.hpp"
-#include "glm/common.hpp"
 #include "graphics/graphics.hh"
 
 ScreenFrameBuffer::ScreenFrameBuffer(int _width, int _height) {
-    width = _width;
-    height = _height;
     // Create main color texture
     screenColorTex = 0;
     glCreateTextures(GL_TEXTURE_2D, 1, &screenColorTex);
-    glTextureStorage2D(screenColorTex, 1, GL_RGBA8, width, height);
+    glTextureStorage2D(screenColorTex, 1, GL_RGBA8, _width, _height);
 
     glTextureParameteri(screenColorTex, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTextureParameteri(screenColorTex, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -25,7 +19,7 @@ ScreenFrameBuffer::ScreenFrameBuffer(int _width, int _height) {
     // Create main depth texture
     screenDepthTex = 0;
     glCreateTextures(GL_TEXTURE_2D, 1, &screenDepthTex);
-    glTextureStorage2D(screenDepthTex, 1, GL_DEPTH24_STENCIL8, width, height);
+    glTextureStorage2D(screenDepthTex, 1, GL_DEPTH24_STENCIL8, _width, _height);
 
     // Create and bind main FBO to main texture and depth texture
     screenFBO = 0;
@@ -38,9 +32,12 @@ ScreenFrameBuffer::ScreenFrameBuffer(int _width, int _height) {
 
     if (glCheckNamedFramebufferStatus(screenFBO, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cerr << "FBO not complete!" << std::endl;
+
+    width = _width;
+    height = _height;
 }
 
-void ScreenFrameBuffer::load(Scene *scene) {
+void ScreenFrameBuffer::load(Scene *scene, Ray *ray) {
     ImGui::Begin("Texture Viewport");
 
     resize();
@@ -53,51 +50,7 @@ void ScreenFrameBuffer::load(Scene *scene) {
     );
 
     if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
-    {
-        ImVec2 mousePos = ImGui::GetMousePos();
-        ImVec2 imageMin = ImGui::GetItemRectMin();
-
-        // Image position
-        float localX = mousePos.x - imageMin.x;
-        float localY = mousePos.y - imageMin.y;
-        localX = glm::clamp(localX, 0.0f, width);
-        localY = glm::clamp(localY, 0.0f, height);
-
-        // Ray creation
-        glm::vec3 ray = scene->camera.getMouseRay(
-                localX,
-                localY,
-                static_cast<int>(width),
-                static_cast<int>(height)
-        );
-
-        bool hitSomething = false;
-
-        for (auto mesh : scene->meshes)
-        {
-            if (!mesh->is_visible)
-                continue;
-
-            if (mesh->rayIntersection(scene->camera.position, ray))
-            {
-                mesh->selected = !mesh->selected;
-                hitSomething = true;
-                break;
-            }
-        }
-
-        if (!hitSomething) {
-            std::cout << "Void Raycast\n";
-            for (auto mesh : scene->meshes) {
-                mesh->selected = false;
-                if (!mesh->is_visible)
-                    continue;
-
-                mesh->applyAndUpdate(scene->modifier);
-            }
-            scene->modifier.clear();
-        }
-    }
+        ray->rayCasting(scene, width, height);
 
     ImGui::End();
 }

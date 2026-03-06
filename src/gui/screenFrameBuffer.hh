@@ -2,6 +2,7 @@
 
 #include "glad/gl.h"
 #include "backend/scene.hh"
+#include "graphics/ray.hh"
 
 class ScreenFrameBuffer {
 private:
@@ -14,10 +15,8 @@ private:
 public:
     ScreenFrameBuffer()=delete;
     ScreenFrameBuffer(int width, int height);
-    void load(Scene *scene);
+    void load(Scene *scene, Ray *ray);
     void resize();
     void bindTextures();
     void unbindTextures();
-
-    GLuint getColorTexture() const { return screenColorTex; }
 };
