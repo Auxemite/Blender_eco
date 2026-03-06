@@ -1,5 +1,5 @@
 #include "camera.hh"
-#include "frontend/env.hh"
+#include "env.hh"
 
 Camera::Camera() {
     position = glm::vec3(0.0f, 0.0f, 0.0f);

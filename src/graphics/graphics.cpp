@@ -1,19 +1,11 @@
 #include "graphics.hh"
 
 #include "shaderUtils.hh"
-#include "env.hh"
 #include "uniform.hh"
-#include "guiUtils.hh"
 
 namespace Graphics {
 
-void bindAndClearWindow() {
-    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, Gui::mainFBO);
-    glViewport(0, 0, WIDTH, HEIGHT);
-
+void clearFrameBuffer() {
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

@@ -1,10 +1,11 @@
-#include "frontend/env.hh"
-#include "frontend/shaderUtils.hh"
-#include "frontend/graphics.hh"
-#include "frontend/window.hh"
-#include "frontend/uniform.hh"
+#include "env.hh"
+#include "shaderUtils.hh"
+#include "graphics/graphics.hh"
+#include "gui/window.hh"
+#include "graphics/uniform.hh"
 #include "backend/scene.hh"
-#include "frontend/gui.hh"
+#include "gui/gui.hh"
+#include "gui/screenFrameBuffer.hh"
 
 int main(int argc, char **argv) {
     GLFWwindow *window = Window::glfwWindowInit();
@@ -13,14 +14,16 @@ int main(int argc, char **argv) {
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO &io = ImGui::GetIO();
-    (void) io;
+    ImGuiIO &io = ImGui::GetIO(); (void) io;
     Gui::initialize(io, window);
 
     Scene *scene = new Scene();
     scene->addMesh("../data/cube.obj");
+
+    ScreenFrameBuffer screenViewport;
+    screenViewport.create(WIDTH, HEIGHT);
+
     Graphics::loadGrid();
-    Gui::loadTextureViewport();
     Env::mainShaderProgram = Shader::createShaderProgram("../shaders/basic");
     GLuint gridShaderProgram = Shader::createShaderProgram("../shaders/grid");
     GLuint wireframeShaderProgram = Shader::createShaderProgram("../shaders/wireframe");
@@ -37,7 +40,7 @@ int main(int argc, char **argv) {
         Gui::newFrame(io);
 
         // Main render Pass
-        Graphics::bindAndClearWindow();
+        screenViewport.bindTextures();
         Graphics::drawGrid(gridShaderProgram, &scene->camera);
 //        Graphics::drawInterfaceObject(unicolorShaderProgram, scene);
         for (auto mesh : scene->meshes) {
@@ -64,7 +67,8 @@ int main(int argc, char **argv) {
         }
 
         // UI construction
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        screenViewport.unbindTextures();
+        screenViewport.load(scene);
         Gui::mainGui(scene);
 
         // UI render & swap buffer

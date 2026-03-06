@@ -1,4 +1,3 @@
-#include <iostream>
 #include <string>
 #include <filesystem>
 #include "gui.hh"
@@ -9,9 +8,6 @@ namespace fs = std::filesystem;
 namespace Gui {
     void mainGui(Scene *scene) {
 //        ImGui::ShowDemoWindow();
-
-        Gui::renderTextureViewport(scene);
-
         ImGui::Begin("Viewport");
         if (ImGui::Button("Basic"))
             Env::mainShaderProgram = Shader::createShaderProgram("../shaders/basic");

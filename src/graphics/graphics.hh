@@ -15,7 +15,7 @@ namespace Graphics {
     inline size_t raySize = 0;
     inline bool loadedRay = false;
 
-    void bindAndClearWindow();
+    void clearFrameBuffer();
     void audit_bindings();
     void checkOpenGLError(const std::string &message);
 

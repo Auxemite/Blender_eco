@@ -6,9 +6,9 @@
 #include <iostream>
 #include <vector>
 #include "glm/glm.hpp"
-#include "frontend/vertex.hh"
-#include "frontend/graphicsUtils.hh"
-#include "frontend/graphicsObject.hh"
+#include "graphics/vertex.hh"
+#include "graphics/graphicsUtils.hh"
+#include "graphics/graphicsObject.hh"
 #include "modifier.hh"
 
 class Mesh : NonCopyable {
