@@ -17,11 +17,11 @@ namespace Gui {
         ImGui::SliderFloat("Position Y", &scene->modifier.position.y, -5, 5);
         ImGui::SliderFloat("Position Z", &scene->modifier.position.z, -5, 5);
 
-        ImGui::SliderFloat("Rotation X", &scene->modifier.rotation.x, -5, 5);
-        ImGui::SliderFloat("Rotation Y", &scene->modifier.rotation.y, -5, 5);
-        ImGui::SliderFloat("Rotation Z", &scene->modifier.rotation.z, -5, 5);
+        ImGui::SliderFloat("Rotation X", &scene->modifier.rotation.x, -5.0f, 5.0f);
+        ImGui::SliderFloat("Rotation Y", &scene->modifier.rotation.y, -5.0f, 5.0f);
+        ImGui::SliderFloat("Rotation Z", &scene->modifier.rotation.z, -5.0f, 5.0f);
 
-        ImGui::SliderFloat("Scale", &scene->modifier.scale, 0.1, 5);
+        ImGui::SliderFloat("Scale", &scene->modifier.scale, 0.1f, 5.0f);
         ImGui::End();
 
         meshTreeNode(scene);
@@ -42,7 +42,6 @@ namespace Gui {
             std::string name = "> Mesh " + std::to_string(i);
             if (ImGui::Button(name.c_str())) {
                 if (scene->meshes[i]->selected) {
-                    scene->meshes[i]->selected = false;
                     scene->meshes[i]->applyAndUpdate(scene->modifier);
                     appliedModifier = true;
                 }

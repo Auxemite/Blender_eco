@@ -44,27 +44,37 @@ int main(int argc, char **argv) {
         screenViewport.bindTextures();
         visualGrid.draw(gridShaderProgram, &scene->camera);
 //        Graphics::drawInterfaceObject(unicolorShaderProgram, scene);
+
+        // Wireframe
+        glDisable(GL_DEPTH_TEST);
         for (auto mesh : scene->meshes) {
-            if (mesh->is_visible) {
-                glUseProgram(Env::mainShaderProgram);
-                Uniform::setBasicUniforms(Env::mainShaderProgram, &scene->camera);
+            if (!mesh->is_visible)
+                continue;
 
-                if (mesh->selected && mesh->is_visible)
-                    Uniform::setModifierUniforms(Env::mainShaderProgram, scene->modifier);
-                else
-                    Uniform::setModifierUniforms(Env::mainShaderProgram,{});
-
-                Uniform::setMeshUniforms(Env::mainShaderProgram, mesh);
-                mesh->graphicsObject->draw();
-            }
-
-            // Wireframe
             if (mesh->selected) {
-                glUseProgram(wireframeShaderProgram);
-                Uniform::setBasicUniforms(wireframeShaderProgram, &scene->camera);
-                Uniform::setModifierUniforms(wireframeShaderProgram, scene->modifier);
+                glUseProgram(unicolorShaderProgram);
+                Uniform::setBasicUniforms(unicolorShaderProgram, &scene->camera);
+                Uniform::setModifierUniforms(unicolorShaderProgram, scene->modifier);
+                Uniform::setMeshUniforms(unicolorShaderProgram, mesh);
+                Uniform::setUniqueColorUniforms(unicolorShaderProgram, glm::vec3(1.0, 1.0, 0.0));
                 mesh->graphicsObject->draw();
             }
+        }
+        glEnable(GL_DEPTH_TEST);
+
+        // Mesh
+        for (auto mesh : scene->meshes) {
+            if (!mesh->is_visible)
+                continue;
+
+            glUseProgram(Env::mainShaderProgram);
+            Uniform::setBasicUniforms(Env::mainShaderProgram, &scene->camera);
+            if (mesh->selected)
+                Uniform::setModifierUniforms(Env::mainShaderProgram, scene->modifier);
+            else
+                Uniform::setModifierUniforms(Env::mainShaderProgram,{});
+            Uniform::setMeshUniforms(Env::mainShaderProgram, mesh);
+            mesh->graphicsObject->draw();
         }
 
         // UI construction
