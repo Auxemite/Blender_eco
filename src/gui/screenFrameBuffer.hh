@@ -12,9 +12,8 @@ private:
     float height = 0;
 
 public:
-    ScreenFrameBuffer()=default;
-
-    void create(int width, int height);
+    ScreenFrameBuffer()=delete;
+    ScreenFrameBuffer(int width, int height);
     void load(Scene *scene);
     void resize();
     void bindTextures();

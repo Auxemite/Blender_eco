@@ -6,6 +6,7 @@
 #include "backend/scene.hh"
 #include "gui/gui.hh"
 #include "gui/screenFrameBuffer.hh"
+#include "graphics/grid.hh"
 
 int main(int argc, char **argv) {
     GLFWwindow *window = Window::glfwWindowInit();
@@ -20,10 +21,9 @@ int main(int argc, char **argv) {
     Scene *scene = new Scene();
     scene->addMesh("../data/cube.obj");
 
-    ScreenFrameBuffer screenViewport;
-    screenViewport.create(WIDTH, HEIGHT);
+    ScreenFrameBuffer screenViewport(WIDTH, HEIGHT);
+    VisualGrid visualGrid;
 
-    Graphics::loadGrid();
     Env::mainShaderProgram = Shader::createShaderProgram("../shaders/basic");
     GLuint gridShaderProgram = Shader::createShaderProgram("../shaders/grid");
     GLuint wireframeShaderProgram = Shader::createShaderProgram("../shaders/wireframe");
@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
 
         // Main render Pass
         screenViewport.bindTextures();
-        Graphics::drawGrid(gridShaderProgram, &scene->camera);
+        visualGrid.draw(gridShaderProgram, &scene->camera);
 //        Graphics::drawInterfaceObject(unicolorShaderProgram, scene);
         for (auto mesh : scene->meshes) {
             if (mesh->is_visible) {

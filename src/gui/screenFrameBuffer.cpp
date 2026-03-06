@@ -9,7 +9,7 @@
 #include "glm/common.hpp"
 #include "graphics/graphics.hh"
 
-void ScreenFrameBuffer::create(int _width, int _height) {
+ScreenFrameBuffer::ScreenFrameBuffer(int _width, int _height) {
     width = _width;
     height = _height;
     // Create main color texture
