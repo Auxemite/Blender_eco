@@ -56,9 +56,44 @@ Mesh::Mesh(const std::string &filename) {
 
     selected = false;
     is_visible = true;
-    graphicsObject = new GraphicsObject();
-    graphicsObject->setup(vertices(), indices());
+    graphicsObject = new GraphicsObject(vertices(), indices());
     this->update();
+}
+
+Mesh::Mesh(const Mesh& mesh) {
+    faces.reserve(mesh.faces.size());
+    for (auto face : mesh.faces) {
+        faces.push_back(new Triangle(face->ia, face->ib, face->ic));
+    }
+    points.reserve(mesh.points.size());
+    for (auto point : mesh.points) {
+        points.push_back(new glm::vec3(*point));
+    }
+
+    material = mesh.material;
+    midPoint = mesh.midPoint;
+    selected = mesh.selected;
+    is_visible = mesh.is_visible;
+    graphicsObject = new GraphicsObject(vertices(), indices());
+}
+
+Mesh::~Mesh() {
+    if (!graphicsObject)
+        std::cerr << "Mesh Destructor Warning : Mesh had no graphicsObject\n";
+    else
+        delete graphicsObject;
+
+    // materials are deleted in the scene object
+    material = nullptr;
+
+    for (auto face : faces) {
+        delete face;
+    }
+    faces.clear();
+    for (auto point : points) {
+        delete point;
+    }
+    points.clear();
 }
 
 std::vector<Engine::vertex> Mesh::vertices() {

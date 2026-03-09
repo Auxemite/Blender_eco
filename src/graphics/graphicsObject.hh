@@ -10,9 +10,8 @@ public:
     GLuint EBO = 0;
     int eboSize = 0;
 
-    void setup(std::vector<Engine::vertex> vertices, std::vector<u32> indices);
-    GraphicsObject() = default;
-    ~GraphicsObject() = default;
+    GraphicsObject(std::vector<Engine::vertex> vertices, std::vector<u32> indices);
+    ~GraphicsObject();
 
     void updateVBOFromMesh(std::vector<Engine::vertex> vertices);
     void updateEBOFromMesh(std::vector<u32> indices);

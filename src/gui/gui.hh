@@ -8,4 +8,6 @@ namespace Gui {
     void mainGui(Scene *scene);
     void meshTreeNode(Scene *scene);
     void addMesh(Scene *scene);
+    void deleteMesh(Scene *scene);
+    void duplicateMesh(Scene *scene);
 }

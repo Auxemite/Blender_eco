@@ -1,6 +1,6 @@
 #include "graphicsObject.hh"
 
-void GraphicsObject::setup(std::vector<Engine::vertex> vertices, std::vector<u32> indices) {
+GraphicsObject::GraphicsObject(std::vector<Engine::vertex> vertices, std::vector<u32> indices) {
     this->eboSize = static_cast<int>(indices.size()); // Warning : conversion from long long to int
     glCreateVertexArrays(1, &VAO);
     glCreateBuffers(1, &VBO);
@@ -40,6 +40,12 @@ void GraphicsObject::setup(std::vector<Engine::vertex> vertices, std::vector<u32
     // Color
     glVertexArrayAttribFormat(VAO, 4, 3, GL_FLOAT, GL_FALSE, 12 * sizeof(float));
     glVertexArrayAttribBinding(VAO, 4, 0);
+}
+
+GraphicsObject::~GraphicsObject() {
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+    glDeleteVertexArrays(1, &VAO);
 }
 
 void GraphicsObject::updateVBOFromMesh(std::vector<Engine::vertex> vertices) {

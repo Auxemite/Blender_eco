@@ -11,13 +11,13 @@ public:
     Camera camera;
 
     std::vector<Mesh *> meshes;
-    std::vector<bool *> selectedMeshes;
+//    std::vector<bool *> selectedMeshes;
     std::vector<Light *> lights;
     std::vector<Material *> materials;
 
-    Mesh *xArrow = new Mesh("../data/xArrow.obj");
-    Mesh *yArrow = new Mesh("../data/yArrow.obj");
-    Mesh *zArrow = new Mesh("../data/zArrow.obj");
+//    Mesh *xArrow = new Mesh("../data/xArrow.obj");
+//    Mesh *yArrow = new Mesh("../data/yArrow.obj");
+//    Mesh *zArrow = new Mesh("../data/zArrow.obj");
 
     glm::vec3 sceneCenter = glm::vec3(0.0f, 0.0f, 0.0f);
     Modifier modifier;
@@ -27,5 +27,8 @@ public:
     bool editmode = false;
 
     Scene()=default;
+    ~Scene();
     void addMesh(const std::string& filename);
+    void deleteMesh(int meshIndex);
+    void duplicateMesh(int meshIndex);
 };

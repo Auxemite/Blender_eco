@@ -62,11 +62,11 @@ void Ray::rayCasting(Scene *scene, float width, float height) {
     if (!hitSomething) {
         std::cout << "Void Raycast\n";
         for (auto mesh : scene->meshes) {
-            mesh->selected = false;
-            if (!mesh->is_visible)
+            if (!mesh->selected)
                 continue;
 
             mesh->applyAndUpdate(scene->modifier);
+            mesh->selected = false;
         }
         scene->modifier.clear();
     }

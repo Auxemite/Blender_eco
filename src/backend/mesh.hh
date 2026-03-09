@@ -11,7 +11,7 @@
 #include "graphics/graphicsObject.hh"
 #include "modifier.hh"
 
-class Mesh : NonCopyable {
+class Mesh {
 public:
     std::vector<glm::vec3 *> points;
     std::vector<Triangle *> faces;
@@ -23,9 +23,14 @@ public:
     bool is_visible = true;
 
     Mesh() = default;
+    Mesh(const Mesh& mesh);
+    ~Mesh();
+    Mesh& operator=(const Mesh&) = delete;
+
+    explicit Mesh(const std::string& filename); //From .obj
+
     std::vector<Engine::vertex> vertices();
     std::vector<u32> indices();
-    explicit Mesh(const std::string& filename); //From .obj
 
     bool rayIntersection(const glm::vec3& cam_position, const glm::vec3& direction);
 

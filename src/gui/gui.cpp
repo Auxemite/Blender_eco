@@ -30,12 +30,10 @@ namespace Gui {
     void meshTreeNode(Scene *scene) {
         ImGui::Begin("Tree");
         addMesh(scene);
-        if (false) { //TODO
-            ImGui::SameLine();
-            if (ImGui::Button("Delete Mesh")) { }
-            ImGui::SameLine();
-            if (ImGui::Button("Duplicate Mesh")) { }
-        }
+        ImGui::SameLine();
+        deleteMesh(scene);
+        ImGui::SameLine();
+        duplicateMesh(scene);
 
         bool appliedModifier = false;
         for (int i = 0; i < scene->meshes.size(); i++) {
@@ -50,8 +48,15 @@ namespace Gui {
             }
             ImGui::SameLine();
             ImGui::PushID(i);
-            if (ImGui::Button("<O>")) {
-                scene->meshes[i]->is_visible = !scene->meshes[i]->is_visible;
+            if (scene->meshes[i]->is_visible) {
+                if (ImGui::Button("<O>")) {
+                    scene->meshes[i]->is_visible = false;
+                }
+            }
+            else {
+                if (ImGui::Button("<Ø>")) {
+                    scene->meshes[i]->is_visible = true;
+                }
             }
             ImGui::PopID();
 //            ImGui::SameLine();
@@ -84,6 +89,34 @@ namespace Gui {
                 }
             }
             ImGui::EndPopup();
+        }
+    }
+
+    void deleteMesh(Scene *scene) {
+        if (ImGui::Button("Delete"))
+        {
+            std::vector<int> meshIndexes;
+            for (int i = 0; i < scene->meshes.size(); ++i) {
+                if (scene->meshes[i]->selected)
+                    meshIndexes.push_back(i);
+            }
+            for (int meshIndex : meshIndexes) {
+                scene->deleteMesh(meshIndex);
+            }
+        }
+    }
+
+    void duplicateMesh(Scene *scene) {
+        if (ImGui::Button("Duplicate"))
+        {
+            std::vector<int> meshIndexes;
+            for (int i = 0; i < scene->meshes.size(); ++i) {
+                if (scene->meshes[i]->selected)
+                    meshIndexes.push_back(i);
+            }
+            for (int meshIndex : meshIndexes) {
+                scene->duplicateMesh(meshIndex);
+            }
         }
     }
 

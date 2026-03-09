@@ -83,15 +83,15 @@ void audit_bindings() {
 }
 
 void drawInterfaceObject(unsigned int shaderProgram, Scene *scene) {
-    glUseProgram(shaderProgram);
-    Uniform::setModelViewProjGui(shaderProgram, &scene->camera);
-    Uniform::setModifierUniforms(shaderProgram, scene->modifier);
-    Uniform::setUniqueColorUniforms(shaderProgram, glm::vec3(1.0, 0.0, 0.0));
-    scene->xArrow->graphicsObject->draw();
-    Uniform::setUniqueColorUniforms(shaderProgram, glm::vec3(0.0, 1.0, 0.0));
-    scene->yArrow->graphicsObject->draw();
-    Uniform::setUniqueColorUniforms(shaderProgram, glm::vec3(0.0, 0.0, 1.0));
-    scene->zArrow->graphicsObject->draw();
+//    glUseProgram(shaderProgram);
+//    Uniform::setModelViewProjGui(shaderProgram, &scene->camera);
+//    Uniform::setModifierUniforms(shaderProgram, scene->modifier);
+//    Uniform::setUniqueColorUniforms(shaderProgram, glm::vec3(1.0, 0.0, 0.0));
+//    scene->xArrow->graphicsObject->draw();
+//    Uniform::setUniqueColorUniforms(shaderProgram, glm::vec3(0.0, 1.0, 0.0));
+//    scene->yArrow->graphicsObject->draw();
+//    Uniform::setUniqueColorUniforms(shaderProgram, glm::vec3(0.0, 0.0, 1.0));
+//    scene->zArrow->graphicsObject->draw();
 }
 
 }
