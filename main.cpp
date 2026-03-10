@@ -13,10 +13,11 @@ int main(int argc, char **argv) {
     if (window == nullptr)
         return -1;
 
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO &io = ImGui::GetIO(); (void) io;
-    Gui::initialize(io, window);
+    // Imgui & Window state
+    Gui::initialize(window);
+    WindowState windowState;
+    glfwSetWindowUserPointer(window, &windowState);
+    glfwSetKeyCallback(window, Window::keyCallback);
 
     Scene *scene = new Scene();
     scene->addMesh("../data/cube.obj");
@@ -38,7 +39,7 @@ int main(int argc, char **argv) {
             break;
 
         // New Frame & Ui Menu Bar
-        Gui::newFrame(io);
+        Gui::newFrame();
 
         // Main render Pass
         screenViewport.bindTextures();
@@ -83,7 +84,7 @@ int main(int argc, char **argv) {
         Gui::mainGui(scene);
 
         // UI render & swap buffer
-        Gui::render(io);
+        Gui::render();
         glfwSwapBuffers(window);
     }
 

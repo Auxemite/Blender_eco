@@ -1,4 +1,5 @@
 #include "window.hh"
+#include "imgui.h"
 
 #include <iostream>
 
@@ -14,6 +15,19 @@ void glfwErrorCallback(int error, const char *description) {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
 
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key != GLFW_KEY_ESCAPE && ImGui::GetIO().WantCaptureKeyboard)
+        return;
+
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    {
+        std::cout  << "Toggling Fullscreen\n";
+        WindowState* state = static_cast<WindowState*>(glfwGetWindowUserPointer(window));
+        toggleFullscreen(window, *state);
+    }
+}
+
 GLFWwindow *glfwWindowInit() {
     if (!glfwInit()) {
         std::cerr << "Error glfw_window_init : Failed to initialize GLFW" << std::endl;
@@ -23,7 +37,9 @@ GLFWwindow *glfwWindowInit() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint( GLFW_DECORATED, GLFW_FALSE );
+
+    // Disable Window Decoration
+//    glfwWindowHint( GLFW_DECORATED, GLFW_FALSE );
 
     GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "Wings", nullptr, nullptr);
     if (!window) {
@@ -32,6 +48,7 @@ GLFWwindow *glfwWindowInit() {
         return nullptr;
     }
     glfwMakeContextCurrent(window);
+    glfwSwapInterval(1);
     glfwSetFramebufferSizeCallback(window, Window::framebufferSizeCallback);
 
     if (!gladLoadGL(glfwGetProcAddress))
@@ -43,6 +60,34 @@ GLFWwindow *glfwWindowInit() {
     return window;
 }
 
+void toggleFullscreen(GLFWwindow* window, WindowState& state) {
+    state.fullScreen = !state.fullScreen;
+
+    if (state.fullScreen)
+    {
+        glfwGetWindowPos(window, &state.windowPosX, &state.windowPosY);
+        glfwGetWindowSize(window, &state.windowWidth, &state.windowHeight);
+
+        GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+        glfwSetWindowMonitor(
+                window,
+                monitor,
+                0, 0,
+                mode->width,
+                mode->height,
+                mode->refreshRate
+        );
+    }
+    else
+    {
+        glfwSetWindowMonitor(window,nullptr,
+                             state.windowPosX,state.windowPosY,
+                             state.windowWidth,state.windowHeight,0);
+    }
+}
+
 void shutDown(GLFWwindow *window) {
     glfwDestroyWindow(window);
     glfwTerminate();
@@ -50,8 +95,13 @@ void shutDown(GLFWwindow *window) {
 
 // return 0 if normal, 1 if ask for shutdown and -1 for error
 int processInput(GLFWwindow *window, Camera *camera) {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_GRAVE_ACCENT) == GLFW_PRESS)
         return 1;
+//    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+//        toggleFullscreen(window);
+//        while (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+//            glfwPollEvents();
+//    }
 
     float currentFrame = static_cast<float>(glfwGetTime());
     float deltaTime = currentFrame - Env::lastFrame;

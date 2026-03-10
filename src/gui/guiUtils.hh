@@ -15,10 +15,9 @@ namespace Gui {
                                         | ImGuiWindowFlags_NoNavFocus
                                         | ImGuiWindowFlags_NoBackground;
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-//    inline double mouseX, mouseY;
 
-    void initialize(ImGuiIO &io, GLFWwindow *window);
-    void newFrame(ImGuiIO &io);
-    void render(ImGuiIO &io);
+    void initialize(GLFWwindow *window);
+    void newFrame();
+    void render();
     void shutDown();
 };

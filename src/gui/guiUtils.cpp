@@ -6,7 +6,11 @@
 
 namespace Gui {
 
-void initialize(ImGuiIO &io, GLFWwindow *window) {
+void initialize(GLFWwindow *window) {
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO &io = ImGui::GetIO(); (void) io;
+
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
@@ -25,7 +29,7 @@ void initialize(ImGuiIO &io, GLFWwindow *window) {
     ImGui_ImplOpenGL3_Init("#version 450");
 }
 
-void newFrame(ImGuiIO &io) {
+void newFrame() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
@@ -36,6 +40,7 @@ void newFrame(ImGuiIO &io) {
     ImGui::SetNextWindowViewport(viewport->ID);
 
     ImGui::Begin("Main Viewport", nullptr, window_flags);
+    ImGuiIO &io = ImGui::GetIO();
     if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
     {
         ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
@@ -62,11 +67,12 @@ void newFrame(ImGuiIO &io) {
     ImGui::End();
 }
 
-void render(ImGuiIO &io) {
+void render() {
     ImGui::Render();
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+    ImGuiIO &io = ImGui::GetIO();
     if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
         GLFWwindow *backup_current_context = glfwGetCurrentContext();
         ImGui::UpdatePlatformWindows();
