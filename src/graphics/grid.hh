@@ -10,6 +10,7 @@ private:
     size_t gridSize = 0;
 
 public:
+    bool activateGrid = true;
     VisualGrid();
     void draw(unsigned int shaderProgram, Camera *camera);
 };

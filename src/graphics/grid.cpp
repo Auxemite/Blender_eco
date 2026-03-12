@@ -23,11 +23,13 @@ VisualGrid::VisualGrid() {
 }
 
 void VisualGrid::draw(unsigned int shaderProgram, Camera *camera) {
-    glUseProgram(shaderProgram);
-    Uniform::setBasicUniforms(shaderProgram, camera);
+    if (activateGrid) {
+        glUseProgram(shaderProgram);
+        Uniform::setBasicUniforms(shaderProgram, camera);
 
-    glBindVertexArray(gridVAO);
-    glDrawArrays(GL_LINES, 0, gridSize / 6); // Warning : gridSize conversion from size_t to int
+        glBindVertexArray(gridVAO);
+        glDrawArrays(GL_LINES, 0, gridSize / 6); // Warning : gridSize conversion from size_t to int
+    }
 }
 
 std::vector<float> generateGrid(int gridSize) {

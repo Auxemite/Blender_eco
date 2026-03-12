@@ -47,24 +47,28 @@ int main(int argc, char **argv) {
 //        Graphics::drawInterfaceObject(unicolorShaderProgram, scene);
 
         // Wireframe
-        glDisable(GL_DEPTH_TEST);
-        for (auto mesh : scene->meshes) {
-            if (!mesh->is_visible)
-                continue;
+        if (!scene->editmode) {
+            glDisable(GL_DEPTH_TEST);
+            for (auto mesh: scene->meshes) {
+                if (!mesh->is_visible)
+                    continue;
 
-            if (mesh->selected) {
-                glUseProgram(unicolorShaderProgram);
-                Uniform::setBasicUniforms(unicolorShaderProgram, &scene->camera);
-                Uniform::setModifierUniforms(unicolorShaderProgram, scene->modifier);
-                Uniform::setMeshUniforms(unicolorShaderProgram, mesh);
-                Uniform::setUniqueColorUniforms(unicolorShaderProgram, glm::vec3(1.0, 1.0, 0.0));
-                mesh->graphicsObject->draw();
+                if (mesh->selected) {
+                    glUseProgram(unicolorShaderProgram);
+                    Uniform::setBasicUniforms(unicolorShaderProgram, &scene->camera);
+                    Uniform::setModifierUniforms(unicolorShaderProgram, scene->modifier);
+                    Uniform::setMeshUniforms(unicolorShaderProgram, mesh);
+                    Uniform::setUniqueColorUniforms(unicolorShaderProgram, glm::vec3(1.0, 1.0, 0.0));
+                    mesh->graphicsObject->draw();
+                }
             }
         }
         glEnable(GL_DEPTH_TEST);
 
         // Mesh
         for (auto mesh : scene->meshes) {
+            if (scene->editmode && !mesh->selected)
+                continue;
             if (!mesh->is_visible)
                 continue;
 
@@ -81,7 +85,7 @@ int main(int argc, char **argv) {
         // UI construction
         screenViewport.unbindTextures();
         screenViewport.load(scene, &ray);
-        Gui::mainGui(scene);
+        Gui::mainGui(scene, visualGrid);
 
         // UI render & swap buffer
         Gui::render();

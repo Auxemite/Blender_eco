@@ -2,10 +2,11 @@
 
 #include "guiUtils.hh"
 #include "backend/scene.hh"
+#include "graphics/grid.hh"
 
 namespace Gui {
     static std::vector<std::string> mesh_names = {};
-    void mainGui(Scene *scene);
+    void mainGui(Scene *scene, VisualGrid& grid);
     void meshTreeNode(Scene *scene);
     void addMesh(Scene *scene);
     void deleteMesh(Scene *scene);

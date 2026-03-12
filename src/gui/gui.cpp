@@ -6,9 +6,12 @@
 namespace fs = std::filesystem;
 
 namespace Gui {
-    void mainGui(Scene *scene) {
+    void mainGui(Scene *scene, VisualGrid& grid) {
 //        ImGui::ShowDemoWindow();
         ImGui::Begin("Viewport");
+        ImGui::Checkbox("Grid", &grid.activateGrid);
+        ImGui::SameLine();
+        ImGui::Checkbox("Editmode", &scene->editmode);
         if (ImGui::Button("Basic"))
             Env::mainShaderProgram = Shader::createShaderProgram("../shaders/basic");
         if (ImGui::Button("Wireframe"))

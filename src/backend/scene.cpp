@@ -20,7 +20,6 @@ Scene::~Scene() {
 void Scene::addMesh(const std::string& filename) {
     Mesh *mesh = new Mesh(filename);
     meshes.push_back(mesh);
-//    selectedMeshes.push_back(&mesh->selected);
 }
 
 void Scene::deleteMesh(int meshIndex) {
@@ -30,5 +29,21 @@ void Scene::deleteMesh(int meshIndex) {
 void Scene::duplicateMesh(int meshIndex) {
     Mesh *mesh = new Mesh(*meshes[meshIndex]);
     meshes.push_back(mesh);
-//    selectedMeshes.push_back(&mesh->selected);
+}
+
+void Scene::toggleEditmode(bool _editmode, EditmodeType _editmodeType) {
+    editmode = _editmode;
+    if (editmode) {
+        editmodeType = _editmodeType;
+        for (auto mesh : meshes) {
+            if (mesh->selected) {
+                selectedMeshes.push_back(mesh);
+            }
+        }
+    }
+    else {
+        editmodeType = NO_EDITMODE;
+        selectedMeshes.clear();
+        selectedPoints.clear();
+    }
 }
