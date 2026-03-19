@@ -4,7 +4,8 @@
 #include "material.hh"
 
 #include <iostream>
-#include <vector>
+#include <vector>*
+#include <unordered_set>
 #include "glm/glm.hpp"
 #include "graphics/vertex.hh"
 #include "graphics/graphicsUtils.hh"
@@ -14,7 +15,9 @@
 class Mesh {
 public:
     std::vector<glm::vec3 *> points;
+    std::unordered_set<int> selectedPoints;
     std::vector<Triangle *> faces;
+
     Material *material = nullptr;
     GraphicsObject *graphicsObject = nullptr;
     glm::vec3 midPoint = glm::vec3(0.0, 0.0, 0.0);
@@ -30,6 +33,7 @@ public:
     explicit Mesh(const std::string& filename); //From .obj
 
     std::vector<Engine::vertex> vertices();
+    std::vector<Engine::vertex> verticesEditmode();
     std::vector<u32> indices();
 
     bool rayIntersection(const glm::vec3& cam_position, const glm::vec3& direction);
@@ -37,5 +41,6 @@ public:
     // Apply & Udpate
     void update();
     void applyAndUpdate(const Modifier& modifier);
+    void applySelectedAndUpdate(const Modifier& modifier);
 
 };

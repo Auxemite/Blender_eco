@@ -7,6 +7,7 @@
 namespace Gui {
     static std::vector<std::string> mesh_names = {};
     void mainGui(Scene *scene, VisualGrid& grid);
+    void editMode(Scene *scene, VisualGrid& grid);
     void meshTreeNode(Scene *scene);
     void addMesh(Scene *scene);
     void deleteMesh(Scene *scene);

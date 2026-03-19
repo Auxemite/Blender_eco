@@ -3,6 +3,7 @@
 #include <filesystem>
 #include "mesh.hh"
 #include "utils.hh"
+#include <random>
 
 #define LINE_LEN 512
 namespace fs = std::filesystem;
@@ -98,8 +99,27 @@ Mesh::~Mesh() {
 
 std::vector<Engine::vertex> Mesh::vertices() {
     auto vertices = std::vector<Engine::vertex>();
-    for (auto & point : points) {
+    for (auto point : points) {
         glm::vec3 color = material == nullptr ? glm::vec3(1.0) : material->color;
+        struct Engine::vertex vertex = {
+                *point,
+                glm::vec3(),
+                glm::vec2(point->x, point->y),
+                glm::vec4(),
+                color
+        };
+        vertices.push_back(vertex);
+    }
+    return vertices;
+}
+
+std::vector<Engine::vertex> Mesh::verticesEditmode() {
+    auto vertices = std::vector<Engine::vertex>();
+    for (size_t i = 0; i < points.size(); i++) {
+        glm::vec3 color = material == nullptr ? glm::vec3(1.0) : material->color;
+        if (selectedPoints.contains(i))
+            color = glm::vec3(1.0, 1.0, 0.0);
+        glm::vec3 *point = points[i];
         struct Engine::vertex vertex = {
                 *point,
                 glm::vec3(),
@@ -145,6 +165,17 @@ void Mesh::applyAndUpdate(const Modifier& modifier) {
     for (auto point : points) {
         *point = rotationMat * (*point - midPoint) * modifier.scale
         + modifier.position + midPoint;
+    }
+    graphicsObject->updateVBOFromMesh(vertices());
+    update();
+}
+
+void Mesh::applySelectedAndUpdate(const Modifier& modifier) {
+    glm::mat3 rotationMat = getRotationMatrix(modifier.rotation);
+    for (auto selectedIndex : selectedPoints) {
+        glm::vec3 *point = points[selectedIndex];
+        *point = rotationMat * (*point - midPoint) * modifier.scale
+                 + modifier.position + midPoint;
     }
     graphicsObject->updateVBOFromMesh(vertices());
     update();

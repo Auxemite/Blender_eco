@@ -8,10 +8,8 @@ namespace fs = std::filesystem;
 namespace Gui {
     void mainGui(Scene *scene, VisualGrid& grid) {
 //        ImGui::ShowDemoWindow();
+        editMode(scene, grid);
         ImGui::Begin("Viewport");
-        ImGui::Checkbox("Grid", &grid.activateGrid);
-        ImGui::SameLine();
-        ImGui::Checkbox("Editmode", &scene->editmode);
         if (ImGui::Button("Basic"))
             Env::mainShaderProgram = Shader::createShaderProgram("../shaders/basic");
         if (ImGui::Button("Wireframe"))
@@ -28,6 +26,32 @@ namespace Gui {
         ImGui::End();
 
         meshTreeNode(scene);
+    }
+
+    void editMode(Scene *scene, VisualGrid& grid) {
+        ImGui::Begin("Editmode");
+        ImGui::Checkbox("Grid", &grid.activateGrid);
+        ImGui::SameLine();
+        ImGui::Text(" | ");
+        ImGui::SameLine();
+        ImGui::Checkbox("Editmode", &scene->editmode);
+        if (scene->editmode) {
+            ImGui::SameLine();
+            ImGui::Text(" | Selection Mode : ");
+            ImGui::SameLine();
+            if (ImGui::RadioButton("Face", reinterpret_cast<int *>(&scene->editmodeType), 1)) {
+                //TODO
+            }
+            ImGui::SameLine();
+            if (ImGui::RadioButton("Edge", reinterpret_cast<int *>(&scene->editmodeType), 2)) {
+                //TODO
+            }
+            ImGui::SameLine();
+            if (ImGui::RadioButton("Summit", reinterpret_cast<int *>(&scene->editmodeType), 3)) {
+                //TODO
+            }
+        }
+        ImGui::End();
     }
 
     void meshTreeNode(Scene *scene) {

@@ -45,6 +45,19 @@ void Ray::rayCasting(Scene *scene, float width, float height) {
             static_cast<int>(height)
     );
 
+    if (!scene->editmode)
+        hitMeshTest(scene, ray);
+    else
+        hitMeshFaceTest(scene, ray);
+
+#ifdef RAY_VISIBLE
+    std::vector<float> rayVertices = generateRay(ray, scene->camera.position);
+    raySize = rayVertices.size();
+    glNamedBufferSubData(rayVBO, 0, raySize * sizeof(float), rayVertices.data());
+#endif
+}
+
+void Ray::hitMeshTest(Scene *scene, glm::vec3 ray) {
     bool hitSomething = false;
     for (auto mesh : scene->meshes)
     {
@@ -70,12 +83,62 @@ void Ray::rayCasting(Scene *scene, float width, float height) {
         }
         scene->modifier.clear();
     }
+}
 
-#ifdef RAY_VISIBLE
-    std::vector<float> rayVertices = generateRay(ray, scene->camera.position);
-    raySize = rayVertices.size();
-    glNamedBufferSubData(rayVBO, 0, raySize * sizeof(float), rayVertices.data());
-#endif
+void Ray::hitMeshFaceTest(Scene *scene, glm::vec3 ray) {
+    if (!scene->editmode)
+        return;
+
+    bool hitSomething = false;
+    for (auto mesh : scene->meshes) {
+        if (!mesh->selected || !mesh->is_visible)
+            continue;
+
+        for (auto face : mesh->faces) {
+            if (face->ray_intersection(mesh->points, scene->camera.position, ray)) {
+                std::cout << "Face touched " << face->ia << " " << face->ib << " " << face->ic << "\n";
+                if (mesh->selectedPoints.contains(face->ia)
+                    && mesh->selectedPoints.contains(face->ib)
+                    && mesh->selectedPoints.contains(face->ic))
+                {
+                    mesh->selectedPoints.erase(face->ia);
+                    mesh->selectedPoints.erase(face->ib);
+                    mesh->selectedPoints.erase(face->ic);
+                    mesh->graphicsObject->updateVBOFromMesh(mesh->vertices());
+                }
+                else {
+                    mesh->selectedPoints.insert(face->ia);
+                    mesh->selectedPoints.insert(face->ib);
+                    mesh->selectedPoints.insert(face->ic);
+                    mesh->graphicsObject->updateVBOFromMesh(mesh->verticesEditmode());
+                }
+                hitSomething = true;
+                break;
+            }
+        }
+        if (hitSomething)
+            break;
+    }
+
+    if (!hitSomething) {
+        std::cout << "Void Raycast\n";
+        for (auto mesh : scene->meshes) {
+            if (!mesh->selected || !mesh->is_visible)
+                continue;
+
+            mesh->applySelectedAndUpdate(scene->modifier);
+            mesh->selectedPoints.clear();
+        }
+        scene->modifier.clear();
+    }
+}
+
+void Ray::hitMeshEdgeTest(Scene *scene, glm::vec3 ray) {
+    bool hitSomething = false;
+}
+
+void Ray::hitMeshPointTest(Scene *scene, glm::vec3 ray) {
+    bool hitSomething = false;
 }
 
 void Ray::draw(unsigned int shaderProgram, Camera *camera) {

@@ -6,17 +6,12 @@
 #include "light.hh"
 #include "modifier.hh"
 
-struct indexMeshPoint {
-    int meshIndex;
-    int pointIndex;
-};
-
 enum EditmodeType {
-    FACE,
-    EDGE,
-    VERTEX,
+    POINT = 1,
+    EDGE = 2,
+    FACE = 3,
 
-    NO_EDITMODE
+    NO_EDITMODE = 0
 };
 
 class Scene : NonMovable {
@@ -28,7 +23,6 @@ public:
     std::vector<Material *> materials;
 
     std::vector<Mesh *> selectedMeshes;
-    std::vector<indexMeshPoint> selectedPoints;
 //    Mesh *xArrow = new Mesh("../data/xArrow.obj");
 //    Mesh *yArrow = new Mesh("../data/yArrow.obj");
 //    Mesh *zArrow = new Mesh("../data/zArrow.obj");
@@ -42,9 +36,14 @@ public:
 
     Scene()=default;
     ~Scene();
+
+    void drawSelectedMeshes(unsigned int shaderProgram, glm::vec3 unicolor);
+    void drawMeshes(unsigned int shaderProgram, glm::vec3 unicolor);
+    void drawOutline(unsigned int shaderProgram);
+
     void addMesh(const std::string& filename);
     void deleteMesh(int meshIndex);
     void duplicateMesh(int meshIndex);
 
-    void toggleEditmode(bool _editmode, EditmodeType _editmodeType);
+    void toggleEditmode();
 };

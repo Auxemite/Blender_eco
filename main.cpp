@@ -26,7 +26,9 @@ int main(int argc, char **argv) {
     VisualGrid visualGrid;
     Ray ray(scene->camera.position);
 
-    Env::mainShaderProgram = Shader::createShaderProgram("../shaders/basic");
+    GLuint basicShaderProgram = Shader::createShaderProgram("../shaders/basic");
+    GLuint editmodeShaderProgram = Shader::createShaderProgram("../shaders/editmode");
+    Env::mainShaderProgram = basicShaderProgram;
     GLuint gridShaderProgram = Shader::createShaderProgram("../shaders/grid");
     GLuint wireframeShaderProgram = Shader::createShaderProgram("../shaders/wireframe");
     GLuint unicolorShaderProgram = Shader::createShaderProgram("../shaders/unicolor");
@@ -46,40 +48,15 @@ int main(int argc, char **argv) {
         visualGrid.draw(gridShaderProgram, &scene->camera);
 //        Graphics::drawInterfaceObject(unicolorShaderProgram, scene);
 
-        // Wireframe
-        if (!scene->editmode) {
-            glDisable(GL_DEPTH_TEST);
-            for (auto mesh: scene->meshes) {
-                if (!mesh->is_visible)
-                    continue;
-
-                if (mesh->selected) {
-                    glUseProgram(unicolorShaderProgram);
-                    Uniform::setBasicUniforms(unicolorShaderProgram, &scene->camera);
-                    Uniform::setModifierUniforms(unicolorShaderProgram, scene->modifier);
-                    Uniform::setMeshUniforms(unicolorShaderProgram, mesh);
-                    Uniform::setUniqueColorUniforms(unicolorShaderProgram, glm::vec3(1.0, 1.0, 0.0));
-                    mesh->graphicsObject->draw();
-                }
-            }
+        if (scene->editmode) {
+            scene->drawSelectedMeshes(basicShaderProgram, {0.0, 0.0, 0.0});
+            scene->drawSelectedMeshes(editmodeShaderProgram, {0.0, 0.0, 0.0});
         }
-        glEnable(GL_DEPTH_TEST);
-
-        // Mesh
-        for (auto mesh : scene->meshes) {
-            if (scene->editmode && !mesh->selected)
-                continue;
-            if (!mesh->is_visible)
-                continue;
-
-            glUseProgram(Env::mainShaderProgram);
-            Uniform::setBasicUniforms(Env::mainShaderProgram, &scene->camera);
-            if (mesh->selected)
-                Uniform::setModifierUniforms(Env::mainShaderProgram, scene->modifier);
-            else
-                Uniform::setModifierUniforms(Env::mainShaderProgram,{});
-            Uniform::setMeshUniforms(Env::mainShaderProgram, mesh);
-            mesh->graphicsObject->draw();
+        else {
+            glDisable(GL_DEPTH_TEST);
+            scene->drawOutline(unicolorShaderProgram);
+            glEnable(GL_DEPTH_TEST);
+            scene->drawMeshes(Env::mainShaderProgram, {1.0, 1.0, 0.0});
         }
 
         // UI construction

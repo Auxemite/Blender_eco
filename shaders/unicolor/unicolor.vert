@@ -16,7 +16,7 @@ uniform mat3 modifierRotation;
 uniform float modifierScale;
 
 void main() {
-    vec3 newPos = modifierRotation * (pos - meshCenter) * modifierScale * 1.03
+    vec3 newPos = modifierRotation * (pos - meshCenter) * modifierScale
                 + modifierPosition + meshCenter;
     gl_Position = projection * view * model * vec4(newPos, 1.0);
 }

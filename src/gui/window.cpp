@@ -97,11 +97,6 @@ void shutDown(GLFWwindow *window) {
 int processInput(GLFWwindow *window, Camera *camera) {
     if (glfwGetKey(window, GLFW_KEY_GRAVE_ACCENT) == GLFW_PRESS)
         return 1;
-//    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-//        toggleFullscreen(window);
-//        while (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-//            glfwPollEvents();
-//    }
 
     float currentFrame = static_cast<float>(glfwGetTime());
     float deltaTime = currentFrame - Env::lastFrame;

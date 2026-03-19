@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 project(blender_eco)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 if(MSVC)
     set(COMPILE_OPTIONS /permissive- /W3 -D_CRT_SECURE_NO_DEPRECATE /Zc:preprocessor /wd5105)
 else()
