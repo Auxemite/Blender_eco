@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
     while (!glfwWindowShouldClose(window)) {
         // Poll events
         glfwPollEvents();
-        if (Window::processInput(window, &scene->camera) == 1)
+        if (Window::processInput(window, scene) == 1)
             break;
 
         // New Frame & Ui Menu Bar
@@ -49,14 +49,14 @@ int main(int argc, char **argv) {
 //        Graphics::drawInterfaceObject(unicolorShaderProgram, scene);
 
         if (scene->editmode) {
-            scene->drawSelectedMeshes(basicShaderProgram, {0.0, 0.0, 0.0});
+//            scene->drawSelectedMeshes(basicShaderProgram, {1.0, 1.0, 1.0});
             scene->drawSelectedMeshes(editmodeShaderProgram, {0.0, 0.0, 0.0});
         }
         else {
             glDisable(GL_DEPTH_TEST);
             scene->drawOutline(unicolorShaderProgram);
             glEnable(GL_DEPTH_TEST);
-            scene->drawMeshes(Env::mainShaderProgram, {1.0, 1.0, 0.0});
+            scene->drawMeshes(Env::mainShaderProgram, {1.0, 1.0, 1.0});
         }
 
         // UI construction

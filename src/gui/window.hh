@@ -4,7 +4,7 @@
 
 #include "glad/gl.h"
 #include "GLFW/glfw3.h"
-#include "backend/camera.hh"
+#include "backend/scene.hh"
 
 struct WindowState
 {
@@ -24,6 +24,6 @@ namespace Window {
 
     GLFWwindow *glfwWindowInit();
     void shutDown(GLFWwindow *window);
-    int processInput(GLFWwindow *window, Camera *camera);
+    int processInput(GLFWwindow *window, Scene *scene);
 
 }

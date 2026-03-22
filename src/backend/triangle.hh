@@ -11,7 +11,7 @@ public:
     bool selected;
 
     Triangle(const int& ia_, const int& ib_, const int& ic_);
-    bool ray_intersection(std::vector<glm::vec3 *> points, const glm::vec3& cam_position, const glm::vec3& direction);
+    float rayIntersection(std::vector<glm::vec3 *> points, const glm::vec3& cam_position, const glm::vec3& direction);
 //    glm::vec3 normal(const glm::vec3& point);
     void normalize();
 

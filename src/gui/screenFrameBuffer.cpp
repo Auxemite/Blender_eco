@@ -33,8 +33,8 @@ ScreenFrameBuffer::ScreenFrameBuffer(int _width, int _height) {
     if (glCheckNamedFramebufferStatus(screenFBO, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cerr << "FBO not complete!" << std::endl;
 
-    width = _width;
-    height = _height;
+    width = static_cast<float>(_width);
+    height = static_cast<float>(_height);
 }
 
 void ScreenFrameBuffer::load(Scene *scene, Ray *ray) {

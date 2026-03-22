@@ -28,7 +28,7 @@ void VisualGrid::draw(unsigned int shaderProgram, Camera *camera) {
         Uniform::setBasicUniforms(shaderProgram, camera);
 
         glBindVertexArray(gridVAO);
-        glDrawArrays(GL_LINES, 0, gridSize / 6); // Warning : gridSize conversion from size_t to int
+        glDrawArrays(GL_LINES, 0, static_cast<int>(gridSize) / 6); // Warning : gridSize conversion from size_t to int
     }
 }
 
@@ -36,14 +36,14 @@ std::vector<float> generateGrid(int gridSize) {
     std::vector<float> gridVertices;
     gridVertices.reserve((gridSize * 2 + 1) * 24 + 24);
     // Red Line for X
-    gridVertices.push_back(-gridSize);
+    gridVertices.push_back(-static_cast<float>(gridSize));
     gridVertices.push_back(0.0f);
     gridVertices.push_back(0.0f);
     gridVertices.push_back(1.0f);
     gridVertices.push_back(0.3f);
     gridVertices.push_back(0.3f);
 
-    gridVertices.push_back(gridSize);
+    gridVertices.push_back(static_cast<float>(gridSize));
     gridVertices.push_back(0.0f);
     gridVertices.push_back(0.0f);
     gridVertices.push_back(1.0f);
@@ -53,14 +53,14 @@ std::vector<float> generateGrid(int gridSize) {
     // Green Line for Z
     gridVertices.push_back(0.0f);
     gridVertices.push_back(0.0f);
-    gridVertices.push_back(-gridSize);
+    gridVertices.push_back(-static_cast<float>(gridSize));
     gridVertices.push_back(0.3f);
     gridVertices.push_back(1.0f);
     gridVertices.push_back(0.3f);
 
     gridVertices.push_back(0.0f);
     gridVertices.push_back(0.0f);
-    gridVertices.push_back(gridSize);
+    gridVertices.push_back(static_cast<float>(gridSize));
     gridVertices.push_back(0.3f);
     gridVertices.push_back(1.0f);
     gridVertices.push_back(0.3f);

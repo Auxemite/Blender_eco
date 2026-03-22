@@ -29,28 +29,25 @@ namespace Gui {
     }
 
     void editMode(Scene *scene, VisualGrid& grid) {
-        ImGui::Begin("Editmode");
+        ImGui::Begin("Mode");
         ImGui::Checkbox("Grid", &grid.activateGrid);
         ImGui::SameLine();
         ImGui::Text(" | ");
         ImGui::SameLine();
-        ImGui::Checkbox("Editmode", &scene->editmode);
+        if (ImGui::Checkbox("Editmode", &scene->editmode)) {
+            scene->toggleEditmode();
+        }
         if (scene->editmode) {
             ImGui::SameLine();
             ImGui::Text(" | Selection Mode : ");
             ImGui::SameLine();
-            if (ImGui::RadioButton("Face", reinterpret_cast<int *>(&scene->editmodeType), 1)) {
-                //TODO
-            }
+            ImGui::RadioButton("Face", reinterpret_cast<int *>(&scene->editmodeType), 0);
             ImGui::SameLine();
-            if (ImGui::RadioButton("Edge", reinterpret_cast<int *>(&scene->editmodeType), 2)) {
-                //TODO
-            }
+            ImGui::RadioButton("Edge", reinterpret_cast<int *>(&scene->editmodeType), 2);
             ImGui::SameLine();
-            if (ImGui::RadioButton("Summit", reinterpret_cast<int *>(&scene->editmodeType), 3)) {
-                //TODO
-            }
+            ImGui::RadioButton("Vertex", reinterpret_cast<int *>(&scene->editmodeType), 1);
         }
+
         ImGui::End();
     }
 
@@ -70,8 +67,9 @@ namespace Gui {
                     scene->meshes[i]->applyAndUpdate(scene->modifier);
                     appliedModifier = true;
                 }
-
-                scene->meshes[i]->selected = !scene->meshes[i]->selected;
+                scene->clearSelectedMeshList();
+                scene->selectedMeshes.push_back(scene->meshes[i]);
+                scene->meshes[i]->selected = true;
             }
             ImGui::SameLine();
             ImGui::PushID(i);

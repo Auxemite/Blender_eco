@@ -7,11 +7,9 @@
 #include "modifier.hh"
 
 enum EditmodeType {
-    POINT = 1,
+    VERTEX = 1,
     EDGE = 2,
-    FACE = 3,
-
-    NO_EDITMODE = 0
+    FACE = 0,
 };
 
 class Scene : NonMovable {
@@ -32,7 +30,8 @@ public:
 
     // Flags
     bool editmode = false;
-    EditmodeType editmodeType = NO_EDITMODE;
+    EditmodeType editmodeType = FACE;
+    bool shiftMode = false;
 
     Scene()=default;
     ~Scene();
@@ -45,5 +44,6 @@ public:
     void deleteMesh(int meshIndex);
     void duplicateMesh(int meshIndex);
 
+    void clearSelectedMeshList();
     void toggleEditmode();
 };

@@ -19,7 +19,7 @@ uniform float modifierScale;
 
 void main() {
     vec3 position = pos;
-    if (color.b == 0) {
+    if (color.r != 0) {
         position = modifierRotation * (pos - meshCenter) * modifierScale * 1.001
                 + modifierPosition + meshCenter;
     }

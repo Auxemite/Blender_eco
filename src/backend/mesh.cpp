@@ -100,7 +100,7 @@ Mesh::~Mesh() {
 std::vector<Engine::vertex> Mesh::vertices() {
     auto vertices = std::vector<Engine::vertex>();
     for (auto point : points) {
-        glm::vec3 color = material == nullptr ? glm::vec3(1.0) : material->color;
+        glm::vec3 color = material == nullptr ? glm::vec3(0.0) : material->color;
         struct Engine::vertex vertex = {
                 *point,
                 glm::vec3(),
@@ -115,8 +115,8 @@ std::vector<Engine::vertex> Mesh::vertices() {
 
 std::vector<Engine::vertex> Mesh::verticesEditmode() {
     auto vertices = std::vector<Engine::vertex>();
-    for (size_t i = 0; i < points.size(); i++) {
-        glm::vec3 color = material == nullptr ? glm::vec3(1.0) : material->color;
+    for (int i = 0; i < points.size(); i++) {
+        glm::vec3 color = glm::vec3(0.0);
         if (selectedPoints.contains(i))
             color = glm::vec3(1.0, 1.0, 0.0);
         glm::vec3 *point = points[i];
@@ -142,12 +142,15 @@ std::vector<u32> Mesh::indices() {
     return indices;
 }
 
-bool Mesh::rayIntersection(const glm::vec3& cam_position, const glm::vec3& direction) {
+float Mesh::rayIntersection(const glm::vec3& cameraPos, const glm::vec3& direction) {
+    float closestHitDistance = 0;
     for (auto & face : faces) {
-        if (face->ray_intersection(points, cam_position, direction))
-            return true;
+        float hitScalar = face->rayIntersection(points, cameraPos, direction);
+        float hitDistance = glm::length(direction * hitScalar);
+        if (hitDistance > 0 && (closestHitDistance == 0 || closestHitDistance > hitDistance))
+            closestHitDistance = hitDistance;
     }
-    return false;
+    return closestHitDistance;
 }
 
 void Mesh::update() {

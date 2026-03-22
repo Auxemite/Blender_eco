@@ -20,7 +20,7 @@ Triangle::Triangle(const int& ia_, const int& ib_, const int& ic_)
     normalize();
 }
 
-bool Triangle::ray_intersection(std::vector<glm::vec3 *> points, const glm::vec3& cam_position, const glm::vec3& direction)
+float Triangle::rayIntersection(std::vector<glm::vec3 *> points, const glm::vec3& cam_position, const glm::vec3& direction)
 {
     glm::vec3 edge_1 = *points[ib] - *points[ia];
     glm::vec3 edge_2 = *points[ic] - *points[ia];
@@ -47,9 +47,7 @@ bool Triangle::ray_intersection(std::vector<glm::vec3 *> points, const glm::vec3
         return false;
     }
 
-    float t = inv_det * dot(edge_2, s_cross_e1);
-
-    return t > 0;
+    return std::max(inv_det * dot(edge_2, s_cross_e1), 0.0f);
 }
 
 //void Triangle::scale(float size) const

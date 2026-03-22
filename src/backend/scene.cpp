@@ -23,8 +23,11 @@ void Scene::drawSelectedMeshes(unsigned int shaderProgram, glm::vec3 unicolor) {
     Uniform::setUniqueColorUniforms(shaderProgram, unicolor);
     Uniform::setBasicUniforms(shaderProgram, &this->camera);
     Uniform::setModifierUniforms(shaderProgram, this->modifier);
-    for (auto mesh : this->meshes) {
-        if (!mesh->selected || !mesh->is_visible)
+    for (auto mesh : this->selectedMeshes) {
+        if (!mesh->selected)
+            std::cerr  << "DrawSelectedMeshes Warning : Mesh should be selectec\n";
+
+        if (!mesh->is_visible)
             continue;
 
         Uniform::setMeshUniforms(shaderProgram, mesh);
@@ -81,18 +84,37 @@ void Scene::duplicateMesh(int meshIndex) {
     meshes.push_back(mesh);
 }
 
+void Scene::clearSelectedMeshList() {
+    for (auto mesh : this->selectedMeshes) {
+        mesh->selected = false;
+    }
+    this->selectedMeshes.clear();
+}
+
 void Scene::toggleEditmode() {
-    editmode = !editmode;
     if (editmode) {
         editmodeType = FACE;
-        for (auto mesh : meshes) {
-            if (mesh->selected) {
-                selectedMeshes.push_back(mesh);
-            }
+
+        for (auto mesh : selectedMeshes) {
+            if (!mesh->is_visible)
+                continue;
+
+            mesh->applyAndUpdate(this->modifier);
         }
+        this->modifier.clear();
+
+        if (selectedMeshes.size() > 1)
+            std::cerr << "ToggleEditmode Warning : SelectedMeshes list is above 1. Multiple Selection not implemented\n";
     }
     else {
-        editmodeType = NO_EDITMODE;
-        selectedMeshes.clear();
+        for (auto mesh : this->meshes) {
+            if (!mesh->selected || !mesh->is_visible)
+                continue;
+
+            mesh->applySelectedAndUpdate(this->modifier);
+            mesh->selectedPoints.clear();
+        }
+        this->modifier.clear();
+        editmodeType = FACE;
     }
 }

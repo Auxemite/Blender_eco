@@ -8,11 +8,5 @@ uniform vec3 unicolor;
 
 void main() {
     FragColor = vec4(unicolor, 1.0);
-    
-    if (fragColor.b != 0) {
-        FragColor = vec4(unicolor, 1.0);
-    }
-    else {
-        FragColor = vec4(fragColor, 1.0);
-    }
+    FragColor = vec4(fragColor, 1.0);
 }

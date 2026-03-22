@@ -4,7 +4,7 @@
 #include "material.hh"
 
 #include <iostream>
-#include <vector>*
+#include <vector>
 #include <unordered_set>
 #include "glm/glm.hpp"
 #include "graphics/vertex.hh"
@@ -36,7 +36,7 @@ public:
     std::vector<Engine::vertex> verticesEditmode();
     std::vector<u32> indices();
 
-    bool rayIntersection(const glm::vec3& cam_position, const glm::vec3& direction);
+    float rayIntersection(const glm::vec3& cameraPos, const glm::vec3& direction);
 
     // Apply & Udpate
     void update();

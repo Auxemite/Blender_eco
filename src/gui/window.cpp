@@ -94,9 +94,13 @@ void shutDown(GLFWwindow *window) {
 }
 
 // return 0 if normal, 1 if ask for shutdown and -1 for error
-int processInput(GLFWwindow *window, Camera *camera) {
+int processInput(GLFWwindow *window, Scene *scene) {
     if (glfwGetKey(window, GLFW_KEY_GRAVE_ACCENT) == GLFW_PRESS)
         return 1;
+
+    Camera *camera = &scene->camera;
+    scene->shiftMode = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS
+            || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS;
 
     float currentFrame = static_cast<float>(glfwGetTime());
     float deltaTime = currentFrame - Env::lastFrame;
