@@ -25,7 +25,7 @@ void Scene::drawSelectedMeshes(unsigned int shaderProgram, glm::vec3 unicolor) {
     Uniform::setModifierUniforms(shaderProgram, this->modifier);
     for (auto mesh : this->selectedMeshes) {
         if (!mesh->selected)
-            std::cerr  << "DrawSelectedMeshes Warning : Mesh should be selectec\n";
+            std::cerr  << "DrawSelectedMeshes Warning : Mesh should be selected\n";
 
         if (!mesh->is_visible)
             continue;
@@ -40,15 +40,10 @@ void Scene::drawMeshes(unsigned int shaderProgram, glm::vec3 unicolor) {
     Uniform::setUniqueColorUniforms(shaderProgram, unicolor);
     Uniform::setBasicUniforms(shaderProgram, &this->camera);
     for (auto mesh : this->meshes) {
-        if (this->editmode && !mesh->selected)
-            continue;
-        if (!mesh->is_visible)
+        if (mesh->selected || !mesh->is_visible)
             continue;
 
-        if (mesh->selected)
-            Uniform::setModifierUniforms(shaderProgram, this->modifier);
-        else
-            Uniform::setModifierUniforms(shaderProgram,{});
+        Uniform::setModifierUniforms(shaderProgram,{});
         Uniform::setMeshUniforms(shaderProgram, mesh);
         mesh->graphicsObject->draw();
     }

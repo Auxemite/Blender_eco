@@ -53,10 +53,11 @@ int main(int argc, char **argv) {
             scene->drawSelectedMeshes(editmodeShaderProgram, {0.0, 0.0, 0.0});
         }
         else {
+            scene->drawMeshes(Env::mainShaderProgram, {1.0, 1.0, 1.0});
             glDisable(GL_DEPTH_TEST);
             scene->drawOutline(unicolorShaderProgram);
             glEnable(GL_DEPTH_TEST);
-            scene->drawMeshes(Env::mainShaderProgram, {1.0, 1.0, 1.0});
+            scene->drawSelectedMeshes(Env::mainShaderProgram, {1.0, 1.0, 1.0});
         }
 
         // UI construction
