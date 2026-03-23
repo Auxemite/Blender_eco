@@ -42,8 +42,8 @@ void Ray::rayCasting(Scene *scene, float width, float height) {
     ray = scene->camera.getMouseRay(
             localX,
             localY,
-            static_cast<int>(width),
-            static_cast<int>(height)
+            width,
+            height
     );
 
     if (!scene->editmode)

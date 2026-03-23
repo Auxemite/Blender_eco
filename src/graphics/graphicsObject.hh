@@ -4,16 +4,16 @@
 #include "graphicsUtils.hh"
 
 class GraphicsObject : NonMovable {
-public:
-    GLuint VAO = 0;
-    GLuint VBO = 0;
-    GLuint EBO = 0;
-    int eboSize = 0;
+    public:
+        GLuint VAO = 0;
+        GLuint VBO = 0;
+        GLuint EBO = 0;
+        int eboSize = 0;
 
-    GraphicsObject(std::vector<Engine::vertex> vertices, std::vector<u32> indices);
-    ~GraphicsObject();
+        GraphicsObject(std::vector<Engine::vertex> vertices, std::vector<u32> indices);
+        ~GraphicsObject();
 
-    void updateVBOFromMesh(std::vector<Engine::vertex> vertices);
-    void updateEBOFromMesh(std::vector<u32> indices);
-    void draw();
+        void updateVBOFromMesh(std::vector<Engine::vertex> vertices);
+        void updateEBOFromMesh(std::vector<u32> indices);
+        void draw();
 };

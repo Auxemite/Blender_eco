@@ -17,6 +17,7 @@ struct WindowState
 };
 
 namespace Window {
+
     void framebufferSizeCallback(GLFWwindow *window, int width, int height);
     void glfwErrorCallback(int error, const char *description);
     void toggleFullscreen(GLFWwindow* window, WindowState& state);

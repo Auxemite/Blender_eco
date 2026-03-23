@@ -7,6 +7,7 @@
 #include "backend/scene.hh"
 
 namespace Gui {
+
     static ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoTitleBar
                                         | ImGuiWindowFlags_NoCollapse
                                         | ImGuiWindowFlags_NoResize
@@ -20,4 +21,5 @@ namespace Gui {
     void newFrame();
     void render();
     void shutDown();
+
 };

@@ -13,14 +13,14 @@ Camera::Camera(glm::vec3 pos_, glm::vec3 up_, glm::vec3 height_) {
     height = height_;
 }
 
-glm::vec3 Camera::getMouseRay(double mouseX, double mouseY,
-                      int windowWidth, int windowHeight)
+glm::vec3 Camera::getMouseRay(float mouseX, float mouseY,
+                              float windowWidth, float windowHeight)
 {
     Env::view = glm::lookAt(position, glm::vec3(0.0f), up);
 
     // Normalized Device Coordinates
-    float x = (2.0f * mouseX) / windowWidth - 1.0f;
-    float y = 1.0f - (2.0f * mouseY) / windowHeight;
+    float x = 2.0f * mouseX / windowWidth - 1.0f;
+    float y = 1.0f - 2.0f * mouseY / windowHeight;
     float z = 1.0f;
 
     // Clip space
