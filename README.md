@@ -15,7 +15,7 @@ The goal of this project was to create Blender like 3D modeling software. For th
 
 This project has two separate versions available via different branches : Raytracing version and Rasterization version (opengl).
 
-### Raytracing version (on the “main” and “raycasting” branches)
+### Raytracing version (on the “raycasting” branch)
 
 This version was created to implement the software without a graphics API (only in C++) and with simple raytracing. Opengl and GLFW were used only for the interface.
 
@@ -39,33 +39,6 @@ It has the following features:
 * Use Phong for light management on meshs with the ability to change the color, kd, ks, and ns of a mesh's material.
 * Option to change the light intensity.
 * Option to save a render in .ppm format.
-
-### Rasterization version (on the “dev” and “opengl” branches)
-
-The goal of this version was to port the raytracing version to opengl in order to run the software in real time, while adding more modern features. All the features of the raytracing version have been ported to opengl (simple 3D scene, Edit Mode, Render Mode). Here are the new features.
-
-#### Simple 3D scene
-* Camera movement is now in real time with options to change the zoom and rotation speed.
-* The mesh tree now shows more options on the mesh as well as a sub-tree with the faces of the mesh.
-* In addition to adding and deleting a mesh, you can now duplicate a mesh.
-* Mesh selection is represented by an outline tracing the contours of the mesh faces.
-* Mesh movement is in real time.
-
-#### Render modes
-* The “Raycast Render” button provides access to simple raycasting rendering (not real time).
-* The “Normals” button switches to classic real-time rendering of 3D modeling software using the mesh normals.
-* The “Outlines” button switches to real-time rendering using outlines only.
-* The “Phong” button switches to real-time Phong rendering.
-* The “BRDF” button switches to real-time PBR rendering with a Labertian diffuse BRDF and a Cook-Torrance GGX specular BRDF.
-* The options for changing the materials of a mesh for Phong and PBR are in real time.
-
-#### Bonus Features
-* Option to simulate hair in a very simplified way using tessellation shader with the “fur only” button or the “fur” checkbox. Addition of customization options (fur length, fur size, and tessellation surface).
-* Option to distort meshes using sinusoids with the “wave” button. It is possible to distort a mesh with sinusoids in all directions with any dependency, amplitude, and frequency (can be combined with hair simulation).
-
-For this software version, we used modern rasterization light management techniques (PBR) as well as advanced OpenGL features (geometry shader, tessellation shader).
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Built With
 
