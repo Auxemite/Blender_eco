@@ -57,7 +57,6 @@ The project is in CPP 17 and the interface has been developped with IMGUI/OPGL/G
 This project has been developped on Windows10 and Linux and should work on both. (Not tested on MacOs)
 
 ### Prerequisites
-
 `Opengl 4.5` and `Glfw` are required to run this project
 
 * Windows :
