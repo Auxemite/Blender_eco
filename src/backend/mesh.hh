@@ -8,7 +8,7 @@
 #include <unordered_set>
 #include "glm/glm.hpp"
 #include "graphics/vertex.hh"
-#include "graphics/graphicsUtils.hh"
+#include "graphics/utils.hh"
 #include "graphics/graphicsObject.hh"
 #include "modifier.hh"
 
@@ -34,7 +34,7 @@ class Mesh {
 
         std::vector<Engine::vertex> vertices();
         std::vector<Engine::vertex> verticesEditmode();
-        std::vector<u32> indices();
+//        std::vector<u32> indices();
 
         float rayIntersection(const glm::vec3& cameraPos, const glm::vec3& direction);
 

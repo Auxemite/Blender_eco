@@ -6,11 +6,15 @@
 class Triangle {
     public:
         int ia, ib, ic;
-        glm::vec3 normal_;
+        glm::vec3 normal;
         bool selected;
 
-        Triangle(const int& ia_, const int& ib_, const int& ic_);
-        float rayIntersection(std::vector<glm::vec3 *> points, const glm::vec3& cam_position, const glm::vec3& direction);
+        Triangle(int _ia, int _ib, int _ic, glm::vec3 _normal);
+        Triangle(int _ia, int _ib, int _ic, const std::vector<glm::vec3 *>& points);
+
+        float rayIntersection(std::vector<glm::vec3 *> points,
+                              const glm::vec3& cam_position,
+                              const glm::vec3& direction);
     //    glm::vec3 normal(const glm::vec3& point);
         void normalize();
 

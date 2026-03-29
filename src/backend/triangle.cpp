@@ -1,22 +1,30 @@
 #include <iostream>
 #include "triangle.hh"
-#include "utils.hh"
+#include "mathUtils.hh"
 
 void Triangle::normalize()
 {
-    float len = std::sqrt(sqr(normal_.x) + sqr(normal_.y) + sqr(normal_.z));
-    normal_ /= len;
+    float len = std::sqrt(sqr(normal.x) + sqr(normal.y) + sqr(normal.z));
+    normal /= len;
 }
 
-Triangle::Triangle(const int& ia_, const int& ib_, const int& ic_)
+Triangle::Triangle(int _ia, int _ib, int _ic, glm::vec3 _normal)
 {
-    ia = ia_;
-    ib = ib_;
-    ic = ic_;
-
+    ia = _ia;
+    ib = _ib;
+    ic = _ic;
     selected = false;
+    normal = _normal;
+    normalize();
+}
 
-    normal_ = glm::vec3();
+Triangle::Triangle(int _ia, int _ib, int _ic, const std::vector<glm::vec3 *>& points)
+{
+    ia = _ia;
+    ib = _ib;
+    ic = _ic;
+    selected = false;
+    normal = cross((*points[ib] - *points[ia]), (*points[ic] - *points[ia]));
     normalize();
 }
 

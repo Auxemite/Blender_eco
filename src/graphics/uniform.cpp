@@ -1,5 +1,5 @@
 #include "uniform.hh"
-#include "backend/utils.hh"
+#include "backend/mathUtils.hh"
 
 namespace Uniform {
 
@@ -59,7 +59,7 @@ void setModifierUniforms(unsigned int shaderProgram, const Modifier &modifier) {
                           modifier.material->color.z);
 
         GLint modifierMaterialLoc = glGetUniformLocation(shaderProgram, "modifierMaterial");
-        glUniform2f(modifierMaterialLoc, modifier.material->pbr_factor.x, modifier.material->pbr_factor.y);
+        glUniform2f(modifierMaterialLoc, modifier.material->pbrFactor.x, modifier.material->pbrFactor.y);
     }
 }
 
@@ -72,5 +72,10 @@ void setUniqueColorUniforms(unsigned int shaderProgram, const glm::vec3 &color) 
     GLint unicolorPositionLoc = glGetUniformLocation(shaderProgram, "unicolor");
     glUniform3f(unicolorPositionLoc, color.x, color.y, color.z);
 }
+
+//void setTextureUniforms(unsigned int shaderProgram, int unit) {
+//    GLint unicolorPositionLoc = glGetUniformLocation(shaderProgram, "tex");
+//    glUniform1i(unicolorPositionLoc, unit);
+//}
 
 }

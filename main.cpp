@@ -21,6 +21,9 @@ int main(int argc, char **argv) {
 
     Scene *scene = new Scene();
     scene->addMesh("../data/cube.obj");
+//    scene->addMesh("../data/plane.obj");
+    scene->addTexture("../data/texture_test.jpg");
+    scene->linkTextureToMesh(0, 0);
 
     ScreenFrameBuffer screenViewport(WIDTH, HEIGHT);
     VisualGrid visualGrid;
@@ -32,6 +35,7 @@ int main(int argc, char **argv) {
     GLuint gridShaderProgram = Shader::createShaderProgram("../shaders/grid");
     GLuint wireframeShaderProgram = Shader::createShaderProgram("../shaders/wireframe");
     GLuint unicolorShaderProgram = Shader::createShaderProgram("../shaders/unicolor");
+    GLuint textureShaderProgram = Shader::createShaderProgram("../shaders/texture");
     glEnable(GL_DEPTH_TEST);
 
     while (!glfwWindowShouldClose(window)) {

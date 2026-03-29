@@ -18,7 +18,9 @@ class Scene : NonMovable {
 
         std::vector<Mesh *> meshes;
         std::vector<Light *> lights;
+
         std::vector<Material *> materials;
+        std::vector<Texture *> textures;
 
         std::vector<Mesh *> selectedMeshes;
     //    Mesh *xArrow = new Mesh("../data/xArrow.obj");
@@ -40,9 +42,16 @@ class Scene : NonMovable {
         void drawMeshes(unsigned int shaderProgram, glm::vec3 unicolor);
         void drawOutline(unsigned int shaderProgram);
 
-        void addMesh(const std::string& filename);
+        void addMesh(const std::string& pathName);
         void deleteMesh(int meshIndex);
         void duplicateMesh(int meshIndex);
+
+        void addMaterial(const Material& material);
+        void addTexture(const std::string& pathName);
+        void deleteMaterial(int materialIndex);
+        void deleteTexture(int textutreIndex);
+
+        void linkTextureToMesh(int meshIndex, int textureIndex);
 
         void clearSelectedMeshList();
         void toggleEditmode();

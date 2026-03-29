@@ -12,8 +12,12 @@ namespace Gui {
         ImGui::Begin("Viewport");
         if (ImGui::Button("Basic"))
             Env::mainShaderProgram = Shader::createShaderProgram("../shaders/basic");
+        ImGui::SameLine();
         if (ImGui::Button("Wireframe"))
             Env::mainShaderProgram = Shader::createShaderProgram("../shaders/wireframe");
+        ImGui::SameLine();
+        if (ImGui::Button("Texture"))
+            Env::mainShaderProgram = Shader::createShaderProgram("../shaders/texture");
         ImGui::SliderFloat("Position X", &scene->modifier.position.x, -5, 5);
         ImGui::SliderFloat("Position Y", &scene->modifier.position.y, -5, 5);
         ImGui::SliderFloat("Position Z", &scene->modifier.position.z, -5, 5);
@@ -128,6 +132,9 @@ namespace Gui {
             for (int meshIndex : meshIndexes) {
                 scene->deleteMesh(meshIndex);
             }
+
+            scene->selectedMeshes.clear();
+            scene->modifier.clear();
         }
     }
 

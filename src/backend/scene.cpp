@@ -65,9 +65,8 @@ void Scene::drawOutline(unsigned int shaderProgram) {
     }
 }
 
-void Scene::addMesh(const std::string& filename) {
-    Mesh *mesh = new Mesh(filename);
-    meshes.push_back(mesh);
+void Scene::addMesh(const std::string& pathName) {
+    meshes.push_back(new Mesh(pathName));
 }
 
 void Scene::deleteMesh(int meshIndex) {
@@ -75,8 +74,32 @@ void Scene::deleteMesh(int meshIndex) {
 }
 
 void Scene::duplicateMesh(int meshIndex) {
-    Mesh *mesh = new Mesh(*meshes[meshIndex]);
-    meshes.push_back(mesh);
+    meshes.push_back(new Mesh(*meshes[meshIndex]));
+}
+
+void Scene::addMaterial(const Material& material) {
+    materials.push_back(new Material(material));
+}
+
+void Scene::addTexture(const std::string& pathName) {
+    textures.push_back(new Texture(pathName));
+}
+
+void Scene::deleteMaterial(int materialIndex) {
+    // TODO unlink every mesh linked to this material
+    materials.erase(materials.begin() + materialIndex);
+}
+
+void Scene::deleteTexture(int textureIndex) {
+    // TODO unlink every mesh linked to this texture
+    textures.erase(textures.begin() + textureIndex);
+}
+
+void Scene::linkTextureToMesh(int meshIndex, int textureIndex) {
+    if (meshIndex < meshes.size() && textureIndex < textures.size())
+        this->meshes[meshIndex]->graphicsObject->linkTextureToMesh(textures[textureIndex]);
+    else
+        std::cerr << "BindTextureToMesh Error : meshIndex or textureIndex invalid\n";
 }
 
 void Scene::clearSelectedMeshList() {

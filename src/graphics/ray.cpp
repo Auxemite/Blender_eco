@@ -5,7 +5,7 @@
 
 #include "ray.hh"
 #include "uniform.hh"
-#include "backend/utils.hh"
+#include "backend/mathUtils.hh"
 
 Ray::Ray(glm::vec3 cameraPos) {
 #ifdef RAY_VISIBLE

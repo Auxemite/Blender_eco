@@ -1,18 +1,19 @@
 #include "graphicsObject.hh"
 
-GraphicsObject::GraphicsObject(std::vector<Engine::vertex> vertices, std::vector<u32> indices) {
-    this->eboSize = static_cast<int>(indices.size()); // Warning : conversion from long long to int
+GraphicsObject::GraphicsObject(std::vector<Engine::vertex> vertices) {
+    this->vboSize = static_cast<int>(vertices.size()); // Warning : conversion from long long to int
+//    this->eboSize = static_cast<int>(indices.size());
     glCreateVertexArrays(1, &VAO);
     glCreateBuffers(1, &VBO);
-    glCreateBuffers(1, &EBO);
+//    glCreateBuffers(1, &EBO);
 
     // Send data to buffer
     glNamedBufferData(VBO, sizeof(Engine::vertex) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
-    glNamedBufferData(EBO, sizeof(u32) * indices.size(),  indices.data(),  GL_STATIC_DRAW);
+//    glNamedBufferData(EBO, sizeof(u32) * indices.size(),  indices.data(),  GL_STATIC_DRAW);
 
     // Bind VBO and EBO to VAO
     glVertexArrayVertexBuffer(VAO, 0, VBO, 0, sizeof(Engine::vertex));
-    glVertexArrayElementBuffer(VAO, EBO);
+//    glVertexArrayElementBuffer(VAO, EBO);
 
     // Def attributes
     glEnableVertexArrayAttrib(VAO, 0);
@@ -44,19 +45,27 @@ GraphicsObject::GraphicsObject(std::vector<Engine::vertex> vertices, std::vector
 
 GraphicsObject::~GraphicsObject() {
     glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+//    glDeleteBuffers(1, &EBO);
     glDeleteVertexArrays(1, &VAO);
+}
+
+
+void GraphicsObject::linkTextureToMesh(Texture *_texture) {
+    texture = _texture;
 }
 
 void GraphicsObject::updateVBOFromMesh(std::vector<Engine::vertex> vertices) {
     glNamedBufferSubData(VBO, 0, sizeof(Engine::vertex) * vertices.size(), vertices.data());
 }
 
-void GraphicsObject::updateEBOFromMesh(std::vector<u32> indices) {
-    glNamedBufferSubData(EBO, 0, sizeof(u32) * indices.size(),  indices.data());
-}
+//void GraphicsObject::updateEBOFromMesh(std::vector<u32> indices) {
+//    glNamedBufferSubData(EBO, 0, sizeof(u32) * indices.size(),  indices.data());
+//}
 
 void GraphicsObject::draw() {
+    if (texture)
+        texture->bind(0);
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, eboSize, GL_UNSIGNED_INT, nullptr);
+//    glDrawElements(GL_TRIANGLES, eboSize, GL_UNSIGNED_INT, nullptr);
+    glDrawArrays(GL_TRIANGLES, 0, vboSize);
 }

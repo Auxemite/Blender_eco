@@ -3,7 +3,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "imgui/imgui_impl_glfw.h"
-#include "graphics/graphicsUtils.hh"
+#include "graphics/utils.hh"
 #include "backend/scene.hh"
 
 namespace Gui {

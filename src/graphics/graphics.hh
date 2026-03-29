@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "graphicsUtils.hh"
+#include "utils.hh"
 #include "backend/camera.hh"
 #include "backend/scene.hh"
 
