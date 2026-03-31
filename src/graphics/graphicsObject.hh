@@ -12,6 +12,7 @@ class GraphicsObject : NonMovable {
         Texture *texture = nullptr;
 
 //        GraphicsObject(std::vector<Engine::vertex> vertices, std::vector<u32> indices);
+        GraphicsObject() = delete;
         explicit GraphicsObject(std::vector<Engine::vertex> vertices);
         ~GraphicsObject();
 

@@ -49,7 +49,6 @@ GraphicsObject::~GraphicsObject() {
     glDeleteVertexArrays(1, &VAO);
 }
 
-
 void GraphicsObject::linkTextureToMesh(Texture *_texture) {
     texture = _texture;
 }

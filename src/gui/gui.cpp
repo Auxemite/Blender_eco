@@ -8,16 +8,10 @@ namespace fs = std::filesystem;
 namespace Gui {
     void mainGui(Scene *scene, VisualGrid& grid) {
 //        ImGui::ShowDemoWindow();
+        materialsAndTextures(scene);
+        lights(scene);
         editMode(scene, grid);
-        ImGui::Begin("Viewport");
-        if (ImGui::Button("Basic"))
-            Env::mainShaderProgram = Shader::createShaderProgram("../shaders/basic");
-        ImGui::SameLine();
-        if (ImGui::Button("Wireframe"))
-            Env::mainShaderProgram = Shader::createShaderProgram("../shaders/wireframe");
-        ImGui::SameLine();
-        if (ImGui::Button("Texture"))
-            Env::mainShaderProgram = Shader::createShaderProgram("../shaders/texture");
+        ImGui::Begin("Action");
         ImGui::SliderFloat("Position X", &scene->modifier.position.x, -5, 5);
         ImGui::SliderFloat("Position Y", &scene->modifier.position.y, -5, 5);
         ImGui::SliderFloat("Position Z", &scene->modifier.position.z, -5, 5);
@@ -52,6 +46,26 @@ namespace Gui {
             ImGui::RadioButton("Vertex", reinterpret_cast<int *>(&scene->editmodeType), 1);
         }
 
+        ImGui::SameLine();
+        if (ImGui::Button("Basic")) {
+            Env::mainShaderProgram = Shader::createShaderProgram("../shaders/basic");
+            scene->textureEnabled = false;
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Wireframe")) {
+            Env::mainShaderProgram = Shader::createShaderProgram("../shaders/wireframe");
+            scene->textureEnabled = false;
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Texture")) {
+            Env::mainShaderProgram = Shader::createShaderProgram("../shaders/texture");
+            scene->textureEnabled = true;
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("PBR")) {
+            Env::mainShaderProgram = Shader::createShaderProgram("../shaders/pbr");
+            scene->textureEnabled = true;
+        }
         ImGui::End();
     }
 
@@ -150,6 +164,32 @@ namespace Gui {
                 scene->duplicateMesh(meshIndex);
             }
         }
+    }
+
+    void materialsAndTextures(Scene *scene) {
+        ImGui::Begin("Materials");
+        static int item = -1;
+        if (ImGui::Button("+")) {
+            scene->addMaterial();
+            item = scene->materialNames.size() - 1;
+        }
+        ImGui::SameLine();
+        ImGui::Combo("Materials", &item, scene->materialNames.data(), scene->materialNames.size());
+        if (item >= 0) {
+            scene->materials[item]->colorModulator();
+            scene->materials[item]->pbrFactorModulator();
+        }
+        ImGui::End();
+    }
+
+    void lights(Scene *scene) {
+        ImGui::Begin("Lights");
+
+        scene->light->colorModulator();
+        scene->light->positionModulator();
+        scene->light->intensityModulator();
+
+        ImGui::End();
     }
 
 //    void treeMesh(Env& env, int index) {

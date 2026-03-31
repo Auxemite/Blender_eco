@@ -55,17 +55,41 @@ void setModifierUniforms(unsigned int shaderProgram, const Modifier &modifier) {
 
     if (modifier.material) {
         GLint modifierColorLoc = glGetUniformLocation(shaderProgram, "modifierColor");
-        glUniform3f(modifierColorLoc, modifier.material->color.x, modifier.material->color.y,
-                          modifier.material->color.z);
+        glm::vec3 color = modifier.material->color();
+        glUniform3f(modifierColorLoc, color.x, color.y, color.z);
 
         GLint modifierMaterialLoc = glGetUniformLocation(shaderProgram, "modifierMaterial");
-        glUniform2f(modifierMaterialLoc, modifier.material->pbrFactor.x, modifier.material->pbrFactor.y);
+        glm::vec2 pbrFactor = modifier.material->pbrFactor();
+        glUniform2f(modifierMaterialLoc, pbrFactor.x, pbrFactor.y);
     }
+}
+
+void setMaterialAndTextureUniforms(unsigned int shaderProgram, Mesh *mesh) {
+    mesh->graphicsObject->texture->bind(0);
+
+    GLint modifierColorLoc = glGetUniformLocation(shaderProgram, "materialAlbedo");
+    glm::vec3 color = mesh->material ? mesh->material->color() : glm::vec3(1.0f, 1.0f, 1.0f);
+    glUniform3f(modifierColorLoc, color.x, color.y, color.z);
+
+    GLint modifierMaterialLoc = glGetUniformLocation(shaderProgram, "pbrFactor");
+    glm::vec2 pbrFactor = mesh->material ? mesh->material->pbrFactor() : glm::vec2(1.0f, 0.0f);
+    glUniform2f(modifierMaterialLoc, pbrFactor.x, pbrFactor.y);
 }
 
 void setMeshUniforms(unsigned int shaderProgram, Mesh *mesh) {
     GLint meshPositionLoc = glGetUniformLocation(shaderProgram, "meshCenter");
     glUniform3f(meshPositionLoc, mesh->midPoint.x, mesh->midPoint.y, mesh->midPoint.z);
+}
+
+void setLightUniforms(unsigned int shaderProgram, Light *light) {
+    GLint lightPositionLoc = glGetUniformLocation(shaderProgram, "lightPos");
+    glUniform3f(lightPositionLoc, light->position_.x, light->position_.y, light->position_.z);
+
+    GLint lightColorLoc = glGetUniformLocation(shaderProgram, "lightColor");
+    glUniform3f(lightColorLoc, light->color_.x, light->color_.y, light->color_.z);
+
+    GLint lightIntensityLoc = glGetUniformLocation(shaderProgram, "lightPower");
+    glUniform1f(lightIntensityLoc, light->intensity_);
 }
 
 void setUniqueColorUniforms(unsigned int shaderProgram, const glm::vec3 &color) {

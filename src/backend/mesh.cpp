@@ -122,7 +122,7 @@ std::vector<Engine::vertex> Mesh::vertices() {
     vertices.reserve(points.size());
     for (auto & triangle : faces) {
 
-        glm::vec3 color = material == nullptr ? glm::vec3(0.0) : material->color;
+        glm::vec3 color = material == nullptr ? glm::vec3(0.0) : material->color();
         glm::vec3 normal = abs(triangle->normal);
 
         vertices.push_back(createVertex(*points[triangle->ia], color, normal));

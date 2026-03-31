@@ -1,36 +1,23 @@
-#include "material.hh"
+#include "light.hh"
+#include "imgui.h"
 
-Material::Material(MATERIAL_TYPE _materialType) {
-    static int materialNumber = 0;
-    color_ = ImVec4(1.0, 1.0, 1.0, 1.0);
-//    materialType = _materialType;
-//    phong_factor = glm::vec3(0.0, 0.0, 0.0);
-    pbrFactor_ = glm::vec2(0.0, 0.0);
-    name_ = "material_" + std::to_string(materialNumber++);
-}
+Light::Light(LightType lightType, glm::vec3 position, glm::vec3 color, float intensity) :
+    lightType_(lightType),
+    position_(position),
+    color_(color),
+    intensity_(intensity)
+{}
 
-const char* Material::name() const {
-    return name_.c_str();
-}
-
-glm::vec3 Material::color() const {
-    return {color_.x, color_.y, color_.z};
-}
-
-glm::vec2 Material::pbrFactor() const {
-    return pbrFactor_;
-}
-
-void Material::colorModulator() {
+void Light::colorModulator() {
     static bool alpha_preview = true;
     static bool alpha_half_preview = false;
     static bool drag_and_drop = true;
     static bool options_menu = true;
     static bool hdr = false;
     ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0)
-            | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop)
-            | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0))
-            | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
+                                     | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop)
+                                     | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0))
+                                     | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
 
     static bool side_preview = true;
     static int display_mode = 0;
@@ -50,7 +37,12 @@ void Material::colorModulator() {
     ImGui::ColorPicker4("Albedo##4", (float*)&color_, flags);
 }
 
-void Material::pbrFactorModulator() {
-    ImGui::SliderFloat("Roughness", &pbrFactor_.x, 0, 1);
-    ImGui::SliderFloat("Metalness", &pbrFactor_.y, 0, 1);
+void Light::positionModulator() {
+    ImGui::SliderFloat("Light X", &position_.x, -5.0, 5.0);
+    ImGui::SliderFloat("Light Y", &position_.y, -5.0, 5.0);
+    ImGui::SliderFloat("Light Z", &position_.z, -5.0, 5.0);
+}
+
+void Light::intensityModulator() {
+    ImGui::SliderFloat("Power", &intensity_, 0, 200);
 }

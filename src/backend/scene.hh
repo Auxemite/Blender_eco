@@ -17,9 +17,12 @@ class Scene : NonMovable {
         Camera camera;
 
         std::vector<Mesh *> meshes;
-        std::vector<Light *> lights;
+//        std::vector<Light *> lights;
+        Light *light = nullptr;
 
         std::vector<Material *> materials;
+        std::vector<const char*> materialNames;
+
         std::vector<Texture *> textures;
 
         std::vector<Mesh *> selectedMeshes;
@@ -34,8 +37,9 @@ class Scene : NonMovable {
         bool editmode = false;
         EditmodeType editmodeType = FACE;
         bool shiftMode = false;
+        bool textureEnabled = false;
 
-        Scene()=default;
+        Scene();
         ~Scene();
 
         void drawSelectedMeshes(unsigned int shaderProgram, glm::vec3 unicolor);
@@ -46,11 +50,12 @@ class Scene : NonMovable {
         void deleteMesh(int meshIndex);
         void duplicateMesh(int meshIndex);
 
-        void addMaterial(const Material& material);
+        void addMaterial();
         void addTexture(const std::string& pathName);
         void deleteMaterial(int materialIndex);
         void deleteTexture(int textutreIndex);
 
+        void linkMaterialToMesh(int meshIndex, int materialIndex);
         void linkTextureToMesh(int meshIndex, int textureIndex);
 
         void clearSelectedMeshList();

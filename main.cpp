@@ -20,10 +20,13 @@ int main(int argc, char **argv) {
     glfwSetKeyCallback(window, Window::keyCallback);
 
     Scene *scene = new Scene();
-    scene->addMesh("../data/cube.obj");
+//    scene->addMesh("../data/cube.obj");
+    scene->addMesh("../data/bunny.obj");
 //    scene->addMesh("../data/plane.obj");
     scene->addTexture("../data/texture_test.jpg");
-    scene->linkTextureToMesh(0, 0);
+    scene->linkTextureToMesh(0, 1);
+    scene->addMaterial();
+    scene->linkMaterialToMesh(0, 0);
 
     ScreenFrameBuffer screenViewport(WIDTH, HEIGHT);
     VisualGrid visualGrid;
@@ -36,6 +39,7 @@ int main(int argc, char **argv) {
     GLuint wireframeShaderProgram = Shader::createShaderProgram("../shaders/wireframe");
     GLuint unicolorShaderProgram = Shader::createShaderProgram("../shaders/unicolor");
     GLuint textureShaderProgram = Shader::createShaderProgram("../shaders/texture");
+    GLuint pbrShaderProgram = Shader::createShaderProgram("../shaders/pbr");
     glEnable(GL_DEPTH_TEST);
 
     while (!glfwWindowShouldClose(window)) {

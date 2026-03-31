@@ -11,6 +11,8 @@ uniform vec3 modifierColor;
 uniform vec2 modifierMaterial;
 uniform vec3 unicolor;
 
+uniform vec2 pbrFactor;
+
 layout(binding = 0) uniform sampler2D tex;
 
 void main() {

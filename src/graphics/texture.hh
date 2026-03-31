@@ -24,6 +24,7 @@ class Texture : NonMovable {
 //        Texture& operator=(Texture&&) = default;
         ~Texture();
 
+        Texture();
         Texture(int _width, int _height, const unsigned char* data);
         explicit Texture(const std::string& imagePath);
         Texture(const TextureData& data);

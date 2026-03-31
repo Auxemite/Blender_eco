@@ -11,6 +11,7 @@
 #include "backend/modifier.hh"
 #include "backend/mesh.hh"
 #include "texture.hh"
+#include "backend/light.hh"
 
 namespace Uniform {
 
@@ -19,6 +20,8 @@ namespace Uniform {
     void setBasicUniforms(unsigned int shaderProgram, Camera *camera);
     void setModifierUniforms(unsigned int shaderProgram, const Modifier& modifier);
     void setMeshUniforms(unsigned int shaderProgram, Mesh *mesh);
+    void setMaterialAndTextureUniforms(unsigned int shaderProgram, Mesh *mesh);
+    void setLightUniforms(unsigned int shaderProgram, Light *light);
     void setUniqueColorUniforms(unsigned int shaderProgram, const glm::vec3 &color);
     void setTextureUniforms(unsigned int shaderProgram, int unit);
 }

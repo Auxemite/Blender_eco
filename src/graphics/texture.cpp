@@ -5,15 +5,22 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
-Texture::~Texture() {
-    glDeleteTextures(1, &id);
+Texture::Texture() {
+    unsigned char data[] = {255, 255, 255, 255};
+    width = 1;
+    height = 1;
+
+
+    format = ImageFormat::RGBA8_UNORM;
+
+    createTexture(data);
 }
 
 Texture::Texture(int _width, int _height, const unsigned char* data) {
     width = _width;
     height = _height;
 
-    format = ImageFormat::RGB8_UNORM;
+    format = ImageFormat::RGBA8_UNORM;
 
     createTexture(data);
 }
@@ -35,6 +42,10 @@ Texture::Texture(const std::string& imagePath) {
 
     createTexture(data);
     stbi_image_free(data);
+}
+
+Texture::~Texture() {
+    glDeleteTextures(1, &id);
 }
 
 void Texture::createTexture(const unsigned char* data) {
