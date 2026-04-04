@@ -48,8 +48,8 @@ void Ray::rayCasting(Scene *scene, EditModeScene *editModeScene, float width, fl
         hitMeshTest(scene);
     else if (editModeScene->editmodeType_ == FACE)
         hitMeshFaceTest(editModeScene);
-//    else if (editModeScene->editmodeType_ == EDGE)
-//        hitMeshEdgeTest(editModeScene);
+    else if (editModeScene->editmodeType_ == EDGE)
+        hitMeshEdgeTest(editModeScene);
     else if (editModeScene->editmodeType_ == VERTEX)
         hitMeshVertexTest(editModeScene, 0.2f);
 
@@ -138,7 +138,61 @@ void Ray::hitMeshFaceTest(EditModeScene *scene) {
 }
 
 void Ray::hitMeshEdgeTest(EditModeScene *scene) {
-    std::cerr << "HitMeshEdgeTest Warning : Not Implemented\n";
+    if (!Env::editmode || scene->selectedMeshes_.empty())
+        return;
+
+    Mesh *mesh = scene->selectedMeshes_[0];
+    if (!mesh->selected)
+        std::cerr << "HitMeshFaceTest Warning : Mesh should be selected\n";
+
+    mesh->applySelectedAndUpdate(scene->modifier_);
+    if (!scene->shiftMode_)
+        mesh->selectedPoints.clear();
+
+    float closestHitDistance = 0;
+    Triangle *hitFace = nullptr;
+    for (auto face : mesh->faces) {
+        float hitDistance = face->rayIntersection(mesh->points, scene->camera_.position, ray);
+        if (hitDistance > 0 && (closestHitDistance == 0 || closestHitDistance > hitDistance)) {
+            closestHitDistance = hitDistance;
+            hitFace = face;
+        }
+    }
+
+    if (hitFace) {
+        glm::vec3 hitPoint = scene->camera_.position + ray * closestHitDistance;
+
+        float distA = glm::distance(*mesh->points[hitFace->ia], hitPoint);
+        float distB = glm::distance(*mesh->points[hitFace->ib], hitPoint);
+        float distC = glm::distance(*mesh->points[hitFace->ic], hitPoint);
+        float maxDist = std::max(distA, std::max(distB, distC));
+        int edgeVertexIndex1 = hitFace->ia;
+        if (maxDist == distA)
+            edgeVertexIndex1 = hitFace->ic;
+        int edgeVertexIndex2 = hitFace->ib;
+        if (maxDist == distB)
+            edgeVertexIndex2 = hitFace->ic;
+
+        std::cout << "Edge touched " << edgeVertexIndex1 << " " << edgeVertexIndex2 << "\n";
+
+        if (scene->shiftMode_
+            && mesh->selectedPoints.contains(edgeVertexIndex1)
+            && mesh->selectedPoints.contains(edgeVertexIndex2))
+        {
+            mesh->selectedPoints.erase(edgeVertexIndex1);
+            mesh->selectedPoints.erase(edgeVertexIndex2);
+            mesh->graphicsObject->updateVBOFromMesh(mesh->verticesEditmode());
+        }
+        else {
+            mesh->selectedPoints.insert(edgeVertexIndex1);
+            mesh->selectedPoints.insert(edgeVertexIndex2);
+            mesh->graphicsObject->updateVBOFromMesh(mesh->verticesEditmode());
+        }
+    }
+    else
+        std::cout << "Void Raycast\n";
+
+    scene->modifier_.clear();
 }
 
 void Ray::hitMeshVertexTest(EditModeScene *scene, float radius) {
@@ -165,7 +219,7 @@ void Ray::hitMeshVertexTest(EditModeScene *scene, float radius) {
 
     if (hitVertexIndex != -1) {
         std::cout << "Vertex touched " << hitVertexIndex << "\n";
-        if (mesh->selectedPoints.contains(hitVertexIndex)) {
+        if (scene->shiftMode_ && mesh->selectedPoints.contains(hitVertexIndex)) {
             mesh->selectedPoints.erase(hitVertexIndex);
             mesh->graphicsObject->updateVBOFromMesh(mesh->verticesEditmode());
         }
