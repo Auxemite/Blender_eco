@@ -18,6 +18,7 @@ class Scene : NonMovable {
         std::vector<const char*> materialNames;
 
         std::vector<Texture *> textures;
+        std::vector<const char*> textureNames;
 
         std::vector<Mesh *> selectedMeshes;
     //    Mesh *xArrow = new Mesh("../data/xArrow.obj");
@@ -47,7 +48,9 @@ class Scene : NonMovable {
         void deleteTexture(int textutreIndex);
 
         void linkMaterialToMesh(int meshIndex, int materialIndex);
+        void linkMaterialToSelectedMesh(int meshIndex, int materialIndex);
         void linkTextureToMesh(int meshIndex, int textureIndex);
+        void linkTextureToSelectedMesh(int meshIndex, int textureIndex);
 
         void clearSelectedMeshList();
 };

@@ -2,7 +2,10 @@
 #include "graphics/uniform.hh"
 
 Scene::Scene() {
-    textures.push_back(new Texture()); // Default white texture
+    Texture *defaultTexture = new Texture();
+    defaultTexture->setName("default_texture");
+    textures.push_back(defaultTexture); // Default white texture
+    textureNames.push_back(defaultTexture->name());
     light = new Light(LightType::PointLight,
               glm::vec3(5.0f, 5.0f, 5.0f),
               glm::vec3(1.0f, 1.0f, 0.5f),
@@ -107,7 +110,9 @@ void Scene::addMaterial() {
 }
 
 void Scene::addTexture(const std::string& pathName) {
-    textures.push_back(new Texture(pathName));
+    Texture *texture = new Texture(pathName);
+    textures.push_back(texture);
+    textureNames.push_back(texture->name());
 }
 
 void Scene::deleteMaterial(int materialIndex) {
@@ -119,11 +124,19 @@ void Scene::deleteMaterial(int materialIndex) {
 void Scene::deleteTexture(int textureIndex) {
     // TODO unlink every mesh linked to this texture
     textures.erase(textures.begin() + textureIndex);
+    textureNames.erase(textureNames.begin() + textureIndex);
 }
 
 void Scene::linkMaterialToMesh(int meshIndex, int materialIndex) {
-    if (meshIndex < meshes.size() && materialIndex < textures.size())
+    if (meshIndex < meshes.size() && materialIndex < materials.size())
         this->meshes[meshIndex]->material = this->materials[materialIndex];
+    else
+        std::cerr << "linkMaterialToMesh Error : meshIndex or materialIndex invalid\n";
+}
+
+void Scene::linkMaterialToSelectedMesh(int meshIndex, int materialIndex) {
+    if (meshIndex < selectedMeshes.size() && materialIndex < materials.size())
+        this->selectedMeshes[meshIndex]->material = this->materials[materialIndex];
     else
         std::cerr << "linkMaterialToMesh Error : meshIndex or materialIndex invalid\n";
 }
@@ -131,6 +144,13 @@ void Scene::linkMaterialToMesh(int meshIndex, int materialIndex) {
 void Scene::linkTextureToMesh(int meshIndex, int textureIndex) {
     if (meshIndex < meshes.size() && textureIndex < textures.size())
         this->meshes[meshIndex]->graphicsObject->linkTextureToMesh(textures[textureIndex]);
+    else
+        std::cerr << "linkTextureToMesh Error : meshIndex or textureIndex invalid\n";
+}
+
+void Scene::linkTextureToSelectedMesh(int meshIndex, int textureIndex) {
+    if (meshIndex < selectedMeshes.size() && textureIndex < textures.size())
+        this->selectedMeshes[meshIndex]->graphicsObject->linkTextureToMesh(textures[textureIndex]);
     else
         std::cerr << "linkTextureToMesh Error : meshIndex or textureIndex invalid\n";
 }

@@ -14,6 +14,7 @@ namespace Gui {
     void addMesh(Scene *scene);
     void deleteMesh(Scene *scene);
     void duplicateMesh(Scene *scene);
-    void materialsAndTextures(Scene *scene);
+    void materials(Scene *scene);
+    void textures(Scene *scene);
     void lights(Scene *scene);
 }

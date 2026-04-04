@@ -9,7 +9,8 @@ namespace fs = std::filesystem;
 namespace Gui {
     void mainGui(Scene *scene, EditModeScene *editModeScene, VisualGrid& grid) {
 //        ImGui::ShowDemoWindow();
-        materialsAndTextures(scene);
+        materials(scene);
+        textures(scene);
         lights(scene);
         editMode(scene, editModeScene, grid);
         Modifier *modifier = &scene->modifier;
@@ -171,18 +172,61 @@ namespace Gui {
         }
     }
 
-    void materialsAndTextures(Scene *scene) {
+    void materials(Scene *scene) {
         ImGui::Begin("Materials");
-        static int item = -1;
-        if (ImGui::Button("+")) {
+        static int materialIndex = -1;
+        if (ImGui::Button("+M")) {
             scene->addMaterial();
-            item = static_cast<int>(scene->materialNames.size() - 1);
+            materialIndex = static_cast<int>(scene->materialNames.size() - 1);
         }
         ImGui::SameLine();
-        ImGui::Combo("Materials", &item, scene->materialNames.data(), static_cast<int>(scene->materialNames.size()));
-        if (item >= 0) {
-            scene->materials[item]->colorModulator();
-            scene->materials[item]->pbrFactorModulator();
+        ImGui::Combo("Materials", &materialIndex, scene->materialNames.data(), static_cast<int>(scene->materialNames.size()));
+        if (materialIndex >= 0) {
+            scene->materials[materialIndex]->colorModulator();
+            scene->materials[materialIndex]->pbrFactorModulator();
+
+            if (scene->selectedMeshes.size() == 1) { // Single selection
+                if (scene->selectedMeshes[0]->material != scene->materials[materialIndex]) {
+                    if (ImGui::Button("Link To Mesh")) {
+                        scene->linkMaterialToSelectedMesh(0, materialIndex);
+                    }
+                }
+                else
+                    ImGui::Text("Linked to selected Mesh");
+            }
+
+            if (ImGui::Button("Delete Material")) {
+                scene->deleteMaterial(materialIndex);
+                materialIndex = -1;
+            }
+        }
+        ImGui::End();
+    }
+
+    void textures(Scene *scene) {
+        ImGui::Begin("Textures");
+        static int texturesIndex = -1;
+        if (ImGui::Button("+T")) {
+            scene->addMaterial();
+            texturesIndex = static_cast<int>(scene->textureNames.size() - 1);
+        }
+        ImGui::SameLine();
+        ImGui::Combo("Textures", &texturesIndex, scene->textureNames.data(), static_cast<int>(scene->textureNames.size()));
+        if (texturesIndex >= 0) {
+            if (scene->selectedMeshes.size() == 1) { // Single selection
+                if (scene->selectedMeshes[0]->graphicsObject->texture != scene->textures[texturesIndex]) {
+                    if (ImGui::Button("Link To Mesh")) {
+                        scene->linkTextureToSelectedMesh(0, texturesIndex);
+                    }
+                }
+                else
+                    ImGui::Text("Linked to selected Mesh");
+            }
+
+            if (ImGui::Button("Delete Texture")) {
+                scene->deleteTexture(texturesIndex);
+                texturesIndex = -1;
+            }
         }
         ImGui::End();
     }

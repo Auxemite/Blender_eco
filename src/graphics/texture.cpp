@@ -5,12 +5,13 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
+static int textureNumber = 0;
+
 Texture::Texture() {
     unsigned char data[] = {255, 255, 255, 255};
     width = 1;
     height = 1;
-
-
+    name_ = "texture_" + std::to_string(textureNumber++);
     format = ImageFormat::RGBA8_UNORM;
 
     createTexture(data);
@@ -19,7 +20,7 @@ Texture::Texture() {
 Texture::Texture(int _width, int _height, const unsigned char* data) {
     width = _width;
     height = _height;
-
+    name_ = "texture_" + std::to_string(textureNumber++);
     format = ImageFormat::RGBA8_UNORM;
 
     createTexture(data);
@@ -35,6 +36,7 @@ Texture::Texture(const std::string& imagePath) {
 
     width = texWidth;
     height = texHeight;
+    name_ = "texture_" + std::to_string(textureNumber++);
 
     // TODO verify image format based on channels
     // format = ImageFormat::RGBA8_UNORM; // Does the "photo of a screen" effect for whatever reason
@@ -46,6 +48,14 @@ Texture::Texture(const std::string& imagePath) {
 
 Texture::~Texture() {
     glDeleteTextures(1, &id);
+}
+
+const char* Texture::name() const {
+    return name_.c_str();
+}
+
+void Texture::setName(const std::string& name) {
+    name_ = name;
 }
 
 void Texture::createTexture(const unsigned char* data) {
