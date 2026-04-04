@@ -1,8 +1,9 @@
 #pragma once
 
 #include "glad/gl.h"
-#include "backend/camera.hh"
-#include "backend/scene.hh"
+#include "scene/camera.hh"
+#include "scene/scene.hh"
+#include "editmode/editmodeScene.hh"
 
 //#define RAY_VISIBLE
 
@@ -16,11 +17,11 @@ class Ray {
     public:
         explicit Ray(glm::vec3 cameraPos);
 
-        void rayCasting(Scene *scene, float width, float height);
+        void rayCasting(Scene *scene, EditModeScene *editModeScene, float width, float height);
         void hitMeshTest(Scene *scene);
-        void hitMeshFaceTest(Scene *scene);
-        void hitMeshEdgeTest(Scene *scene);
-        void hitMeshVertexTest(Scene *scene, float radius);
+        void hitMeshFaceTest(EditModeScene *scene);
+        void hitMeshEdgeTest(EditModeScene *scene);
+        void hitMeshVertexTest(EditModeScene *scene, float radius);
 
         float sphereIntersection(glm::vec3 cameraPos, glm::vec3 center, float radius);
 

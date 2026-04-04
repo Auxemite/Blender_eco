@@ -37,7 +37,7 @@ ScreenFrameBuffer::ScreenFrameBuffer(int _width, int _height) {
     height = static_cast<float>(_height);
 }
 
-void ScreenFrameBuffer::load(Scene *scene, Ray *ray) {
+void ScreenFrameBuffer::load(Scene *scene, EditModeScene *editModeScene, Ray *ray) {
     ImGui::Begin("Texture Viewport");
 
     resize();
@@ -50,7 +50,7 @@ void ScreenFrameBuffer::load(Scene *scene, Ray *ray) {
     );
 
     if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
-        ray->rayCasting(scene, width, height);
+        ray->rayCasting(scene, editModeScene, width, height);
 
     ImGui::End();
 }

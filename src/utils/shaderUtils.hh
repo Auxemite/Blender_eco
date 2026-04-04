@@ -1,7 +1,7 @@
 #pragma once
 
 #include "glad/gl.h"
-#include "backend/scene.hh"
+#include "scene/scene.hh"
 
 #include <iostream>
 #include <fstream>

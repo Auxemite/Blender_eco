@@ -12,6 +12,7 @@ uniform vec2 modifierMaterial;
 uniform vec3 unicolor;
 
 uniform vec2 pbrFactor;
+uniform vec3 materialAlbedo;
 
 layout(binding = 0) uniform sampler2D tex;
 
@@ -23,7 +24,7 @@ void main() {
     float diff = dot(viewDir, normal);
     vec3 gray = unicolor * diff;
 
-    vec4 texColor = texture(tex, uv) * diff;
-    FragColor = vec4(vec3(0.3f) + texColor.rgb, 1.0f);
+    vec3 texColor = texture(tex, uv).rgb * diff * materialAlbedo;
+    FragColor = vec4(texColor.rgb, 1.0f);
 //    FragColor = vec4(vec3(uv, 0.0), 1.0f);
 }

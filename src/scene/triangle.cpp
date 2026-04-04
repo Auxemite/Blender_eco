@@ -1,6 +1,6 @@
 #include <iostream>
 #include "triangle.hh"
-#include "mathUtils.hh"
+#include "utils/mathUtils.hh"
 
 void Triangle::normalize()
 {

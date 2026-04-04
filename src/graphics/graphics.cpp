@@ -1,6 +1,6 @@
 #include "graphics.hh"
 
-#include "shaderUtils.hh"
+#include "utils/shaderUtils.hh"
 #include "uniform.hh"
 
 namespace Graphics {

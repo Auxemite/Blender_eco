@@ -6,12 +6,6 @@
 #include "light.hh"
 #include "modifier.hh"
 
-enum EditmodeType {
-    VERTEX = 1,
-    EDGE = 2,
-    FACE = 0,
-};
-
 class Scene : NonMovable {
     public:
         Camera camera;
@@ -34,9 +28,6 @@ class Scene : NonMovable {
         Modifier modifier;
 
         // Flags
-        bool editmode = false;
-        EditmodeType editmodeType = FACE;
-        bool shiftMode = false;
         bool textureEnabled = false;
 
         Scene();
@@ -59,5 +50,4 @@ class Scene : NonMovable {
         void linkTextureToMesh(int meshIndex, int textureIndex);
 
         void clearSelectedMeshList();
-        void toggleEditmode();
 };

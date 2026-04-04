@@ -2,7 +2,7 @@
 #include <fstream>
 #include <filesystem>
 #include "mesh.hh"
-#include "mathUtils.hh"
+#include "utils/mathUtils.hh"
 #include <random>
 
 #define LINE_LEN 512

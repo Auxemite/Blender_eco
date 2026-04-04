@@ -94,12 +94,15 @@ void shutDown(GLFWwindow *window) {
 }
 
 // return 0 if normal, 1 if ask for shutdown and -1 for error
-int processInput(GLFWwindow *window, Scene *scene) {
+int processInput(GLFWwindow *window, Scene *scene, EditModeScene *editModeScene) {
     if (glfwGetKey(window, GLFW_KEY_GRAVE_ACCENT) == GLFW_PRESS)
         return 1;
 
     Camera *camera = &scene->camera;
-    scene->shiftMode = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS
+    if (Env::editmode)
+        camera = &editModeScene->camera_;
+
+    editModeScene->shiftMode_ = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS
             || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS;
 
     float currentFrame = static_cast<float>(glfwGetTime());

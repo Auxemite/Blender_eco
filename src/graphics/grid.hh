@@ -1,7 +1,7 @@
 #pragma once
 
 #include "glad/gl.h"
-#include "backend/camera.hh"
+#include "scene/camera.hh"
 
 class VisualGrid {
     private:

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "glad/gl.h"
-#include "backend/scene.hh"
+#include "scene/scene.hh"
 #include "graphics/ray.hh"
 
 class ScreenFrameBuffer {
@@ -15,7 +15,7 @@ class ScreenFrameBuffer {
     public:
         ScreenFrameBuffer()=delete;
         ScreenFrameBuffer(int width, int height);
-        void load(Scene *scene, Ray *ray);
+        void load(Scene *scene, EditModeScene *editModeScene, Ray *ray);
         void resize();
         void bindTextures();
         void unbindTextures();

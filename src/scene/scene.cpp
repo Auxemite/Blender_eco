@@ -141,31 +141,3 @@ void Scene::clearSelectedMeshList() {
     }
     this->selectedMeshes.clear();
 }
-
-void Scene::toggleEditmode() {
-    if (editmode) {
-        editmodeType = FACE;
-
-        for (auto mesh : selectedMeshes) {
-            if (!mesh->is_visible)
-                continue;
-
-            mesh->applyAndUpdate(this->modifier);
-        }
-        this->modifier.clear();
-
-        if (selectedMeshes.size() > 1)
-            std::cerr << "ToggleEditmode Warning : SelectedMeshes list is above 1. Multiple Selection not implemented\n";
-    }
-    else {
-        for (auto mesh : this->meshes) {
-            if (!mesh->selected || !mesh->is_visible)
-                continue;
-
-            mesh->applySelectedAndUpdate(this->modifier);
-            mesh->selectedPoints.clear();
-        }
-        this->modifier.clear();
-        editmodeType = FACE;
-    }
-}

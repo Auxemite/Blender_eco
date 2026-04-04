@@ -7,11 +7,11 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
-#include "backend/camera.hh"
-#include "backend/modifier.hh"
-#include "backend/mesh.hh"
+#include "scene/camera.hh"
+#include "scene/modifier.hh"
+#include "scene/mesh.hh"
 #include "texture.hh"
-#include "backend/light.hh"
+#include "scene/light.hh"
 
 namespace Uniform {
 

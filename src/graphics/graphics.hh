@@ -2,8 +2,8 @@
 
 #include <string>
 #include "utils.hh"
-#include "backend/camera.hh"
-#include "backend/scene.hh"
+#include "scene/camera.hh"
+#include "scene/scene.hh"
 
 namespace Graphics {
 

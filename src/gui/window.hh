@@ -4,7 +4,8 @@
 
 #include "glad/gl.h"
 #include "GLFW/glfw3.h"
-#include "backend/scene.hh"
+#include "scene/scene.hh"
+#include "editmode/editmodeScene.hh"
 
 struct WindowState
 {
@@ -25,6 +26,6 @@ namespace Window {
 
     GLFWwindow *glfwWindowInit();
     void shutDown(GLFWwindow *window);
-    int processInput(GLFWwindow *window, Scene *scene);
+    int processInput(GLFWwindow *window, Scene *scene, EditModeScene *editModeScene);
 
 }

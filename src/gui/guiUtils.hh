@@ -4,7 +4,7 @@
 #include "imgui/imgui_impl_opengl3.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "graphics/utils.hh"
-#include "backend/scene.hh"
+#include "scene/scene.hh"
 
 namespace Gui {
 

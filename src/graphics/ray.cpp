@@ -5,7 +5,7 @@
 
 #include "ray.hh"
 #include "uniform.hh"
-#include "backend/mathUtils.hh"
+#include "utils/mathUtils.hh"
 
 Ray::Ray(glm::vec3 cameraPos) {
 #ifdef RAY_VISIBLE
@@ -28,7 +28,7 @@ Ray::Ray(glm::vec3 cameraPos) {
 #endif
 }
 
-void Ray::rayCasting(Scene *scene, float width, float height) {
+void Ray::rayCasting(Scene *scene, EditModeScene *editModeScene, float width, float height) {
     ImVec2 mousePos = ImGui::GetMousePos();
     ImVec2 imageMin = ImGui::GetItemRectMin();
 
@@ -39,19 +39,19 @@ void Ray::rayCasting(Scene *scene, float width, float height) {
     localY = glm::clamp(localY, 0.0f, height);
 
     // Ray creation
-    ray = scene->camera.getMouseRay(
-            localX,
-            localY,
-            width,
-            height
-    );
+    if (Env::editmode)
+        ray = editModeScene->camera_.getMouseRay(localX,localY,width,height);
+    else
+        ray = scene->camera.getMouseRay(localX,localY,width,height);
 
-    if (!scene->editmode)
+    if (!Env::editmode)
         hitMeshTest(scene);
-    else if (scene->editmodeType == FACE)
-        hitMeshFaceTest(scene);
-    else if (scene->editmodeType == VERTEX)
-        hitMeshVertexTest(scene, 0.2f);
+    else if (editModeScene->editmodeType_ == FACE)
+        hitMeshFaceTest(editModeScene);
+//    else if (editModeScene->editmodeType_ == EDGE)
+//        hitMeshEdgeTest(editModeScene);
+    else if (editModeScene->editmodeType_ == VERTEX)
+        hitMeshVertexTest(editModeScene, 0.2f);
 
 #ifdef RAY_VISIBLE
     std::vector<float> rayVertices = generateRay(ray, scene->camera.position);
@@ -90,22 +90,22 @@ void Ray::hitMeshTest(Scene *scene) {
     scene->modifier.clear();
 }
 
-void Ray::hitMeshFaceTest(Scene *scene) {
-    if (!scene->editmode || scene->meshes.empty())
+void Ray::hitMeshFaceTest(EditModeScene *scene) {
+    if (!Env::editmode || scene->selectedMeshes_.empty())
         return;
 
-    Mesh *mesh = scene->meshes[0];
+    Mesh *mesh = scene->selectedMeshes_[0];
     if (!mesh->selected)
         std::cerr << "HitMeshFaceTest Warning : Mesh should be selected\n";
-    mesh->applySelectedAndUpdate(scene->modifier);
 
-    Triangle *hitFace = nullptr;
-    if (!scene->shiftMode)
+    mesh->applySelectedAndUpdate(scene->modifier_);
+    if (!scene->shiftMode_)
         mesh->selectedPoints.clear();
-    float closestHitDistance = 0;
 
+    float closestHitDistance = 0;
+    Triangle *hitFace = nullptr;
     for (auto face : mesh->faces) {
-        float hitDistance = face->rayIntersection(mesh->points, scene->camera.position, ray);
+        float hitDistance = face->rayIntersection(mesh->points, scene->camera_.position, ray);
         if (hitDistance > 0 && (closestHitDistance == 0 || closestHitDistance > hitDistance)) {
             closestHitDistance = hitDistance;
             hitFace = face;
@@ -114,7 +114,7 @@ void Ray::hitMeshFaceTest(Scene *scene) {
 
     if (hitFace) {
         std::cout << "Face touched " << hitFace->ia << " " << hitFace->ib << " " << hitFace->ic << "\n";
-        if (scene->shiftMode
+        if (scene->shiftMode_
             && mesh->selectedPoints.contains(hitFace->ia)
             && mesh->selectedPoints.contains(hitFace->ib)
             && mesh->selectedPoints.contains(hitFace->ic))
@@ -133,28 +133,30 @@ void Ray::hitMeshFaceTest(Scene *scene) {
     }
     else
         std::cout << "Void Raycast\n";
+
+    scene->modifier_.clear();
 }
 
-void Ray::hitMeshEdgeTest(Scene *scene) {
+void Ray::hitMeshEdgeTest(EditModeScene *scene) {
     std::cerr << "HitMeshEdgeTest Warning : Not Implemented\n";
 }
 
-void Ray::hitMeshVertexTest(Scene *scene, float radius) {
-    if (!scene->editmode || scene->meshes.empty())
+void Ray::hitMeshVertexTest(EditModeScene *scene, float radius) {
+    if (!Env::editmode || scene->selectedMeshes_.empty())
         return;
 
-    Mesh *mesh = scene->meshes[0];
+    Mesh *mesh = scene->selectedMeshes_[0];
     if (!mesh->selected)
         std::cerr << "HitMeshFaceTest Warning : Mesh should be selected\n";
-    mesh->applySelectedAndUpdate(scene->modifier);
+
+    mesh->applySelectedAndUpdate(scene->modifier_);
+    if (!scene->shiftMode_)
+        mesh->selectedPoints.clear();
 
     int hitVertexIndex = -1;
-    if (!scene->shiftMode)
-        mesh->selectedPoints.clear();
     float closestHitDistance = 0;
-
     for (int i = 0; i < mesh->points.size(); i++) {
-        float hitDistance = sphereIntersection(scene->camera.position, *mesh->points[i], radius);
+        float hitDistance = sphereIntersection(scene->camera_.position, *mesh->points[i], radius);
         if (hitDistance > 0 && (closestHitDistance == 0 || closestHitDistance > hitDistance)) {
             closestHitDistance = hitDistance;
             hitVertexIndex = i;
@@ -174,6 +176,8 @@ void Ray::hitMeshVertexTest(Scene *scene, float radius) {
     }
     else
         std::cout << "Void Raycast\n";
+
+    scene->modifier_.clear();
 }
 
 float Ray::sphereIntersection(glm::vec3 cameraPos, glm::vec3 center, float radius) {

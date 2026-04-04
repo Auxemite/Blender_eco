@@ -1,49 +1,54 @@
 #include <string>
 #include <filesystem>
 #include "gui.hh"
-#include "backend/scene.hh"
-#include "shaderUtils.hh"
+#include "scene/scene.hh"
+#include "utils/shaderUtils.hh"
+
 namespace fs = std::filesystem;
 
 namespace Gui {
-    void mainGui(Scene *scene, VisualGrid& grid) {
+    void mainGui(Scene *scene, EditModeScene *editModeScene, VisualGrid& grid) {
 //        ImGui::ShowDemoWindow();
         materialsAndTextures(scene);
         lights(scene);
-        editMode(scene, grid);
+        editMode(scene, editModeScene, grid);
+        Modifier *modifier = &scene->modifier;
+        if (Env::editmode)
+            modifier = &editModeScene->modifier_;
+
         ImGui::Begin("Action");
-        ImGui::SliderFloat("Position X", &scene->modifier.position.x, -5, 5);
-        ImGui::SliderFloat("Position Y", &scene->modifier.position.y, -5, 5);
-        ImGui::SliderFloat("Position Z", &scene->modifier.position.z, -5, 5);
+        ImGui::SliderFloat("Position X", &modifier->position.x, -5, 5);
+        ImGui::SliderFloat("Position Y", &modifier->position.y, -5, 5);
+        ImGui::SliderFloat("Position Z", &modifier->position.z, -5, 5);
 
-        ImGui::SliderFloat("Rotation X", &scene->modifier.rotation.x, -5.0f, 5.0f);
-        ImGui::SliderFloat("Rotation Y", &scene->modifier.rotation.y, -5.0f, 5.0f);
-        ImGui::SliderFloat("Rotation Z", &scene->modifier.rotation.z, -5.0f, 5.0f);
+        ImGui::SliderFloat("Rotation X", &modifier->rotation.x, -5.0f, 5.0f);
+        ImGui::SliderFloat("Rotation Y", &modifier->rotation.y, -5.0f, 5.0f);
+        ImGui::SliderFloat("Rotation Z", &modifier->rotation.z, -5.0f, 5.0f);
 
-        ImGui::SliderFloat("Scale", &scene->modifier.scale, 0.1f, 5.0f);
+        ImGui::SliderFloat("Scale", &modifier->scale, 0.1f, 5.0f);
         ImGui::End();
 
         meshTreeNode(scene);
     }
 
-    void editMode(Scene *scene, VisualGrid& grid) {
+    void editMode(Scene *scene, EditModeScene *editModeScene, VisualGrid& grid) {
         ImGui::Begin("Mode");
         ImGui::Checkbox("Grid", &grid.activateGrid);
         ImGui::SameLine();
         ImGui::Text(" | ");
         ImGui::SameLine();
-        if (ImGui::Checkbox("Editmode", &scene->editmode)) {
-            scene->toggleEditmode();
+        if (ImGui::Checkbox("Editmode", &Env::editmode)) {
+            toggleEditMode(scene, editModeScene);
         }
-        if (scene->editmode) {
+        if (Env::editmode) {
             ImGui::SameLine();
             ImGui::Text(" | Selection Mode : ");
             ImGui::SameLine();
-            ImGui::RadioButton("Face", reinterpret_cast<int *>(&scene->editmodeType), 0);
+            ImGui::RadioButton("Face", reinterpret_cast<int *>(&editModeScene->editmodeType_), 0);
             ImGui::SameLine();
-            ImGui::RadioButton("Edge", reinterpret_cast<int *>(&scene->editmodeType), 2);
+            ImGui::RadioButton("Edge", reinterpret_cast<int *>(&editModeScene->editmodeType_), 2);
             ImGui::SameLine();
-            ImGui::RadioButton("Vertex", reinterpret_cast<int *>(&scene->editmodeType), 1);
+            ImGui::RadioButton("Vertex", reinterpret_cast<int *>(&editModeScene->editmodeType_), 1);
         }
 
         ImGui::SameLine();
@@ -171,10 +176,10 @@ namespace Gui {
         static int item = -1;
         if (ImGui::Button("+")) {
             scene->addMaterial();
-            item = scene->materialNames.size() - 1;
+            item = static_cast<int>(scene->materialNames.size() - 1);
         }
         ImGui::SameLine();
-        ImGui::Combo("Materials", &item, scene->materialNames.data(), scene->materialNames.size());
+        ImGui::Combo("Materials", &item, scene->materialNames.data(), static_cast<int>(scene->materialNames.size()));
         if (item >= 0) {
             scene->materials[item]->colorModulator();
             scene->materials[item]->pbrFactorModulator();

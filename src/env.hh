@@ -21,4 +21,6 @@ namespace Env {
 
     inline bool audit_bindings_before_draw = false;
     inline GLuint mainShaderProgram;
+
+    inline bool editmode = false;
 }
