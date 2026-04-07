@@ -4,17 +4,17 @@
 #include "material.hh"
 
 struct Modifier {
-    glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
-    glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-    float scale = 1.0f;
-    Material *material = nullptr;
+    public :
+        glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
+        glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+        float scale = 1.0f;
 
-    Modifier()=default;
+        Modifier()=default;
 
-    void clear() {
-        position = glm::vec3(0.0f, 0.0f, 0.0f);
-        rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-        scale = 1.0f;
-        material = nullptr;
-    }
+        void clear();
+        bool isCleared() const;
+
+        void positionModulator();
+        void rotationModulator();
+        void scaleModulator();
 };

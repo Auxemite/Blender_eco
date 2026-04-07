@@ -3,23 +3,24 @@
 #include "vertex.hh"
 #include "utils.hh"
 #include "texture.hh"
+#include <glad/gl.h>
 
 class GraphicsObject : NonMovable {
     public:
-        GLuint VAO = 0;
-        GLuint VBO = 0;
-        int vboSize = 0;
-        Texture *texture = nullptr;
-
-//        GraphicsObject(std::vector<Engine::vertex> vertices, std::vector<u32> indices);
         GraphicsObject() = delete;
         explicit GraphicsObject(std::vector<Engine::vertex> vertices);
         ~GraphicsObject();
 
-        void linkTextureToMesh(Texture *_texture);
+        bool isLinkedTexture(Texture *texture) const;
+        void linkToGraphicObject(Texture *_texture);
 
         void updateVBOFromMesh(std::vector<Engine::vertex> vertices);
-//        void updateEBOFromMesh(std::vector<u32> indices);
 
         void draw();
+
+    private:
+        GLuint VAO_ = 0;
+        GLuint VBO_ = 0;
+        int vboSize_ = 0;
+        Texture *texture_ = nullptr;
 };

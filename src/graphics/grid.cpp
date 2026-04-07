@@ -2,33 +2,34 @@
 #include <iostream>
 #include "grid.hh"
 #include "uniform.hh"
+#include "glad/gl.h"
 
 VisualGrid::VisualGrid() {
     std::vector<float> gridVertices = generateGrid(100);
-    gridSize = gridVertices.size();
-    glCreateVertexArrays(1, &gridVAO);
-    glCreateBuffers(1, &gridVBO);
+    gridSize_ = gridVertices.size();
+    glCreateVertexArrays(1, &gridVAO_);
+    glCreateBuffers(1, &gridVBO_);
 
-    glNamedBufferData(gridVBO, gridSize * sizeof(float), gridVertices.data(), GL_STATIC_DRAW);
-    glVertexArrayVertexBuffer(gridVAO, 0, gridVBO, 0, 6 * sizeof(float));
+    glNamedBufferData(gridVBO_, gridSize_ * sizeof(float), gridVertices.data(), GL_STATIC_DRAW);
+    glVertexArrayVertexBuffer(gridVAO_, 0, gridVBO_, 0, 6 * sizeof(float));
 
-    glEnableVertexArrayAttrib(gridVAO, 0);
-    glEnableVertexArrayAttrib(gridVAO, 1);
+    glEnableVertexArrayAttrib(gridVAO_, 0);
+    glEnableVertexArrayAttrib(gridVAO_, 1);
 
-    glVertexArrayAttribFormat(gridVAO, 0, 3, GL_FLOAT, GL_FALSE, 0);
-    glVertexArrayAttribBinding(gridVAO, 0, 0);
+    glVertexArrayAttribFormat(gridVAO_, 0, 3, GL_FLOAT, GL_FALSE, 0);
+    glVertexArrayAttribBinding(gridVAO_, 0, 0);
 
-    glVertexArrayAttribFormat(gridVAO, 1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float));
-    glVertexArrayAttribBinding(gridVAO, 1, 0);
+    glVertexArrayAttribFormat(gridVAO_, 1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float));
+    glVertexArrayAttribBinding(gridVAO_, 1, 0);
 }
 
-void VisualGrid::draw(unsigned int shaderProgram, Camera *camera) {
-    if (activateGrid) {
+void VisualGrid::draw(unsigned int shaderProgram, const Camera& camera) {
+    if (activateGrid_) {
         glUseProgram(shaderProgram);
         Uniform::setBasicUniforms(shaderProgram, camera);
 
-        glBindVertexArray(gridVAO);
-        glDrawArrays(GL_LINES, 0, static_cast<int>(gridSize) / 6); // Warning : gridSize conversion from size_t to int
+        glBindVertexArray(gridVAO_);
+        glDrawArrays(GL_LINES, 0, static_cast<int>(gridSize_) / 6); // Warning : gridSize conversion from size_t to int
     }
 }
 

@@ -10,6 +10,6 @@ namespace Graphics {
     void clearFrameBuffer();
     void audit_bindings();
     void checkOpenGLError(const std::string &message);
-    void drawInterfaceObject(unsigned int shaderProgram, Scene *scene);
+    void drawInterfaceObject(unsigned int shaderProgram, const Scene& scene);
 
 }

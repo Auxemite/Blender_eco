@@ -1,5 +1,6 @@
 #include "window.hh"
 #include "imgui.h"
+#include "glad/gl.h"
 
 #include <iostream>
 
@@ -94,37 +95,21 @@ void shutDown(GLFWwindow *window) {
 }
 
 // return 0 if normal, 1 if ask for shutdown and -1 for error
-int processInput(GLFWwindow *window, Scene *scene, EditModeScene *editModeScene) {
+int processInput(GLFWwindow *window, Scene& scene, EditMode::EditModeScene& editModeScene) {
     if (glfwGetKey(window, GLFW_KEY_GRAVE_ACCENT) == GLFW_PRESS)
         return 1;
 
-    Camera *camera = &scene->camera;
-    if (Env::editmode)
-        camera = &editModeScene->camera_;
-
-    editModeScene->shiftMode_ = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS
+    Env::shiftMode = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS
             || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS;
 
     float currentFrame = static_cast<float>(glfwGetTime());
     float deltaTime = currentFrame - Env::lastFrame;
     Env::lastFrame = currentFrame;
-    float cameraSpeedz = camera->speed_zoom * deltaTime;
-    float cameraSpeedr = camera->speed_rotation * 10.0f * deltaTime;
-    if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
-        camera->radius -= cameraSpeedz;
-    if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
-        camera->radius += cameraSpeedz;
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera->yaw -= cameraSpeedr;
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera->yaw += cameraSpeedr;
+    if (Env::editmode)
+        editModeScene.processInputs(window, deltaTime);
+    else
+        scene.processInputs(window, deltaTime);
 
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera->height.y += cameraSpeedz;
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera->height.y -= cameraSpeedz;
-
-    camera->radius = glm::clamp(camera->radius, 1.0f, 100.0f);
     return 0;
 }
 

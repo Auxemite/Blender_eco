@@ -1,22 +1,23 @@
 #pragma once
 
-#include "glad/gl.h"
 #include "scene/scene.hh"
 #include "graphics/ray.hh"
+#include "editmode/editmodeRay.hh"
 
 class ScreenFrameBuffer {
-    private:
-        GLuint screenFBO = 0;
-        GLuint screenColorTex = 0;
-        GLuint screenDepthTex = 0;
-        float width = 0; // float is for resize operations
-        float height = 0;
-
     public:
         ScreenFrameBuffer()=delete;
         ScreenFrameBuffer(int width, int height);
-        void load(Scene *scene, EditModeScene *editModeScene, Ray *ray);
+        void load(Scene& scene, Ray& ray);
+        void loadEditMode(EditMode::EditModeScene& editModeScene, EditMode::EditModeRay& ray);
         void resize();
         void bindTextures();
         void unbindTextures();
+
+    private:
+        GLuint screenFBO_ = 0;
+        GLuint screenColorTex_ = 0;
+        GLuint screenDepthTex_ = 0;
+        float width_ = 0; // float is for resize operations
+        float height_ = 0;
 };

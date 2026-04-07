@@ -1,5 +1,5 @@
-#include <iostream>
 #include "guiUtils.hh"
+
 #include "GLFW/glfw3.h"
 #include "imgui_internal.h"
 #include "graphics/graphics.hh"

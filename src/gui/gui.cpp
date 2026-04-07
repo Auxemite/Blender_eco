@@ -7,117 +7,65 @@
 namespace fs = std::filesystem;
 
 namespace Gui {
-    void mainGui(Scene *scene, EditModeScene *editModeScene, VisualGrid& grid) {
+    void mainGui(Scene& scene, EditMode::EditModeScene& editModeScene, VisualGrid& grid) {
 //        ImGui::ShowDemoWindow();
         materials(scene);
         textures(scene);
         lights(scene);
-        editMode(scene, editModeScene, grid);
-        Modifier *modifier = &scene->modifier;
-        if (Env::editmode)
-            modifier = &editModeScene->modifier_;
+
+        ImGui::Begin("Mode");
+        ImGui::Checkbox("Grid", &grid.activateGrid_);
+        ImGui::SameLine();
+        ImGui::Text(" | ");
+        ImGui::SameLine();
+        editModeScene.editModeModulator(scene);
+
+        ImGui::SameLine();
+        if (ImGui::Button("Basic")) {
+            Env::mainShaderProgram = Shader::createShaderProgram("../shaders/basic");
+            Env::textureEnabled = false;
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Wireframe")) {
+            Env::mainShaderProgram = Shader::createShaderProgram("../shaders/wireframe");
+            Env::textureEnabled = false;
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Texture")) {
+            Env::mainShaderProgram = Shader::createShaderProgram("../shaders/texture");
+            Env::textureEnabled = true;
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("PBR")) {
+            Env::mainShaderProgram = Shader::createShaderProgram("../shaders/pbr");
+            Env::textureEnabled = true;
+        }
+        ImGui::End();
 
         ImGui::Begin("Action");
-        ImGui::SliderFloat("Position X", &modifier->position.x, -5, 5);
-        ImGui::SliderFloat("Position Y", &modifier->position.y, -5, 5);
-        ImGui::SliderFloat("Position Z", &modifier->position.z, -5, 5);
+        if (Env::editmode)
+            editModeScene.modifierModulator();
+        else
+            scene.modifierModulator();
 
-        ImGui::SliderFloat("Rotation X", &modifier->rotation.x, -5.0f, 5.0f);
-        ImGui::SliderFloat("Rotation Y", &modifier->rotation.y, -5.0f, 5.0f);
-        ImGui::SliderFloat("Rotation Z", &modifier->rotation.z, -5.0f, 5.0f);
-
-        ImGui::SliderFloat("Scale", &modifier->scale, 0.1f, 5.0f);
         ImGui::End();
 
         meshTreeNode(scene);
     }
 
-    void editMode(Scene *scene, EditModeScene *editModeScene, VisualGrid& grid) {
-        ImGui::Begin("Mode");
-        ImGui::Checkbox("Grid", &grid.activateGrid);
-        ImGui::SameLine();
-        ImGui::Text(" | ");
-        ImGui::SameLine();
-        if (ImGui::Checkbox("Editmode", &Env::editmode)) {
-            toggleEditMode(scene, editModeScene);
-        }
-        if (Env::editmode) {
-            ImGui::SameLine();
-            ImGui::Text(" | Selection Mode : ");
-            ImGui::SameLine();
-            ImGui::RadioButton("Face", reinterpret_cast<int *>(&editModeScene->editmodeType_), 0);
-            ImGui::SameLine();
-            ImGui::RadioButton("Edge", reinterpret_cast<int *>(&editModeScene->editmodeType_), 2);
-            ImGui::SameLine();
-            ImGui::RadioButton("Vertex", reinterpret_cast<int *>(&editModeScene->editmodeType_), 1);
-        }
-
-        ImGui::SameLine();
-        if (ImGui::Button("Basic")) {
-            Env::mainShaderProgram = Shader::createShaderProgram("../shaders/basic");
-            scene->textureEnabled = false;
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("Wireframe")) {
-            Env::mainShaderProgram = Shader::createShaderProgram("../shaders/wireframe");
-            scene->textureEnabled = false;
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("Texture")) {
-            Env::mainShaderProgram = Shader::createShaderProgram("../shaders/texture");
-            scene->textureEnabled = true;
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("PBR")) {
-            Env::mainShaderProgram = Shader::createShaderProgram("../shaders/pbr");
-            scene->textureEnabled = true;
-        }
-        ImGui::End();
-    }
-
-    void meshTreeNode(Scene *scene) {
+    void meshTreeNode(Scene& scene) {
         ImGui::Begin("Tree");
         addMesh(scene);
         ImGui::SameLine();
-        deleteMesh(scene);
+        scene.duplicateMeshModulator();
         ImGui::SameLine();
-        duplicateMesh(scene);
-
-        bool appliedModifier = false;
-        for (int i = 0; i < scene->meshes.size(); i++) {
-            std::string name = "> Mesh " + std::to_string(i);
-            if (ImGui::Button(name.c_str())) {
-                if (scene->meshes[i]->selected) {
-                    scene->meshes[i]->applyAndUpdate(scene->modifier);
-                    appliedModifier = true;
-                }
-                scene->clearSelectedMeshList();
-                scene->selectedMeshes.push_back(scene->meshes[i]);
-                scene->meshes[i]->selected = true;
-            }
-            ImGui::SameLine();
-            ImGui::PushID(i);
-            if (scene->meshes[i]->is_visible) {
-                if (ImGui::Button("<O>")) {
-                    scene->meshes[i]->is_visible = false;
-                }
-            }
-            else {
-                if (ImGui::Button("<Ø>")) {
-                    scene->meshes[i]->is_visible = true;
-                }
-            }
-            ImGui::PopID();
-//            ImGui::SameLine();
-//            treeMesh(env, i);
-        }
-        if (appliedModifier)
-            scene->modifier.clear();
+        scene.deleteMeshModulator();
+        scene.treeMeshModulator();
 
         ImGui::End();
     }
 
-    void addMesh(Scene *scene) {
+    void addMesh(Scene& scene) {
         if (ImGui::Button("Add Mesh"))
         {
             ImGui::OpenPopup("add_mesh");
@@ -134,110 +82,28 @@ namespace Gui {
                 std::string ui_filename = filename;
                 ui_filename[0] = toupper(ui_filename[0]);
                 if (ImGui::Selectable(ui_filename.c_str())) {
-                    scene->addMesh("../data/" + filename + ".obj");
+                    scene.addMesh("../data/" + filename + ".obj");
                 }
             }
             ImGui::EndPopup();
         }
     }
 
-    void deleteMesh(Scene *scene) {
-        if (ImGui::Button("Delete"))
-        {
-            std::vector<int> meshIndexes;
-            for (int i = 0; i < scene->meshes.size(); ++i) {
-                if (scene->meshes[i]->selected)
-                    meshIndexes.push_back(i);
-            }
-            for (int meshIndex : meshIndexes) {
-                scene->deleteMesh(meshIndex);
-            }
-
-            scene->selectedMeshes.clear();
-            scene->modifier.clear();
-        }
-    }
-
-    void duplicateMesh(Scene *scene) {
-        if (ImGui::Button("Duplicate"))
-        {
-            std::vector<int> meshIndexes;
-            for (int i = 0; i < scene->meshes.size(); ++i) {
-                if (scene->meshes[i]->selected)
-                    meshIndexes.push_back(i);
-            }
-            for (int meshIndex : meshIndexes) {
-                scene->duplicateMesh(meshIndex);
-            }
-        }
-    }
-
-    void materials(Scene *scene) {
+    void materials(Scene& scene) {
         ImGui::Begin("Materials");
-        static int materialIndex = -1;
-        if (ImGui::Button("+M")) {
-            scene->addMaterial();
-            materialIndex = static_cast<int>(scene->materialNames.size() - 1);
-        }
-        ImGui::SameLine();
-        ImGui::Combo("Materials", &materialIndex, scene->materialNames.data(), static_cast<int>(scene->materialNames.size()));
-        if (materialIndex >= 0) {
-            scene->materials[materialIndex]->colorModulator();
-            scene->materials[materialIndex]->pbrFactorModulator();
-
-            if (scene->selectedMeshes.size() == 1) { // Single selection
-                if (scene->selectedMeshes[0]->material != scene->materials[materialIndex]) {
-                    if (ImGui::Button("Link To Mesh")) {
-                        scene->linkMaterialToSelectedMesh(0, materialIndex);
-                    }
-                }
-                else
-                    ImGui::Text("Linked to selected Mesh");
-            }
-
-            if (ImGui::Button("Delete Material")) {
-                scene->deleteMaterial(materialIndex);
-                materialIndex = -1;
-            }
-        }
+        scene.materialModulator();
         ImGui::End();
     }
 
-    void textures(Scene *scene) {
+    void textures(Scene& scene) {
         ImGui::Begin("Textures");
-        static int texturesIndex = -1;
-        if (ImGui::Button("+T")) {
-            scene->addMaterial();
-            texturesIndex = static_cast<int>(scene->textureNames.size() - 1);
-        }
-        ImGui::SameLine();
-        ImGui::Combo("Textures", &texturesIndex, scene->textureNames.data(), static_cast<int>(scene->textureNames.size()));
-        if (texturesIndex >= 0) {
-            if (scene->selectedMeshes.size() == 1) { // Single selection
-                if (scene->selectedMeshes[0]->graphicsObject->texture != scene->textures[texturesIndex]) {
-                    if (ImGui::Button("Link To Mesh")) {
-                        scene->linkTextureToSelectedMesh(0, texturesIndex);
-                    }
-                }
-                else
-                    ImGui::Text("Linked to selected Mesh");
-            }
-
-            if (ImGui::Button("Delete Texture")) {
-                scene->deleteTexture(texturesIndex);
-                texturesIndex = -1;
-            }
-        }
+        scene.textureModulator();
         ImGui::End();
     }
 
-    void lights(Scene *scene) {
+    void lights(Scene& scene) {
         ImGui::Begin("Lights");
-
-        scene->light->colorModulator();
-        scene->light->positionModulator();
-        scene->light->intensityModulator();
-
+        scene.lightModulator();
         ImGui::End();
     }
 
@@ -273,18 +139,18 @@ namespace Gui {
 //        }
 //    }
 
-    void printObjInfo(Mesh* focus_mesh) {
-        if (focus_mesh == nullptr) {
-            ImGui::Text("No Mesh Selected");
-            return;
-        }
-        std::string text = "type : Mesh\n";
-        text += "Number of Faces : " + std::to_string(focus_mesh->faces.size()) + "\n";
-        text += "Number of Summit : " + std::to_string(focus_mesh->points.size()) + "\n";
-//    text += "Summits :\n";
-//    for (auto & summit : focus_mesh->points) {
-//        text += summit->to_string() + "\n";
+//    void printObjInfo(Mesh* focus_mesh) {
+//        if (focus_mesh == nullptr) {
+//            ImGui::Text("No Mesh Selected");
+//            return;
+//        }
+//        std::string text = "type : Mesh\n";
+//        text += "Number of Faces : " + std::to_string(focus_mesh->faces.size()) + "\n";
+//        text += "Number of Summit : " + std::to_string(focus_mesh->points.size()) + "\n";
+////    text += "Summits :\n";
+////    for (auto & summit : focus_mesh->points) {
+////        text += summit->to_string() + "\n";
+////    }
+//        ImGui::Text("%s", text.c_str());
 //    }
-        ImGui::Text("%s", text.c_str());
-    }
 }

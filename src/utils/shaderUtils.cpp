@@ -1,4 +1,5 @@
 #include "shaderUtils.hh"
+#include "glad/gl.h"
 
 namespace fs = std::filesystem;
 

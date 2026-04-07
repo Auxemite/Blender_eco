@@ -8,6 +8,18 @@ Light::Light(LightType lightType, glm::vec3 position, glm::vec3 color, float int
     intensity_(intensity)
 {}
 
+glm::vec3 Light::position() const {
+    return position_;
+}
+
+glm::vec3 Light::color() const {
+    return color_;
+}
+
+float Light::intensity() const {
+    return intensity_;
+}
+
 void Light::colorModulator() {
     static bool alpha_preview = true;
     static bool alpha_half_preview = false;

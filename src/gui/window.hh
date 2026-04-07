@@ -2,7 +2,7 @@
 
 #include "env.hh"
 
-#include "glad/gl.h"
+#include <glad/gl.h>
 #include "GLFW/glfw3.h"
 #include "scene/scene.hh"
 #include "editmode/editmodeScene.hh"
@@ -26,6 +26,6 @@ namespace Window {
 
     GLFWwindow *glfwWindowInit();
     void shutDown(GLFWwindow *window);
-    int processInput(GLFWwindow *window, Scene *scene, EditModeScene *editModeScene);
+    int processInput(GLFWwindow *window, Scene& scene, EditMode::EditModeScene& editModeScene);
 
 }

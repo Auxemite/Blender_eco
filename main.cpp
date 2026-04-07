@@ -31,8 +31,9 @@ int main(int argc, char **argv) {
 
     ScreenFrameBuffer screenViewport(WIDTH, HEIGHT);
     VisualGrid visualGrid;
-    Ray ray(scene.camera.position);
-    EditModeScene editmodeScene = EditModeScene(scene);
+    Ray ray(scene.camera().position());
+    EditMode::EditModeRay editModeRay(scene.camera().position());
+    EditMode::EditModeScene editmodeScene = EditMode::EditModeScene(scene);
 
     GLuint basicShaderProgram = Shader::createShaderProgram("../shaders/basic");
     GLuint editmodeShaderProgram = Shader::createShaderProgram("../shaders/editmode");
@@ -46,7 +47,7 @@ int main(int argc, char **argv) {
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
-        if (Window::processInput(window, &scene, &editmodeScene) == 1)
+        if (Window::processInput(window, scene, editmodeScene) == 1)
             break;
 
         // New Frame & Ui Menu Bar
@@ -56,12 +57,12 @@ int main(int argc, char **argv) {
         screenViewport.bindTextures();
 //        Graphics::drawInterfaceObject(unicolorShaderProgram, scene);
         if (Env::editmode) {
-            visualGrid.draw(gridShaderProgram, &editmodeScene.camera_);
+            visualGrid.draw(gridShaderProgram, editmodeScene.camera());
 //            editmodeScene.drawMeshes(basicShaderProgram, {1.0, 1.0, 1.0});
             editmodeScene.drawSelectedMeshes(editmodeShaderProgram, {0.0, 0.0, 0.0});
         }
         else {
-            visualGrid.draw(gridShaderProgram, &scene.camera);
+            visualGrid.draw(gridShaderProgram, scene.camera());
             scene.drawMeshes(Env::mainShaderProgram, {1.0, 1.0, 1.0});
             glDisable(GL_DEPTH_TEST);
             scene.drawOutline(unicolorShaderProgram);
@@ -71,8 +72,11 @@ int main(int argc, char **argv) {
 
         // UI construction
         screenViewport.unbindTextures();
-        screenViewport.load(&scene, &editmodeScene, &ray);
-        Gui::mainGui(&scene, &editmodeScene, visualGrid);
+        if (Env::editmode)
+            screenViewport.loadEditMode(editmodeScene, editModeRay);
+        else
+            screenViewport.load(scene, ray);
+        Gui::mainGui(scene, editmodeScene, visualGrid);
 
         // UI render & swap buffer
         Gui::render();

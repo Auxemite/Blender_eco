@@ -4,58 +4,39 @@
 
 void Triangle::normalize()
 {
-    float len = std::sqrt(sqr(normal.x) + sqr(normal.y) + sqr(normal.z));
-    normal /= len;
+    float len = std::sqrt(Math::sqr(normal_.x) + Math::sqr(normal_.y) + Math::sqr(normal_.z));
+    normal_ /= len;
 }
 
-Triangle::Triangle(int _ia, int _ib, int _ic, glm::vec3 _normal)
+Triangle::Triangle(glm::ivec3 vertexIndexes, glm::vec3 _normal)
 {
-    ia = _ia;
-    ib = _ib;
-    ic = _ic;
-    selected = false;
-    normal = _normal;
+    ia_ = vertexIndexes.x;
+    ib_ = vertexIndexes.y;
+    ic_ = vertexIndexes.z;
+    normal_ = _normal;
     normalize();
 }
 
-Triangle::Triangle(int _ia, int _ib, int _ic, const std::vector<glm::vec3 *>& points)
+Triangle::Triangle(glm::ivec3 vertexIndexes, const std::vector<glm::vec3 *>& points)
 {
-    ia = _ia;
-    ib = _ib;
-    ic = _ic;
-    selected = false;
-    normal = cross((*points[ib] - *points[ia]), (*points[ic] - *points[ia]));
+    ia_ = vertexIndexes.x;
+    ib_ = vertexIndexes.y;
+    ic_ = vertexIndexes.z;
+    normal_ = cross((*points[ib_] - *points[ia_]), (*points[ic_] - *points[ia_]));
     normalize();
 }
 
-float Triangle::rayIntersection(std::vector<glm::vec3 *> points, const glm::vec3& cam_position, const glm::vec3& direction)
+glm::ivec3 Triangle::vertexIndexes() const {
+    return {ia_, ib_, ic_};
+}
+
+glm::vec3 Triangle::normal() const {
+    return normal_;
+}
+
+float Triangle::rayTriangleIntersection(std::vector<glm::vec3 *> points, const glm::vec3& cameraPos, const glm::vec3& rayDir)
 {
-    glm::vec3 edge_1 = *points[ib] - *points[ia];
-    glm::vec3 edge_2 = *points[ic] - *points[ia];
-    glm::vec3 normal_vect = cross(direction, edge_2);
-    float det = dot(edge_1, normal_vect);
-
-    // Parallel
-    if (abs_(det) <= 0.001) {
-        return false;
-    }
-
-    float inv_det = 1.0f / det;
-    glm::vec3 s = cam_position - *points[ia];
-    float u = inv_det * dot(s, normal_vect);
-
-    if (u < 0.0f || u > 1.0f) {
-        return false;
-    }
-
-    glm::vec3 s_cross_e1 = cross(s, edge_1);
-    float v = inv_det * dot(direction, s_cross_e1);
-
-    if (v < 0.0f || u + v > 1.0f) {
-        return false;
-    }
-
-    return std::max(inv_det * dot(edge_2, s_cross_e1), 0.0f);
+    return Math::rayTriangleIntersection(cameraPos, rayDir, *points[ia_], *points[ib_], *points[ic_]);
 }
 
 //void Triangle::scale(float size) const

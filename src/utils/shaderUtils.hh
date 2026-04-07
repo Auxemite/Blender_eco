@@ -1,6 +1,5 @@
 #pragma once
 
-#include "glad/gl.h"
 #include "scene/scene.hh"
 
 #include <iostream>

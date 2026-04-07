@@ -1,18 +1,18 @@
 #pragma once
 
-#include "glad/gl.h"
 #include "scene/camera.hh"
 
 class VisualGrid {
-    private:
-        GLuint gridVAO = 0;
-        GLuint gridVBO = 0;
-        size_t gridSize = 0;
-
     public:
-        bool activateGrid = true;
+        bool activateGrid_ = true;
+
         VisualGrid();
-        void draw(unsigned int shaderProgram, Camera *camera);
+        void draw(unsigned int shaderProgram, const Camera& camera);
+
+    private:
+        GLuint gridVAO_ = 0;
+        GLuint gridVBO_ = 0;
+        size_t gridSize_ = 0;
 };
 
 std::vector<float> generateGrid(int gridSize);

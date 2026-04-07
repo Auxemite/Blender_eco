@@ -1,4 +1,5 @@
 #include "imageFormat.hh"
+#include "glad/gl.h"
 
 ImageFormatGL imageFormatToGL(ImageFormat format) {
     switch(format) {

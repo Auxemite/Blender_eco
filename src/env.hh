@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include "glad/gl.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
@@ -20,7 +19,9 @@ namespace Env {
     inline float lastFrame = 0.0;
 
     inline bool audit_bindings_before_draw = false;
-    inline GLuint mainShaderProgram;
+    inline unsigned int mainShaderProgram;
 
     inline bool editmode = false;
+    inline bool textureEnabled = false;
+    inline bool shiftMode = false;
 }

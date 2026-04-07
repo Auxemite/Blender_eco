@@ -1,12 +1,13 @@
 #include "material.hh"
 
-Material::Material(MATERIAL_TYPE _materialType) {
+Material::Material(MATERIAL_TYPE materialType) {
     static int materialNumber = 0;
     color_ = ImVec4(1.0, 1.0, 1.0, 1.0);
 //    materialType = _materialType;
 //    phong_factor = glm::vec3(0.0, 0.0, 0.0);
     pbrFactor_ = glm::vec2(0.0, 0.0);
     name_ = "material_" + std::to_string(materialNumber++);
+    materialType_ = materialType;
 }
 
 const char* Material::name() const {

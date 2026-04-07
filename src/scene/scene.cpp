@@ -4,160 +4,222 @@
 Scene::Scene() {
     Texture *defaultTexture = new Texture();
     defaultTexture->setName("default_texture");
-    textures.push_back(defaultTexture); // Default white texture
-    textureNames.push_back(defaultTexture->name());
-    light = new Light(LightType::PointLight,
+    textures_.push_back(defaultTexture); // Default white texture
+    textureNames_.push_back(defaultTexture->name());
+    light_ = new Light(LightType::PointLight,
               glm::vec3(5.0f, 5.0f, 5.0f),
               glm::vec3(1.0f, 1.0f, 0.5f),
               50.0f);
 }
 
 Scene::~Scene() {
-    for (auto mesh : this->meshes) {
+    for (auto mesh : meshes_) {
         delete mesh;
     }
-    this->meshes.clear();
+    meshes_.clear();
 
 //    for (auto light : this->lights) {
 //        delete light;
 //    }
 //    this->lights.clear();
-    delete light;
+    delete light_;
 
-    for (auto mesh : this->materials) {
+    for (auto mesh : materials_) {
         delete mesh;
     }
-    this->materials.clear();
+    materials_.clear();
+}
+
+Camera Scene::camera() const {
+    return camera_;
+}
+
+std::vector<Mesh *> Scene::selectedMeshes() const {
+    return selectedMeshes_;
+}
+
+void Scene::applyAndUpdate() {
+    if (modifier_.isCleared())
+        return;
+
+    for (auto mesh : selectedMeshes_) {
+        if (!mesh->isVisible())
+            continue;
+
+        mesh->applyAndUpdate(modifier_);
+    }
+    modifier_.clear();
+
+    if (selectedMeshes_.size() > 1)
+        std::cerr << "toggleEditmode Warning : SelectedMeshes list is above 1. Multiple Selection not implemented\n";
 }
 
 void Scene::drawSelectedMeshes(unsigned int shaderProgram, glm::vec3 unicolor) {
     glUseProgram(shaderProgram);
     Uniform::setUniqueColorUniforms(shaderProgram, unicolor);
-    Uniform::setBasicUniforms(shaderProgram, &this->camera);
-    Uniform::setModifierUniforms(shaderProgram, this->modifier);
-    if (this->textureEnabled)
-        Uniform::setLightUniforms(shaderProgram, light);
+    Uniform::setBasicUniforms(shaderProgram, camera_);
+    Uniform::setModifierUniforms(shaderProgram, this->modifier_);
+    if (Env::textureEnabled)
+        Uniform::setLightUniforms(shaderProgram, *light_);
 
-    for (auto mesh : this->selectedMeshes) {
-        if (!mesh->selected)
+    for (auto mesh : this->selectedMeshes_) {
+        if (!mesh->isSelected())
             std::cerr  << "DrawSelectedMeshes Warning : Mesh should be selected\n";
 
-        if (!mesh->is_visible)
+        if (!mesh->isVisible())
             continue;
 
-        Uniform::setMeshUniforms(shaderProgram, mesh);
-        if (textureEnabled)
-            Uniform::setMaterialAndTextureUniforms(shaderProgram, mesh);
-        mesh->graphicsObject->draw();
+        Uniform::setMeshUniforms(shaderProgram, *mesh);
+        if (Env::textureEnabled)
+            Uniform::setMaterialAndTextureUniforms(shaderProgram, *mesh);
+        mesh->draw();
     }
 }
 
 void Scene::drawMeshes(unsigned int shaderProgram, glm::vec3 unicolor) {
     glUseProgram(shaderProgram);
     Uniform::setUniqueColorUniforms(shaderProgram, unicolor);
-    Uniform::setBasicUniforms(shaderProgram, &this->camera);
-    if (this->textureEnabled)
-        Uniform::setLightUniforms(shaderProgram, this->light);
+    Uniform::setBasicUniforms(shaderProgram, camera_);
+    if (Env::textureEnabled)
+        Uniform::setLightUniforms(shaderProgram, *light_);
 
-    for (auto mesh : this->meshes) {
-        if (mesh->selected || !mesh->is_visible)
+    for (auto mesh : this->meshes_) {
+        if (mesh->isSelected() || !mesh->isVisible())
             continue;
 
         Uniform::setModifierUniforms(shaderProgram,{});
-        Uniform::setMeshUniforms(shaderProgram, mesh);
-        if (textureEnabled)
-            Uniform::setMaterialAndTextureUniforms(shaderProgram, mesh);
-        mesh->graphicsObject->draw();
+        Uniform::setMeshUniforms(shaderProgram, *mesh);
+        if (Env::textureEnabled)
+            Uniform::setMaterialAndTextureUniforms(shaderProgram, *mesh);
+        mesh->draw();
     }
 }
 
 void Scene::drawOutline(unsigned int shaderProgram) {
     glUseProgram(shaderProgram);
-    Modifier outlineModifier = this->modifier;
+    Modifier outlineModifier = this->modifier_;
     outlineModifier.scale += 0.03f;
-    Uniform::setBasicUniforms(shaderProgram, &this->camera);
+    Uniform::setBasicUniforms(shaderProgram, camera_);
     Uniform::setModifierUniforms(shaderProgram, outlineModifier);
     Uniform::setUniqueColorUniforms(shaderProgram, glm::vec3(1.0, 1.0, 0.0));
-    for (auto mesh: this->meshes) {
-        if (!mesh->is_visible || !mesh->selected)
+    for (auto mesh: this->meshes_) {
+        if (!mesh->isSelected() || !mesh->isVisible())
             continue;
 
-        Uniform::setMeshUniforms(shaderProgram, mesh);
-        mesh->graphicsObject->draw();
+        Uniform::setMeshUniforms(shaderProgram, *mesh);
+        mesh->draw();
     }
 }
 
 void Scene::addMesh(const std::string& pathName) {
     Mesh *mesh = new Mesh(pathName);
-    mesh->graphicsObject->linkTextureToMesh(this->textures[0]);
-    meshes.push_back(mesh);
+    mesh->linkToMesh(this->textures_[0]);
+    meshesNames_.push_back(mesh->name());
+    meshes_.push_back(mesh);
 }
 
 void Scene::deleteMesh(int meshIndex) {
-    meshes.erase(meshes.begin() + meshIndex);
+    meshes_.erase(meshes_.begin() + meshIndex);
+    meshesNames_.erase(meshesNames_.begin() + meshIndex);
 }
 
 void Scene::duplicateMesh(int meshIndex) {
-    Mesh *mesh = new Mesh(*meshes[meshIndex]);
-    mesh->graphicsObject->linkTextureToMesh(this->textures[0]);
-    meshes.push_back(mesh);
+    Mesh *mesh = new Mesh(*meshes_[meshIndex]);
+    mesh->linkToMesh(this->textures_[0]);
+    meshesNames_.push_back(mesh->name());
+    meshes_.push_back(mesh);
 }
 
 void Scene::addMaterial() {
     Material *material = new Material(MATERIAL_TYPE::PBR);
-    materials.push_back(material);
-    materialNames.push_back(material->name());
+    materials_.push_back(material);
+    materialNames_.push_back(material->name());
 }
 
 void Scene::addTexture(const std::string& pathName) {
     Texture *texture = new Texture(pathName);
-    textures.push_back(texture);
-    textureNames.push_back(texture->name());
+    textures_.push_back(texture);
+    textureNames_.push_back(texture->name());
 }
 
 void Scene::deleteMaterial(int materialIndex) {
     // TODO unlink every mesh linked to this material
-    materials.erase(materials.begin() + materialIndex);
-    materialNames.erase(materialNames.begin() + materialIndex);
+    materials_.erase(materials_.begin() + materialIndex);
+    materialNames_.erase(materialNames_.begin() + materialIndex);
 }
 
 void Scene::deleteTexture(int textureIndex) {
     // TODO unlink every mesh linked to this texture
-    textures.erase(textures.begin() + textureIndex);
-    textureNames.erase(textureNames.begin() + textureIndex);
+    textures_.erase(textures_.begin() + textureIndex);
+    textureNames_.erase(textureNames_.begin() + textureIndex);
 }
 
 void Scene::linkMaterialToMesh(int meshIndex, int materialIndex) {
-    if (meshIndex < meshes.size() && materialIndex < materials.size())
-        this->meshes[meshIndex]->material = this->materials[materialIndex];
+    if (meshIndex < meshes_.size() && materialIndex < materials_.size())
+        this->meshes_[meshIndex]->linkToMesh(materials_[materialIndex]);
     else
         std::cerr << "linkMaterialToMesh Error : meshIndex or materialIndex invalid\n";
 }
 
 void Scene::linkMaterialToSelectedMesh(int meshIndex, int materialIndex) {
-    if (meshIndex < selectedMeshes.size() && materialIndex < materials.size())
-        this->selectedMeshes[meshIndex]->material = this->materials[materialIndex];
+    if (meshIndex < selectedMeshes_.size() && materialIndex < materials_.size())
+        this->selectedMeshes_[meshIndex]->linkToMesh(materials_[materialIndex]);
     else
         std::cerr << "linkMaterialToMesh Error : meshIndex or materialIndex invalid\n";
 }
 
 void Scene::linkTextureToMesh(int meshIndex, int textureIndex) {
-    if (meshIndex < meshes.size() && textureIndex < textures.size())
-        this->meshes[meshIndex]->graphicsObject->linkTextureToMesh(textures[textureIndex]);
+    if (meshIndex < meshes_.size() && textureIndex < textures_.size())
+        this->meshes_[meshIndex]->linkToMesh(textures_[textureIndex]);
     else
         std::cerr << "linkTextureToMesh Error : meshIndex or textureIndex invalid\n";
 }
 
 void Scene::linkTextureToSelectedMesh(int meshIndex, int textureIndex) {
-    if (meshIndex < selectedMeshes.size() && textureIndex < textures.size())
-        this->selectedMeshes[meshIndex]->graphicsObject->linkTextureToMesh(textures[textureIndex]);
+    if (meshIndex < selectedMeshes_.size() && textureIndex < textures_.size())
+        this->selectedMeshes_[meshIndex]->linkToMesh(textures_[textureIndex]);
     else
         std::cerr << "linkTextureToMesh Error : meshIndex or textureIndex invalid\n";
 }
 
 void Scene::clearSelectedMeshList() {
-    for (auto mesh : this->selectedMeshes) {
-        mesh->selected = false;
+    for (auto mesh : this->selectedMeshes_) {
+        mesh->setSelection(false);
     }
-    this->selectedMeshes.clear();
+    this->selectedMeshes_.clear();
+}
+
+void Scene::rayCasting(const glm::vec3& rayDir) {
+    float closestHitDistance = 0.0f;
+    Mesh *hitMesh = nullptr;
+    for (auto mesh : meshes_) {
+        if (!mesh->isVisible())
+            continue;
+
+        if (mesh->isSelected())
+            mesh->applyAndUpdate(modifier_);
+
+        mesh->setSelection(false);
+        Math::RayInfo rayInfo = mesh->rayMeshIntersection(camera_.position(), rayDir);
+        if (rayInfo.hitDistance > 0 && (closestHitDistance == 0 || closestHitDistance > rayInfo.hitScalar)) {
+            closestHitDistance = rayInfo.hitDistance;
+            hitMesh = mesh;
+        }
+    }
+
+    clearSelectedMeshList();
+    if (hitMesh) {
+        hitMesh->setSelection(true);
+        selectedMeshes_.push_back(hitMesh);
+        std::cout << "Hit Mesh\n";
+    }
+    else
+        std::cout << "Void Raycast\n";
+
+    modifier_.clear();
+}
+
+
+void Scene::processInputs(GLFWwindow *window, float deltaTime) {
+    camera_.processInputs(window, deltaTime);
 }

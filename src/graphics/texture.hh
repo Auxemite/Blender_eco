@@ -1,14 +1,13 @@
 #pragma once
 
-#include "glm/glm.hpp"
 #include "graphics/imageFormat.hh"
 #include <string>
 
 struct TextureData {
     // TODO data;
-    int width;
-    int height;
-    ImageFormat format;
+    int width_;
+    int height_;
+    ImageFormat format_;
 };
 
 class Texture : NonMovable {
@@ -17,7 +16,7 @@ class Texture : NonMovable {
 //        Texture(Texture&&) = default;
 //        Texture& operator=(Texture&&) = default;
         Texture();
-        Texture(int _width, int _height, const unsigned char* data);
+        Texture(int width, int height, const unsigned char* data);
         explicit Texture(const std::string& imagePath);
         Texture(const TextureData& data);
         Texture(const glm::uvec2 &size, ImageFormat format);
@@ -33,9 +32,9 @@ class Texture : NonMovable {
         int mipLevels() const;
 
     private:
-        GLuint id = 0;
-        int width;
-        int height;
-        ImageFormat format;
+        unsigned int id_ = 0;
+        int width_;
+        int height_;
+        ImageFormat format_;
         std::string name_;
 };
