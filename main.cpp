@@ -1,8 +1,6 @@
 #include "env.hh"
 #include "utils/shaderUtils.hh"
-#include "graphics/graphics.hh"
 #include "gui/window.hh"
-#include "graphics/uniform.hh"
 #include "scene/scene.hh"
 #include "gui/gui.hh"
 #include "gui/screenFrameBuffer.hh"
@@ -10,15 +8,9 @@
 #include "editmode/editmodeScene.hh"
 
 int main(int argc, char **argv) {
-    GLFWwindow *window = Window::glfwWindowInit();
-    if (window == nullptr)
-        return -1;
-
-    // Imgui & Window state
-    Gui::initialize(window);
-    WindowState windowState;
-    glfwSetWindowUserPointer(window, &windowState);
-    glfwSetKeyCallback(window, Window::keyCallback);
+    // Software Context Initialization
+    GLFWwindow *window = Window::softwareContextInit();
+    if (window == nullptr) return -1;
 
     Scene scene = Scene();
 //    scene.addMesh("../data/cube.obj");
@@ -83,7 +75,6 @@ int main(int argc, char **argv) {
         glfwSwapBuffers(window);
     }
 
-    Gui::shutDown();
     Window::shutDown(window);
 
     return 0;

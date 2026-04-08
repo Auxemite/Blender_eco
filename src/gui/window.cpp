@@ -1,6 +1,7 @@
 #include "window.hh"
 #include "imgui.h"
 #include "glad/gl.h"
+#include "guiUtils.hh"
 
 #include <iostream>
 
@@ -29,7 +30,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
     }
 }
 
-GLFWwindow *glfwWindowInit() {
+GLFWwindow *softwareContextInit() {
     if (!glfwInit()) {
         std::cerr << "Error glfw_window_init : Failed to initialize GLFW" << std::endl;
         return nullptr;
@@ -57,6 +58,11 @@ GLFWwindow *glfwWindowInit() {
         std::cerr << "Error glfw_window_init : Failed to initialize GLAD" << std::endl;
         return nullptr;
     }
+
+    Gui::initialize(window);
+    WindowState windowState;
+    glfwSetWindowUserPointer(window, &windowState);
+    glfwSetKeyCallback(window, Window::keyCallback);
 
     return window;
 }
@@ -90,6 +96,7 @@ void toggleFullscreen(GLFWwindow* window, WindowState& state) {
 }
 
 void shutDown(GLFWwindow *window) {
+    Gui::shutDown();
     glfwDestroyWindow(window);
     glfwTerminate();
 }

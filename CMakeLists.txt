@@ -12,6 +12,7 @@ endif()
 # external lib
 add_subdirectory(external/glfw)
 add_subdirectory(external/glm)
+add_subdirectory(external/Catch2)
 
 include_directories(external/glfw/include)
 include_directories(external/glad/include)
@@ -53,3 +54,25 @@ add_executable(blender_eco
 
 target_link_libraries(blender_eco glfw)
 target_compile_options(blender_eco PUBLIC ${COMPILE_OPTIONS})
+
+# =========================
+# TESTS
+# =========================
+
+enable_testing()
+
+file(GLOB_RECURSE TEST_FILES
+        "tests/*.cpp"
+)
+
+add_executable(tests
+        ${SOURCE_FILES}
+        ${EXTERNAL_FILES}
+        ${SHADER_FILES}
+        ${TEST_FILES}
+)
+
+target_link_libraries(tests PRIVATE
+        Catch2::Catch2WithMain
+        glfw
+)

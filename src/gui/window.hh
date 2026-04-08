@@ -24,7 +24,7 @@ namespace Window {
     void toggleFullscreen(GLFWwindow* window, WindowState& state);
     void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
-    GLFWwindow *glfwWindowInit();
+    GLFWwindow *softwareContextInit();
     void shutDown(GLFWwindow *window);
     int processInput(GLFWwindow *window, Scene& scene, EditMode::EditModeScene& editModeScene);
 
