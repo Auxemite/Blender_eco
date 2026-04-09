@@ -1,5 +1,5 @@
 #define CATCH_CONFIG_MAIN
-#include <catch2/catch_test_macros.hpp>
+#include "Catch2/src/catch2/catch_test_macros.hpp"
 #include "scene/scene.hh"
 #include "gui/window.hh"
 
