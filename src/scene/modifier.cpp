@@ -11,19 +11,23 @@ bool Modifier::isCleared() const {
     return position == glm::vec3(0.0f) && rotation == glm::vec3(0.0f) && scale == 1.0f;
 }
 
-
 void Modifier::positionModulator() {
-    ImGui::SliderFloat("Position X", &position.x, -5, 5);
-    ImGui::SliderFloat("Position Y", &position.y, -5, 5);
-    ImGui::SliderFloat("Position Z", &position.z, -5, 5);
+    ImGui::Text("Position");
+    ImGui::SliderFloat("X##modifierPositionX", &position.x, -5, 5);
+    ImGui::SliderFloat("Y##modifierPositionY", &position.y, -5, 5);
+    ImGui::SliderFloat("Z##modifierPositionZ", &position.z, -5, 5);
 }
 
 void Modifier::rotationModulator() {
-    ImGui::SliderFloat("Rotation X", &rotation.x, -5.0f, 5.0f);
-    ImGui::SliderFloat("Rotation Y", &rotation.y, -5.0f, 5.0f);
-    ImGui::SliderFloat("Rotation Z", &rotation.z, -5.0f, 5.0f);
+    ImGui::Text("Rotation");
+    ImGui::SliderFloat("X##modifierRotationX", &rotation.x, -5.0f, 5.0f);
+    ImGui::SliderFloat("Y##modifierRotationY", &rotation.y, -5.0f, 5.0f);
+    ImGui::SliderFloat("Z##modifierRotationZ", &rotation.z, -5.0f, 5.0f);
 }
 
 void Modifier::scaleModulator() {
-    ImGui::SliderFloat("Scale", &scale, 0.1f, 5.0f);
+    ImGui::Text("Scale");
+    ImGui::SliderFloat("Scale##modifierScaleX", &scale, 0.1f, 5.0f);
+//    ImGui::SliderFloat("Y##modifierScaleY", &scale, 0.1f, 5.0f);
+//    ImGui::SliderFloat("Z##modifierScaleZ", &scale, 0.1f, 5.0f);
 }

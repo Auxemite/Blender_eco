@@ -6,10 +6,6 @@ Scene::Scene() {
     defaultTexture->setName("default_texture");
     textures_.push_back(defaultTexture); // Default white texture
     textureNames_.push_back(defaultTexture->name());
-    light_ = new Light(LightType::PointLight,
-              glm::vec3(5.0f, 5.0f, 5.0f),
-              glm::vec3(1.0f, 1.0f, 0.5f),
-              50.0f);
 }
 
 Scene::~Scene() {
@@ -17,12 +13,6 @@ Scene::~Scene() {
         delete mesh;
     }
     meshes_.clear();
-
-//    for (auto light : this->lights) {
-//        delete light;
-//    }
-//    this->lights.clear();
-    delete light_;
 
     for (auto mesh : materials_) {
         delete mesh;
@@ -59,8 +49,10 @@ void Scene::drawSelectedMeshes(unsigned int shaderProgram, glm::vec3 unicolor) {
     Uniform::setUniqueColorUniforms(shaderProgram, unicolor);
     Uniform::setBasicUniforms(shaderProgram, camera_);
     Uniform::setModifierUniforms(shaderProgram, this->modifier_);
-    if (Env::textureEnabled)
-        Uniform::setLightUniforms(shaderProgram, *light_);
+    if (Env::PBREnabled) {
+        Uniform::setLightUniform(shaderProgram, lights_.getModifyingLight(), lights_.count());
+        lights_.bind(1);
+    }
 
     for (auto mesh : this->selectedMeshes_) {
         if (!mesh->isSelected())
@@ -80,8 +72,10 @@ void Scene::drawMeshes(unsigned int shaderProgram, glm::vec3 unicolor) {
     glUseProgram(shaderProgram);
     Uniform::setUniqueColorUniforms(shaderProgram, unicolor);
     Uniform::setBasicUniforms(shaderProgram, camera_);
-    if (Env::textureEnabled)
-        Uniform::setLightUniforms(shaderProgram, *light_);
+    if (Env::PBREnabled) {
+        Uniform::setLightUniform(shaderProgram, lights_.getModifyingLight(), lights_.count());
+        lights_.bind(1);
+    }
 
     for (auto mesh : this->meshes_) {
         if (mesh->isSelected() || !mesh->isVisible())
@@ -130,8 +124,8 @@ void Scene::duplicateMesh(int meshIndex) {
     meshes_.push_back(mesh);
 }
 
-void Scene::addMaterial() {
-    Material *material = new Material(MATERIAL_TYPE::PBR);
+void Scene::addMaterial(const glm::vec3& color, const glm::vec2& pbrFactor) {
+    Material *material = new Material(MATERIAL_TYPE::PBR, color, pbrFactor);
     materials_.push_back(material);
     materialNames_.push_back(material->name());
 }

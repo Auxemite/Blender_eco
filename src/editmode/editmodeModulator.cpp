@@ -1,18 +1,18 @@
 #include "editmode/editmodeScene.hh"
 
 void EditMode::EditModeScene::editModeModulator(Scene& scene) {
-    if (ImGui::Checkbox("Editmode", &Env::editmode)) {
+    if (ImGui::Checkbox("Editmode##toggleEditmode", &Env::editmode)) {
         toggleEditMode(scene, *this);
     }
     if (Env::editmode) {
         ImGui::SameLine();
         ImGui::Text(" | Selection Mode : ");
         ImGui::SameLine();
-        ImGui::RadioButton("Face", reinterpret_cast<int *>(&editmodeType_), 0);
+        ImGui::RadioButton("Face##editmodeFace", reinterpret_cast<int *>(&editmodeType_), 0);
         ImGui::SameLine();
-        ImGui::RadioButton("Edge", reinterpret_cast<int *>(&editmodeType_), 2);
+        ImGui::RadioButton("Edge##editmodeEdge", reinterpret_cast<int *>(&editmodeType_), 2);
         ImGui::SameLine();
-        ImGui::RadioButton("Vertex", reinterpret_cast<int *>(&editmodeType_), 1);
+        ImGui::RadioButton("Vertex##editmodeVertex", reinterpret_cast<int *>(&editmodeType_), 1);
     }
 }
 

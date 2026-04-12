@@ -101,11 +101,8 @@ void shutDown(GLFWwindow *window) {
     glfwTerminate();
 }
 
-// return 0 if normal, 1 if ask for shutdown and -1 for error
+// return 0 if normal and -1 for error
 int processInput(GLFWwindow *window, Scene& scene, EditMode::EditModeScene& editModeScene) {
-    if (glfwGetKey(window, GLFW_KEY_GRAVE_ACCENT) == GLFW_PRESS)
-        return 1;
-
     Env::shiftMode = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS
             || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS;
 

@@ -2,7 +2,6 @@
 
 #include <cmath>
 
-#include "common/test_helpers.hh"
 #include "editmode/editmodeRay.hh"
 #include "editmode/editmodeScene.hh"
 #include "env.hh"
@@ -11,6 +10,7 @@
 #include "scene/material.hh"
 #include "scene/mesh.hh"
 #include "scene/scene.hh"
+#include "../common/test_helpers.hh"
 
 TEST_CASE("Mesh functionality", "[scene][mesh]") {
     TestHelpers::ScopedWindowContext context;

@@ -39,7 +39,7 @@ ScreenFrameBuffer::ScreenFrameBuffer(int width, int height) {
 }
 
 void ScreenFrameBuffer::load(Scene& scene, Ray& ray) {
-    ImGui::Begin("Texture Viewport");
+    ImGui::Begin("Screen Viewport");
 
     resize();
 
@@ -57,7 +57,7 @@ void ScreenFrameBuffer::load(Scene& scene, Ray& ray) {
 }
 
 void ScreenFrameBuffer::loadEditMode(EditMode::EditModeScene& editModeScene, EditMode::EditModeRay& ray) {
-    ImGui::Begin("Texture Viewport");
+    ImGui::Begin("Editmode Viewport");
 
     resize();
 

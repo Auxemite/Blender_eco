@@ -7,19 +7,17 @@ void Scene::modifierModulator() {
 }
 
 void Scene::lightModulator() {
-    light_->colorModulator();
-    light_->positionModulator();
-    light_->intensityModulator();
+    lights_.lightModulator();
 }
 
 void Scene::materialModulator() {
     static int materialIndex = -1;
-    if (ImGui::Button("+M")) {
-        addMaterial();
+    if (ImGui::Button("+##addNewMaterial")) {
+        addMaterial({1.0f,1.0f,1.0f}, {0.5, 0.1});
         materialIndex = static_cast<int>(materialNames_.size() - 1);
     }
     ImGui::SameLine();
-    ImGui::Combo("Materials", &materialIndex,
+    ImGui::Combo("Materials##listMaterials", &materialIndex,
                  materialNames_.data(), static_cast<int>(materialNames_.size()));
     if (materialIndex >= 0) {
         materials_[materialIndex]->colorModulator();
@@ -27,7 +25,7 @@ void Scene::materialModulator() {
 
         if (selectedMeshes_.size() == 1) { // Single selection
             if (!selectedMeshes_[0]->isLinkedMaterial(materials_[materialIndex])) {
-                if (ImGui::Button("Link To Mesh")) {
+                if (ImGui::Button("Link To Mesh##linkMaterialToSelectedMesh")) {
                     linkMaterialToSelectedMesh(0, materialIndex);
                 }
             }
@@ -38,7 +36,7 @@ void Scene::materialModulator() {
             std::cerr << "MaterialModulator Warning : Multiple Selected Not Implemented\n";
         }
 
-        if (ImGui::Button("Delete Material")) {
+        if (ImGui::Button("Delete##deleteMaterial")) {
             deleteMaterial(materialIndex);
             materialIndex = -1;
         }
@@ -47,17 +45,17 @@ void Scene::materialModulator() {
 
 void Scene::textureModulator() {
     static int texturesIndex = -1;
-//    if (ImGui::Button("+T")) {
+//    if (ImGui::Button("+##addNewTexture")) {
 //        addTexture();
 //        texturesIndex = static_cast<int>(textureNames_.size() - 1);
 //    }
 //    ImGui::SameLine();
-    ImGui::Combo("Textures", &texturesIndex,
+    ImGui::Combo("Textures##listMaterial", &texturesIndex,
                  textureNames_.data(), static_cast<int>(textureNames_.size()));
     if (texturesIndex >= 0) {
         if (selectedMeshes_.size() == 1) { // Single selection
             if (!selectedMeshes_[0]->isLinkedTexture(textures_[texturesIndex])) {
-                if (ImGui::Button("Link To Mesh")) {
+                if (ImGui::Button("Link To Mesh##linkTextureToSelectedMesh")) {
                     linkTextureToSelectedMesh(0, texturesIndex);
                 }
             }
@@ -68,7 +66,7 @@ void Scene::textureModulator() {
             std::cerr << "TextureModulator Warning : Multiple Selected Not Implemented\n";
         }
 
-        if (ImGui::Button("Delete Texture")) {
+        if (ImGui::Button("Delete##deleteTexture")) {
             deleteTexture(texturesIndex);
             texturesIndex = -1;
         }
@@ -90,12 +88,14 @@ void Scene::treeMeshModulator() {
         ImGui::SameLine();
         ImGui::PushID(i);
         if (meshes_[i]->isVisible()) {
-            if (ImGui::Button("<O>")) {
+            const std::string label = "<O>##unwatch" + std::to_string(i);
+            if (ImGui::Button(label.c_str())) {
                 meshes_[i]->setVisibility(false);
             }
         }
         else {
-            if (ImGui::Button("<Ø>")) {
+            const std::string label = "<Ø>##unwatch" + std::to_string(i);
+            if (ImGui::Button(label.c_str())) {
                 meshes_[i]->setVisibility(true);
             }
         }
@@ -108,7 +108,7 @@ void Scene::treeMeshModulator() {
 }
 
 void Scene::duplicateMeshModulator() {
-    if (ImGui::Button("Duplicate"))
+    if (ImGui::Button("Duplicate##duplicateMesh"))
     {
         if (selectedMeshes_.empty()) {
             modifier_.clear();
@@ -130,7 +130,7 @@ void Scene::duplicateMeshModulator() {
 }
 
 void Scene::deleteMeshModulator() {
-    if (ImGui::Button("Delete"))
+    if (ImGui::Button("Delete##deleteMesh"))
     {
         if (selectedMeshes_.empty()) {
             modifier_.clear();

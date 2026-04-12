@@ -13,7 +13,7 @@ enum class MATERIAL_TYPE {
 class Material {
     public:
         Material()=delete;
-        explicit Material(MATERIAL_TYPE materialType);
+        explicit Material(MATERIAL_TYPE materialType, const glm::vec3& color, const glm::vec2& pbrFactor);
 
         const char* name() const;
         glm::vec3 color() const;

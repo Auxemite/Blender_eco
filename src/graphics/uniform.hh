@@ -15,7 +15,7 @@ namespace Uniform {
     void setModifierUniforms(unsigned int shaderProgram, const Modifier& modifier);
     void setMeshUniforms(unsigned int shaderProgram, const Mesh& mesh);
     void setMaterialAndTextureUniforms(unsigned int shaderProgram, const Mesh& mesh);
-    void setLightUniforms(unsigned int shaderProgram, const Light& light);
+    void setLightUniform(unsigned int shaderProgram, Light *light, const u32& nbLight);
     void setUniqueColorUniforms(unsigned int shaderProgram, const glm::vec3 &color);
 //    void setTextureUniforms(unsigned int shaderProgram, int unit);
 }

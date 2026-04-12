@@ -1,6 +1,7 @@
 #include "uniform.hh"
 #include "utils/mathUtils.hh"
 #include "glad/gl.h"
+#include "graphics.hh"
 
 namespace Uniform {
 
@@ -68,17 +69,21 @@ void setMeshUniforms(unsigned int shaderProgram, const Mesh& mesh) {
     glUniform3f(meshPositionLoc, center.x, center.y, center.z);
 }
 
-void setLightUniforms(unsigned int shaderProgram, const Light& light) {
-    GLint lightPositionLoc = glGetUniformLocation(shaderProgram, "lightPos");
-    glm::vec3 pos = light.position();
+void setLightUniform(unsigned int shaderProgram, Light *light, const u32& nbLight) {
+    GLint modifierScaleLoc = glGetUniformLocation(shaderProgram, "lightNumber");
+    glUniform1ui(modifierScaleLoc, nbLight);
+
+    GLint lightPositionLoc = glGetUniformLocation(shaderProgram, "modifierLightPos");
+    glm::vec3 pos = light ? light->position() : glm::vec3(0.0f);
     glUniform3f(lightPositionLoc, pos.x, pos.y, pos.z);
 
-    GLint lightColorLoc = glGetUniformLocation(shaderProgram, "lightColor");
-    glm::vec3 color = light.color();
+    GLint lightColorLoc = glGetUniformLocation(shaderProgram, "modifierLightColor");
+    glm::vec3 color = light ? light->color() : glm::vec3(0.0f);
     glUniform3f(lightColorLoc, color.x, color.y, color.z);
 
-    GLint lightIntensityLoc = glGetUniformLocation(shaderProgram, "lightPower");
-    glUniform1f(lightIntensityLoc, light.intensity());
+    float intensity = light ? light->intensity() : 0.0f;
+    GLint lightIntensityLoc = glGetUniformLocation(shaderProgram, "modifierLightRadius");
+    glUniform1f(lightIntensityLoc, intensity);
 }
 
 void setUniqueColorUniforms(unsigned int shaderProgram, const glm::vec3 &color) {

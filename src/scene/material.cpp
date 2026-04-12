@@ -1,11 +1,11 @@
 #include "material.hh"
 
-Material::Material(MATERIAL_TYPE materialType) {
+Material::Material(MATERIAL_TYPE materialType, const glm::vec3& color, const glm::vec2& pbrFactor) {
     static int materialNumber = 0;
-    color_ = ImVec4(1.0, 1.0, 1.0, 1.0);
+    color_ = ImVec4(color.x, color.y, color.z, 1.0);
 //    materialType = _materialType;
 //    phong_factor = glm::vec3(0.0, 0.0, 0.0);
-    pbrFactor_ = glm::vec2(0.0, 0.0);
+    pbrFactor_ = pbrFactor;
     name_ = "material_" + std::to_string(materialNumber++);
     materialType_ = materialType;
 }
@@ -48,10 +48,10 @@ void Material::colorModulator() {
 //    if (display_mode == 3) flags |= ImGuiColorEditFlags_DisplayHSV;
     flags |= ImGuiColorEditFlags_DisplayHSV;
 //    if (display_mode == 4) flags |= ImGuiColorEditFlags_DisplayHex;
-    ImGui::ColorPicker4("Albedo##4", (float*)&color_, flags);
+    ImGui::ColorPicker4("Albedo##materialColor", (float*)&color_, flags);
 }
 
 void Material::pbrFactorModulator() {
-    ImGui::SliderFloat("Roughness", &pbrFactor_.x, 0, 1);
-    ImGui::SliderFloat("Metalness", &pbrFactor_.y, 0, 1);
+    ImGui::SliderFloat("Roughness##materialRoughness", &pbrFactor_.x, 0, 1);
+    ImGui::SliderFloat("Metalness##materialMetalness", &pbrFactor_.y, 0, 1);
 }

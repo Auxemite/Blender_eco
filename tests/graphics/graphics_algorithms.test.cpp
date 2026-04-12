@@ -8,7 +8,7 @@
 #include "graphics/grid.hh"
 #include "graphics/imageFormat.hh"
 #include "graphics/ray.hh"
-#include "utils/shaderUtils.hh"
+#include "shader/shaderUtils.hh"
 
 TEST_CASE("Image format conversions", "[graphics][image-format]") {
     const auto rgba8 = imageFormatToGL(ImageFormat::RGBA8_UNORM);

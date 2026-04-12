@@ -23,5 +23,6 @@ namespace Env {
 
     inline bool editmode = false;
     inline bool textureEnabled = false;
+    inline bool PBREnabled = false;
     inline bool shiftMode = false;
 }

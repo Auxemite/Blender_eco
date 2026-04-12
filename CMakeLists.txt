@@ -63,6 +63,7 @@ enable_testing()
 
 file(GLOB_RECURSE TEST_FILES
         "tests/*.cpp"
+        "tests/*.hh"
 )
 
 add_executable(tests

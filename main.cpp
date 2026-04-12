@@ -1,5 +1,5 @@
 #include "env.hh"
-#include "utils/shaderUtils.hh"
+#include "shader/shaderUtils.hh"
 #include "gui/window.hh"
 #include "scene/scene.hh"
 #include "gui/gui.hh"
@@ -12,20 +12,28 @@ int main(int argc, char **argv) {
     GLFWwindow *window = Window::softwareContextInit();
     if (window == nullptr) return -1;
 
+    Graphics::checkOpenGLError("Error Main : Window Context Initialization");
+
     Scene scene = Scene();
+
+    Graphics::checkOpenGLError("Error Main : Scene Creation");
 //    scene.addMesh("../data/cube.obj");
     scene.addMesh("../data/bunny.obj");
 //    scene.addMesh("../data/plane.obj");
     scene.addTexture("../data/texture_test.jpg");
     scene.linkTextureToMesh(0, 1);
-    scene.addMaterial();
+    scene.addMaterial({1.0f,1.0f,1.0f}, {0.5f,0.8f});
     scene.linkMaterialToMesh(0, 0);
+
+    Graphics::checkOpenGLError("Error Main : Scene Modification");
 
     ScreenFrameBuffer screenViewport(WIDTH, HEIGHT);
     VisualGrid visualGrid;
     Ray ray(scene.camera().position());
     EditMode::EditModeRay editModeRay(scene.camera().position());
     EditMode::EditModeScene editmodeScene = EditMode::EditModeScene(scene);
+
+    Graphics::checkOpenGLError("Error Main : Pipeline Object Creation");
 
     GLuint basicShaderProgram = Shader::createShaderProgram("../shaders/basic");
     GLuint editmodeShaderProgram = Shader::createShaderProgram("../shaders/editmode");
@@ -34,11 +42,16 @@ int main(int argc, char **argv) {
 //    GLuint wireframeShaderProgram = Shader::createShaderProgram("../shaders/wireframe");
     GLuint unicolorShaderProgram = Shader::createShaderProgram("../shaders/unicolor");
 //    GLuint textureShaderProgram = Shader::createShaderProgram("../shaders/texture");
-//    GLuint pbrShaderProgram = Shader::createShaderProgram("../shaders/pbr");
+    GLuint pbrShaderProgram = Shader::createShaderProgram("../shaders/pbr");
+
+    Graphics::checkOpenGLError("Error Main : Programs Creation");
+
     glEnable(GL_DEPTH_TEST);
 
-    while (!glfwWindowShouldClose(window)) {
+    for (;;) {
         glfwPollEvents();
+        if (glfwWindowShouldClose(window) || glfwGetKey(window, GLFW_KEY_GRAVE_ACCENT))
+            return 1;
         if (Window::processInput(window, scene, editmodeScene) == 1)
             break;
 

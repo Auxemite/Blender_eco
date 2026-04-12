@@ -1,7 +1,7 @@
 #include "graphics.hh"
 #include "glad/gl.h"
 
-#include "utils/shaderUtils.hh"
+#include "shader/shaderUtils.hh"
 #include "uniform.hh"
 
 namespace Graphics {
@@ -16,6 +16,24 @@ void checkOpenGLError(const std::string &message) {
     while ((err = glGetError()) != GL_NO_ERROR) {
         std::cerr << "OpenGL error (" << message << "): " << err << std::endl;
     }
+}
+
+u32 bufferUsageToGL(BufferUsage usage) {
+    switch(usage) {
+        case BufferUsage::Attribute:
+            return GL_ARRAY_BUFFER;
+
+        case BufferUsage::Index:
+            return GL_ELEMENT_ARRAY_BUFFER;
+
+        case BufferUsage::Uniform:
+            return GL_UNIFORM_BUFFER;
+
+        case BufferUsage::Storage:
+            return GL_SHADER_STORAGE_BUFFER;
+    }
+
+    FATAL("Unknown usage value");
 }
 
 void audit_bindings() {
@@ -83,7 +101,7 @@ void audit_bindings() {
     }
 }
 
-void drawInterfaceObject(unsigned int shaderProgram, const Scene& scene) {
+//void drawInterfaceObject(unsigned int shaderProgram, const Scene& scene) {
 //    glUseProgram(shaderProgram);
 //    Uniform::setModelViewProjGui(shaderProgram, scene.camera());
 //    Uniform::setModifierUniforms(shaderProgram, scene.modifier);
@@ -93,6 +111,6 @@ void drawInterfaceObject(unsigned int shaderProgram, const Scene& scene) {
 //    scene->yArrow->graphicsObject->draw();
 //    Uniform::setUniqueColorUniforms(shaderProgram, glm::vec3(0.0, 0.0, 1.0));
 //    scene->zArrow->graphicsObject->draw();
-}
+//}
 
 }

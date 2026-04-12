@@ -11,7 +11,7 @@
 #include "scene/light.hh"
 #include "scene/mesh.hh"
 #include "scene/modifier.hh"
-#include "utils/shaderUtils.hh"
+#include "shader/shaderUtils.hh"
 
 namespace {
 
@@ -79,7 +79,7 @@ TEST_CASE("Uniform and Graphics namespace functions", "[graphics][uniform][graph
     Graphics::audit_bindings();
 
     Scene scene;
-    Graphics::drawInterfaceObject(program, scene);
+//    Graphics::drawInterfaceObject(program, scene);
 
     glDeleteProgram(program);
 }

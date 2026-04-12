@@ -5,6 +5,7 @@
 #include "mesh.hh"
 #include "light.hh"
 #include "modifier.hh"
+#include "graphics/lightBuffer.hh"
 
 class Scene : NonMovable {
     public:
@@ -33,7 +34,7 @@ class Scene : NonMovable {
         void addMesh(const std::string& pathName);
         void deleteMesh(int meshIndex);
         void duplicateMesh(int meshIndex);
-        void addMaterial();
+        void addMaterial(const glm::vec3& color, const glm::vec2& pbrFactor);
         void addTexture(const std::string& pathName);
         void deleteMaterial(int materialIndex);
         void deleteTexture(int textutreIndex);
@@ -55,8 +56,7 @@ class Scene : NonMovable {
         std::vector<Mesh *> meshes_;
         std::vector<Mesh *> selectedMeshes_;
         std::vector<const char*> meshesNames_;
-        //        std::vector<Light *> lights_;
-        Light *light_ = nullptr;
+        LightBuffer lights_;
 
         std::vector<Material *> materials_;
         std::vector<const char*> materialNames_;

@@ -1,24 +1,35 @@
 #version 450 core
 
+struct PointLight {
+    vec3 position;
+    float radius;
+    vec3 color;
+    float padding_1;
+};
+
 in vec3 fragColor;
 in vec2 uv;
 in vec4 fragPos;
 
 out vec4 FragColor;
 
-uniform vec3 cameraPos;
-uniform vec3 modifierColor;
-uniform vec2 modifierMaterial;
-uniform vec3 unicolor;
+layout(binding = 1) buffer PointLights {
+    PointLight point_lights[];
+};
 
+layout(binding = 0) uniform sampler2D tex;
+
+uniform vec3 cameraPos;
+uniform vec3 unicolor;
 uniform vec2 pbrFactor;
 uniform vec3 materialAlbedo;
 
-uniform vec3 lightPos;
-uniform vec3 lightColor;
-uniform float lightPower;
+uniform vec3 modifierLightPos;
+uniform vec3 modifierLightColor;
+uniform float modifierLightRadius;
 
-layout(binding = 0) uniform sampler2D tex;
+uniform uint lightNumber;
+
 float pi = 3.14159265359;
 
 // From three.js
@@ -74,12 +85,9 @@ float fresnelSchlick(float dotVH, float f0)
     return f0 + (1.0 - f0) * pow(1.0 - dotVH, 5.0);
 }
 
-vec3 brdf(vec3 normal, float roughness, float metaless, vec3 ViewDirectionWS)
+vec3 brdf(vec3 normal, float roughness, float metaless, vec3 ViewDirectionWS,
+            vec3 lightPos, float lightPower, vec3 lightColor)
 {
-//    vec3 lightPos = vec3(5.0f, 5.0f, 5.0f);
-//    vec3 lightColor = vec3(0.0f, 0.0f, 1.0f);
-//    float lightPower = 50.0f;
-
     vec3 irradiance = materialAlbedo * lightPower / 500.0;
     vec3 lightDir = normalize(lightPos - fragPos.xyz);
 
@@ -108,12 +116,17 @@ void main() {
     vec3 normal = normalize(cross(dpdx.xyz, dpdy.xyz));
 
     vec3 ViewDirectionWS = normalize(cameraPos - fragPos.xyz);
-    vec3 irradiance = brdf(normal, pbrFactor.x, pbrFactor.y, ViewDirectionWS);
+    vec3 irradiance = brdf(normal, pbrFactor.x, pbrFactor.y, ViewDirectionWS,
+            modifierLightPos, modifierLightRadius, modifierLightColor);
+    for(uint i = 0; i != lightNumber; ++i) {
+        PointLight pl = point_lights[i];
+        irradiance += brdf(normal, pbrFactor.x, pbrFactor.y, ViewDirectionWS, pl.position, pl.radius, pl.color);
+    }
 
     vec3 albedo = sRGBToLinear(vec4(irradiance, 1.0)).rgb;
     albedo = Aces(albedo); // HDR
 
     vec4 texColor = texture(tex, uv);
     FragColor = vec4(albedo * texColor.rgb, 1.0f);
-//    FragColor = vec4(vec3(uv, 0.0), 1.0f);
+//    FragColor = vec4(irradiance, 1.0f);
 }

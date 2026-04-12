@@ -2,6 +2,7 @@
 
 #include "glm/vec3.hpp"
 #include "material.hh"
+#include "light.hh"
 
 struct Modifier {
     public :

@@ -2,7 +2,7 @@
 #include <filesystem>
 #include "gui.hh"
 #include "scene/scene.hh"
-#include "utils/shaderUtils.hh"
+#include "shader/shaderUtils.hh"
 
 namespace fs = std::filesystem;
 
@@ -14,31 +14,35 @@ namespace Gui {
         lights(scene);
 
         ImGui::Begin("Mode");
-        ImGui::Checkbox("Grid", &grid.activateGrid_);
+        ImGui::Checkbox("Grid##visualGridToggle", &grid.activateGrid_);
         ImGui::SameLine();
         ImGui::Text(" | ");
         ImGui::SameLine();
         editModeScene.editModeModulator(scene);
 
         ImGui::SameLine();
-        if (ImGui::Button("Basic")) {
+        if (ImGui::Button("Basic##shaderBasic")) {
             Env::mainShaderProgram = Shader::createShaderProgram("../shaders/basic");
             Env::textureEnabled = false;
+            Env::PBREnabled = false;
         }
         ImGui::SameLine();
-        if (ImGui::Button("Wireframe")) {
+        if (ImGui::Button("Wireframe##shaderWireframe")) {
             Env::mainShaderProgram = Shader::createShaderProgram("../shaders/wireframe");
             Env::textureEnabled = false;
+            Env::PBREnabled = false;
         }
         ImGui::SameLine();
-        if (ImGui::Button("Texture")) {
+        if (ImGui::Button("Texture##shaderTexture")) {
             Env::mainShaderProgram = Shader::createShaderProgram("../shaders/texture");
             Env::textureEnabled = true;
+            Env::PBREnabled = false;
         }
         ImGui::SameLine();
-        if (ImGui::Button("PBR")) {
+        if (ImGui::Button("PBR##shaderPBR")) {
             Env::mainShaderProgram = Shader::createShaderProgram("../shaders/pbr");
             Env::textureEnabled = true;
+            Env::PBREnabled = true;
         }
         ImGui::End();
 
@@ -66,7 +70,7 @@ namespace Gui {
     }
 
     void addMesh(Scene& scene) {
-        if (ImGui::Button("Add Mesh"))
+        if (ImGui::Button("New##addNewMesh"))
         {
             ImGui::OpenPopup("add_mesh");
             std::string path = "../data/";
