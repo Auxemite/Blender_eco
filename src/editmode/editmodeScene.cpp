@@ -85,9 +85,7 @@ void EditModeScene::rayCasting(const glm::vec3& rayDir) {
         if (rayInfo.hitFace) {
             glm::ivec3 vertexIndexes = rayInfo.hitFace->vertexIndexes();
             std::cout << "Face touched " << vertexIndexes.x << " " << vertexIndexes.y << " " << vertexIndexes.z << "\n";
-            mesh->addToSelectedPoints(vertexIndexes.x);
-            mesh->addToSelectedPoints(vertexIndexes.y);
-            mesh->addToSelectedPoints(vertexIndexes.z);
+            mesh->addToSelectedPoints(vertexIndexes);
         }
         else
             std::cout << "Void Raycast\n";

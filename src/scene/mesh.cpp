@@ -311,9 +311,38 @@ void Mesh::clearSelectedPoints() {
     selectedPoints_.clear();
 }
 
-void Mesh::addToSelectedPoints(int value) {
+void Mesh::addToSelectedPoints(const int& value) {
     if (Env::shiftMode && selectedPoints_.contains(value))
         selectedPoints_.erase(value);
     else
         selectedPoints_.insert(value);
+}
+
+void Mesh::addToSelectedPoints(const glm::ivec2& values) {
+    if (Env::shiftMode && selectedPoints_.contains(values.x)
+                          && selectedPoints_.contains(values.y))
+    {
+        selectedPoints_.erase(values.x);
+        selectedPoints_.erase(values.y);
+    }
+    else {
+        selectedPoints_.insert(values.x);
+        selectedPoints_.insert(values.y);
+    }
+}
+
+void Mesh::addToSelectedPoints(const glm::ivec3& values) {
+    if (Env::shiftMode && selectedPoints_.contains(values.x)
+                          && selectedPoints_.contains(values.y)
+                             && selectedPoints_.contains(values.z))
+    {
+        selectedPoints_.erase(values.x);
+        selectedPoints_.erase(values.y);
+        selectedPoints_.erase(values.z);
+    }
+    else {
+        selectedPoints_.insert(values.x);
+        selectedPoints_.insert(values.y);
+        selectedPoints_.insert(values.z);
+    }
 }

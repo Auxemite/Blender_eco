@@ -52,7 +52,9 @@ class Mesh {
         std::vector<Engine::vertex> verticesEditmode();
 
         void clearSelectedPoints();
-        void addToSelectedPoints(int value);
+        void addToSelectedPoints(const int& value);
+        void addToSelectedPoints(const glm::ivec2& values);
+        void addToSelectedPoints(const glm::ivec3& values);
 
     private:
         std::string name_;
