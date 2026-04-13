@@ -17,7 +17,7 @@ uniform mat4 projection;
 uniform vec3 meshCenter;
 uniform vec3 modifierPosition;
 uniform mat3 modifierRotation;
-uniform float modifierScale;
+uniform vec3 modifierScale;
 
 void main() {
     vec3 newPos = pos;

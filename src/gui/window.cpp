@@ -17,19 +17,6 @@ void glfwErrorCallback(int error, const char *description) {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
 
-void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if (key != GLFW_KEY_ESCAPE && ImGui::GetIO().WantCaptureKeyboard)
-        return;
-
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-    {
-        std::cout  << "Toggling Fullscreen\n";
-        WindowState* state = static_cast<WindowState*>(glfwGetWindowUserPointer(window));
-        toggleFullscreen(window, *state);
-    }
-}
-
 GLFWwindow *softwareContextInit() {
     if (!glfwInit()) {
         std::cerr << "Error glfw_window_init : Failed to initialize GLFW" << std::endl;
@@ -60,20 +47,29 @@ GLFWwindow *softwareContextInit() {
     }
 
     Gui::initialize(window);
-    WindowState windowState;
-    glfwSetWindowUserPointer(window, &windowState);
     glfwSetKeyCallback(window, Window::keyCallback);
 
     return window;
 }
 
-void toggleFullscreen(GLFWwindow* window, WindowState& state) {
-    state.fullScreen = !state.fullScreen;
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key != GLFW_KEY_ESCAPE && ImGui::GetIO().WantCaptureKeyboard)
+        return;
 
-    if (state.fullScreen)
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     {
-        glfwGetWindowPos(window, &state.windowPosX, &state.windowPosY);
-        glfwGetWindowSize(window, &state.windowWidth, &state.windowHeight);
+        std::cout  << "Toggling Fullscreen\n";
+        toggleFullscreen(window);
+    }
+}
+
+void toggleFullscreen(GLFWwindow* window) {
+    Env::windowState.fullScreen = glfwGetWindowMonitor(window) == nullptr;
+    if (Env::windowState.fullScreen)
+    {
+        glfwGetWindowPos(window, &Env::windowState.posX, &Env::windowState.posY);
+        glfwGetWindowSize(window, &Env::windowState.width, &Env::windowState.height);
 
         GLFWmonitor* monitor = glfwGetPrimaryMonitor();
         const GLFWvidmode* mode = glfwGetVideoMode(monitor);
@@ -90,8 +86,8 @@ void toggleFullscreen(GLFWwindow* window, WindowState& state) {
     else
     {
         glfwSetWindowMonitor(window,nullptr,
-                             state.windowPosX,state.windowPosY,
-                             state.windowWidth,state.windowHeight,0);
+                             Env::windowState.posX,Env::windowState.posY,
+                             Env::windowState.width,Env::windowState.height,0);
     }
 }
 

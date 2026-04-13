@@ -50,7 +50,7 @@ void setModifierUniforms(unsigned int shaderProgram, const Modifier &modifier) {
     glUniformMatrix3fv(modifierRotationLoc, 1, GL_FALSE, glm::value_ptr(rotationMatrix));
 
     GLint modifierScaleLoc = glGetUniformLocation(shaderProgram, "modifierScale");
-    glUniform1f(modifierScaleLoc, modifier.scale);
+    glUniform3f(modifierScaleLoc, modifier.scale.x, modifier.scale.y, modifier.scale.z);
 }
 
 void setMaterialAndTextureUniforms(unsigned int shaderProgram, const Mesh& mesh) {

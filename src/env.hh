@@ -8,6 +8,15 @@
 #define WIDTH 1280//1920
 #define HEIGHT 720//1080
 
+struct WindowState
+{
+    bool fullScreen = false;
+    int posX = 0;
+    int posY = 0;
+    int width = 1280;
+    int height = 720;
+};
+
 namespace Env {
 
     inline glm::mat4 model = glm::mat4(1.0f);
@@ -20,6 +29,8 @@ namespace Env {
 
     inline bool audit_bindings_before_draw = false;
     inline unsigned int mainShaderProgram;
+
+    inline WindowState windowState;
 
     inline bool editmode = false;
     inline bool textureEnabled = false;

@@ -92,7 +92,7 @@ void Scene::drawMeshes(unsigned int shaderProgram, glm::vec3 unicolor) {
 void Scene::drawOutline(unsigned int shaderProgram) {
     glUseProgram(shaderProgram);
     Modifier outlineModifier = this->modifier_;
-    outlineModifier.scale += 0.03f;
+    outlineModifier.scale += camera_.ratioZoom();
     Uniform::setBasicUniforms(shaderProgram, camera_);
     Uniform::setModifierUniforms(shaderProgram, outlineModifier);
     Uniform::setUniqueColorUniforms(shaderProgram, glm::vec3(1.0, 1.0, 0.0));

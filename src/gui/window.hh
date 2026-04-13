@@ -7,24 +7,14 @@
 #include "scene/scene.hh"
 #include "editmode/editmodeScene.hh"
 
-struct WindowState
-{
-    bool fullScreen = false;
-
-    int windowPosX = 0;
-    int windowPosY = 0;
-    int windowWidth = 1280;
-    int windowHeight = 720;
-};
-
 namespace Window {
 
     void framebufferSizeCallback(GLFWwindow *window, int width, int height);
     void glfwErrorCallback(int error, const char *description);
-    void toggleFullscreen(GLFWwindow* window, WindowState& state);
-    void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-
     GLFWwindow *softwareContextInit();
+
+    void toggleFullscreen(GLFWwindow* window);
+    void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
     void shutDown(GLFWwindow *window);
     int processInput(GLFWwindow *window, Scene& scene, EditMode::EditModeScene& editModeScene);
 

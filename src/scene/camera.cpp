@@ -20,6 +20,10 @@ glm::vec3 Camera::up() const {
     return up_;
 }
 
+float Camera::ratioZoom() const {
+    return radius_ / 200.0f;
+}
+
 void Camera::processInputs(GLFWwindow *window, float deltaTime) {
     float cameraSpeedz = speedZoom_ * deltaTime;
     float cameraSpeedr = speedRotation_ * 10.0f * deltaTime;

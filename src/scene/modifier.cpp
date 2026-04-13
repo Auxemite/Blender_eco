@@ -4,11 +4,11 @@
 void Modifier::clear() {
     position = glm::vec3(0.0f, 0.0f, 0.0f);
     rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-    scale = 1.0f;
+    scale = glm::vec3(1.0f, 1.0f, 1.0f);
 }
 
 bool Modifier::isCleared() const {
-    return position == glm::vec3(0.0f) && rotation == glm::vec3(0.0f) && scale == 1.0f;
+    return position == glm::vec3(0.0f) && rotation == glm::vec3(0.0f) && scale == glm::vec3(1.0f);
 }
 
 void Modifier::positionModulator() {
@@ -27,7 +27,7 @@ void Modifier::rotationModulator() {
 
 void Modifier::scaleModulator() {
     ImGui::Text("Scale");
-    ImGui::SliderFloat("Scale##modifierScaleX", &scale, 0.1f, 5.0f);
-//    ImGui::SliderFloat("Y##modifierScaleY", &scale, 0.1f, 5.0f);
-//    ImGui::SliderFloat("Z##modifierScaleZ", &scale, 0.1f, 5.0f);
+    ImGui::SliderFloat("X##modifierScaleX", &scale.x,  0.1f, 5.0f);
+    ImGui::SliderFloat("Y##modifierScaleY", &scale.y,  0.1f, 5.0f);
+    ImGui::SliderFloat("Z##modifierScaleZ", &scale.z,  0.1f, 5.0f);
 }

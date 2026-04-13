@@ -11,6 +11,7 @@ class Camera {
 
         glm::vec3 position() const;
         glm::vec3 up() const;
+        float ratioZoom() const;
 
         void processInputs(GLFWwindow *window, float deltaTime);
         glm::vec3 getMouseRay(float mouseX, float mouseY, float windowWidth, float windowHeight) const;
