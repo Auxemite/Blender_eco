@@ -1,0 +1,39 @@
+#pragma once
+
+#include <vector>
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
+
+#define WIDTH 1280//1920
+#define HEIGHT 720//1080
+
+struct WindowState
+{
+    bool fullScreen = false;
+    int posX = 0;
+    int posY = 0;
+    int width = 1280;
+    int height = 720;
+};
+
+namespace Env {
+
+    inline glm::mat4 model = glm::mat4(1.0f);
+    inline glm::mat4 view = glm::mat4(1.0f);
+    inline glm::mat4 projection = glm::perspective(glm::radians(45.0f),
+                                                   static_cast<float>(WIDTH) / static_cast<float>(HEIGHT),
+                                                   0.1f, 100.0f);
+
+    inline float lastFrame = 0.0;
+
+    inline bool audit_bindings_before_draw = false;
+    inline unsigned int mainShaderProgram;
+
+    inline WindowState windowState;
+
+    inline bool editmode = false;
+    inline bool textureEnabled = false;
+    inline bool PBREnabled = false;
+    inline bool shiftMode = false;
+}
