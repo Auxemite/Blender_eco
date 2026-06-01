@@ -11,7 +11,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-The goal of this project is to build an open-source real-time 3D engine entriely from scratch. This project is an opportunity to experiment with and implement various features and optimizations commonly used in modern real-time 3D rendering. For the graphical user interface we used Dear IMGUI with GLFW and Opengl.
+The goal of this project is to build an open-source real-time 3D engine entriely from scratch. This project is an opportunity to experiment with and implement various features and optimizations commonly used in modern real-time 3D rendering. For the graphical user interface we used Dear IMGUI with GLFW and OpenGL.
 
 ### Aimed features :
 * Load and save 3D scenes in various formats
@@ -61,25 +61,18 @@ The project is in C++ 20 and the interface has been developped with IMGUI/OPGL/G
 
 ## Getting Started
 
-This project has been developped on Windows10 and Linux and should work on both. (Not tested on MacOs)
+This project has been developped on Windows 10 and Linux and should work on both. (Not tested on MacOs)
 
 ### Prerequisites
-`Opengl 4.5` and `Glfw` are required to run this project
+`Opengl 4.5` and C++20 are required to run this project.
 
-* Windows : You can use `vcpkg` to install `glfw`, `glew` and `glm` on windows (it's very simple to use with Jet Brains Clion)
-
-* Linux : [https://stackoverflow.com/questions/17768008/how-to-build-install-glfw-3-and-use-it-in-a-linux-project]
+`Glad`, `Glfw`, `Glm` and `Imgui` are directly inside de project in the "external" folder.
 
 ### Installation
 
 1. Clone the repo
 ```sh
 git clone https://github.com/Auxemite/Blender_eco
-```
-
-1.5. Change branch (if you want to test the rasterization version)
-```sh
-git switch dev
 ```
 
 2. Build
@@ -93,10 +86,6 @@ cp imgui.ini build/imgui.ini
 cd build
 ./blender_eco
 ```
-
-## Important Info
-
-For a more efficient way of using DEAR IMGUI, we have created a directory in src/frontend called "imgui". This is the code of DEAR IMGUI and is NOT our code. We use this library only for some help on the creation of the app.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
