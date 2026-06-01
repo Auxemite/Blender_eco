@@ -1,5 +1,5 @@
 <a id="readme-top"></a>
-# 3D Real-Time Modeling Software
+# BE : Real-time 3D Engine
 
 <br />
 <div align="center">
@@ -11,22 +11,30 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-The goal of this project was to create Blender like 3D real-time modeling software. For this project, we used Dear IMGUI with GLFW and Opengl for the graphical user interface.
+The goal of this project is to build an open-source real-time 3D engine entriely from scratch. This project is an opportunity to experiment with and implement various features and optimizations commonly used in modern real-time 3D rendering. For the graphical user interface we used Dear IMGUI with GLFW and Opengl.
 
-### Simple 3D scene
-* Creation of a scene including a mesh cube with the option to disable the grid
-* Camera movement in real time with arrows and options to change the zoom and rotation speed.
-* View the scene's mesh tree with various options and hide meshs
-* Add, remove and duplicate an mesh in the scene with a choice of ten basic meshs (cube, plane, triangle, cone, sphere, icosphere, cylinder, donut, monkey)
-* Select a mesh in the scene to move, rotate, or resize it
-* Mesh move action is in real time.
-* Save the scene in .obj format
-* Mesh selection is represented by an outline tracing the contours of the mesh faces.
+### Aimed features :
+* Load and save 3D scenes in various formats
+* Move, rotate, and scale any mesh in real time
+* Dynamic camera system
+* Dynamic materials and textures
+* Add and edit lights
+* Skybox support
+* Shadow management
+* Transparent object rendering
+* Post-processing stack
+* Procedural generation
 
-### Edit Mode
-* Switch to “edit mode” after selecting a mesh to select or move the face or vertex of a mesh
-* Several extrude options on a face of a mesh in “edit mode”
+### Aimed rendering optimizations :
+* Bounding boxes
+* Culling tests (frustum, backface and distance culling)
+* Z-prepass
+* Deferred rendering
+* Mipmapped textures
+* Mesh LOD
+* Probe lights.
 
+<!--
 ### Render Modes
 * The “Raycast Render” button provides access to simple raycasting rendering (not real time).
 * The “Normals” button switches to classic real-time rendering of 3D modeling software using the mesh normals.
@@ -41,12 +49,11 @@ The goal of this project was to create Blender like 3D real-time modeling softwa
 * Option to distort meshes using sinusoids with the “wave” button. It is possible to distort a mesh with sinusoids in all directions with any dependency, amplitude, and frequency (can be combined with hair simulation).
 
 For this software version, we used modern rasterization light management techniques (PBR) as well as advanced OpenGL features (geometry shader, tessellation shader).
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+-->
 
 ## Built With
 
-The project is in CPP 17 and the interface has been developped with IMGUI/OPGL/GLFW.
+The project is in C++ 20 and the interface has been developped with IMGUI/OPGL/GLFW.
 * [![Cpp][Cpp.cpp]][Cpp-url]
 * [![OpenGL][OP.GL]][OPGL-url]
 * [![ImGUI][IM.GUI]][IMGUI-url]
@@ -59,11 +66,9 @@ This project has been developped on Windows10 and Linux and should work on both.
 ### Prerequisites
 `Opengl 4.5` and `Glfw` are required to run this project
 
-* Windows :
-You can use `vcpkg` to install `glfw`, `glew` and `glm` on windows (it's very simple to use with Jet Brains Clion)
+* Windows : You can use `vcpkg` to install `glfw`, `glew` and `glm` on windows (it's very simple to use with Jet Brains Clion)
 
-* Linux :
-[https://stackoverflow.com/questions/17768008/how-to-build-install-glfw-3-and-use-it-in-a-linux-project]
+* Linux : [https://stackoverflow.com/questions/17768008/how-to-build-install-glfw-3-and-use-it-in-a-linux-project]
 
 ### Installation
 
@@ -93,10 +98,12 @@ cd build
 
 For a more efficient way of using DEAR IMGUI, we have created a directory in src/frontend called "imgui". This is the code of DEAR IMGUI and is NOT our code. We use this library only for some help on the creation of the app.
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 <!-- AUTHORS -->
 ## Authors
-Ernest Bardon
-Kael Facon
+- Ernest Bardon
+- Kael Facon
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!--5586a6-->
